@@ -1,7 +1,7 @@
 docker run \
   -it \
   --rm \
-  --name schedule_back \
+  --name schedule-back \
   --env-file .env \
   -v ${PWD}:/app \
   -v /app/node_modules \
