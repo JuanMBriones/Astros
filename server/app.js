@@ -17,6 +17,10 @@ app.get('/', (req, res) => {
     res.json({msg: 'Hello from Astros index route!'});
 })
 
+app.use('/api', require('./controllers/Profesor'))
+
+app.use('/api', require('./controllers/Clase'))
+
 // error handling middleware 
 app.use(eHandler());
 app.use(sendAsJSON());

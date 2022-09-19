@@ -14,4 +14,4 @@ const hsSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("horario_semana", hsSchema);
+module.exports = mongoose.model("horario_semana", hsSchema, "horario_semana");
