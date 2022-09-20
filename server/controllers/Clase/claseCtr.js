@@ -1,7 +1,4 @@
-const   Profesor = require('../../models/clase'),
-        CustomError = require('../../middleware/customError'),
-        ctr = {};
-
+const ctr = {};
 
 
 module.exports = ctr;

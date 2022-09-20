@@ -1,9 +1,10 @@
-const   express = require('express'),
-        router = express.Router({ mergeParams: true }),
-        asyncHandler = require('express-async-handler'),
-        profesorCtr = require('./profesorCtr');
-        
-router.get('/prof', (req, res) => res.status(200).json({ msg: 'Hello from prof index' }));
+const express = require('express');
+const router = express.router({mergeParams: true});
+const asyncHandler = require('express-async-handler');
+const profesorCtr = require('./profesorCtr');
+
+router.get('/prof', (req, res) => res.status(200).json({msg:
+    'Hello from prof index'}));
 
 router.get('/profesores', asyncHandler(profesorCtr.getAll()));
 

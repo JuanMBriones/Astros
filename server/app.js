@@ -20,11 +20,11 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/api', require('./controllers/Profesor'))
+app.use('/api', require('./controllers/Profesor'));
 
-app.use('/api', require('./controllers/Clase'))
+app.use('/api', require('./controllers/Clase'));
 
-// error handling middleware 
+// error handling middleware
 app.use(eHandler());
 app.use(sendAsJSON());
 
