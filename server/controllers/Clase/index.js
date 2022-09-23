@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.router({mergeParams: true});
+const router = express.Router({mergeParams: true});
 
 router.get('/class', (req, res) => res.status(200).json({msg:
     'Hello from clase index'}));

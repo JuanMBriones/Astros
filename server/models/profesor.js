@@ -16,6 +16,9 @@ const profesorSchema = new mongoose.Schema({
   correo: {
     type: String,
   },
+  cip: {
+    type: Number,
+  },
   modalidad: {
     type: String,
   },
@@ -25,6 +28,7 @@ const profesorSchema = new mongoose.Schema({
   comentarios: {
     type: String,
   },
+  // date or timestamp?
   ultima_mod: {
     type: Date,
   },

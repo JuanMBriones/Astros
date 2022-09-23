@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const claseSchema = new mongoose.Schema({
-  paquete_clave: {
+  paquete: {
+    type: String,
+  },
+  clave: {
     type: String,
   },
   grupo_apg: {
@@ -16,9 +19,13 @@ const claseSchema = new mongoose.Schema({
   aula: {
     type: String,
   },
+  cip: {
+    type: Number,
+  },
   profesor: {
     type: mongoose.Schema.Types.ObjectId,
   },
+  // propuesta = modelo?
   propuesta: {
     type: String,
   },
@@ -34,6 +41,7 @@ const claseSchema = new mongoose.Schema({
   modalidad_grupo: {
     type: String,
   },
+  // why array?
   horario: [{
     type: mongoose.Schema.Types.ObjectId,
   }],
