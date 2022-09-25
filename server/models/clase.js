@@ -22,6 +22,7 @@ const claseSchema = new mongoose.Schema({
   cip: {
     type: Number,
   },
+  // mejor array?
   profesor: {
     type: mongoose.Schema.Types.ObjectId,
   },

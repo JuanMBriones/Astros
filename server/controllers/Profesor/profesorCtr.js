@@ -10,6 +10,7 @@ ctr.getAll = () => async (req, res, next) => {
 
 // get materias que puede dar un profesor
 ctr.getProfMaterias = () => async (req, res, next) => {
+  // expected: nomina profesor
   const {profesor} = req.body;
   const profCip = await Profesor.find({nomina: profesor}).
     distinct('cip').exec();
@@ -18,14 +19,18 @@ ctr.getProfMaterias = () => async (req, res, next) => {
   res.status(200).json({profMaterias});
 };
 
-// post example
-ctr.createP = () => async (req, res, next) => {
-  const {nomina} = req.body;
-  const profe = new Profesor({nomina});
-  await profe.save();
+// assign a class to a professor
+ctr.assignProf = () => async (req, res, next) => {
+  // expected: id materia, nomina profesor
+  const {id, profesor} = req.body;
+  console.log(id, profesor);
+  let idProfesor = await Profesor.find({nomina: profesor}).select('_id').exec();
+  idProfesor = idProfesor[0]._id.toString();
+  const updatedMat = await Clase.
+    findByIdAndUpdate(id, {profesor: idProfesor}).exec();
   res.status(201).json({
-    message: 'Prof created successfully',
-    profe,
+    message: 'Materia updated successfully',
+    updatedMat,
   });
 };
 
