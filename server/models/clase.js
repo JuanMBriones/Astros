@@ -44,7 +44,7 @@ const claseSchema = new mongoose.Schema({
   },
   // why array?
   horario: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.Mixed,
   }],
 });
 

@@ -10,6 +10,8 @@ router.get('/profesores', asyncHandler(profesorCtr.getAll()));
 
 router.get('/profMaterias', asyncHandler(profesorCtr.getProfMaterias()));
 
-router.post('/assignProf', asyncHandler(profesorCtr.assignProf()));
+router.put('/assignProf', asyncHandler(profesorCtr.assignProf()));
+
+router.get('/horarioProf', asyncHandler(profesorCtr.horarioProf()));
 
 module.exports = router;

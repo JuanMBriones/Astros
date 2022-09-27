@@ -5,7 +5,7 @@ const hbSchema = new mongoose.Schema({
     type: String,
   },
   horario_semana: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.Mixed,
   }],
 });
 

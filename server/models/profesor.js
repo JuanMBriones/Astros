@@ -25,6 +25,15 @@ const profesorSchema = new mongoose.Schema({
   rol: {
     type: String,
   },
+  carga_perm: {
+    type: Number,
+  },
+  carga_asig: {
+    type: Number,
+  },
+  clases: [{
+    type: mongoose.Schema.Types.ObjectId,
+  }],
   comentarios: {
     type: String,
   },
