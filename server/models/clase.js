@@ -23,9 +23,9 @@ const claseSchema = new mongoose.Schema({
     type: Number,
   },
   // mejor array?
-  profesor: {
+  profesor: [{
     type: mongoose.Schema.Types.ObjectId,
-  },
+  }],
   // propuesta = modelo?
   propuesta: {
     type: String,
