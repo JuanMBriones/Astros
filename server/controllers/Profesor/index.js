@@ -1,5 +1,6 @@
+/* eslint-disable new-cap */
 const express = require('express');
-const router = express.router({mergeParams: true});
+const router = express.Router({mergeParams: true});
 const asyncHandler = require('express-async-handler');
 const profesorCtr = require('./profesorCtr');
 
