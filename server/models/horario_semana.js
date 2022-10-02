@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const hsSchema = new mongoose.Schema({
   hora_inicio: {
-    type: Timestamp,
+    type: Date,
   },
   hora_fin: {
-    type: Timestamp,
+    type: Date,
   },
   dia: {
     type: Number,
