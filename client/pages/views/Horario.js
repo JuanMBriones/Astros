@@ -1,11 +1,24 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from '@mui/material';
 import Box from '@mui/material/Box';
+import axios from 'axios';
 import Calendario from '../components/Calendario';
 
+
 export default function Horario() {
+  const [professors, setProfessor] = useState([]);
+
+  useEffect(() => {
+    const getDataProfessors = async () => {
+      const res = await axios.get('http://localhost:3001/api/profesores');
+      setProfessor(res.data.allProfessors);
+    };
+
+    getDataProfessors();
+  }, []);
+
   return (
     <div>
       <center>
@@ -26,6 +39,13 @@ export default function Horario() {
           bgcolor: 'background.paper',
           borderRadius: 1}}>
           <div style={{padding: 20}}>
+            {
+              professors.map((professor) => (
+                <div key={professor._id}>
+                  <h2>{professor.nombre}</h2>
+                </div>
+              ))
+            }
             <h2 style={{color: 'red'}}>WARNINGS</h2>
             <ul>
               <li>Aqui van todas las advertencias que tenga el profesor</li>

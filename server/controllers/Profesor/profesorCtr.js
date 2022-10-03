@@ -164,9 +164,10 @@ ctr.assignProf = () => async (req, res, next) => {
 
 // horario de un profesor
 ctr.horarioProf = () => async (req, res, next) => {
-  // expected: nomina profesor
-  const {profesor} = req.body;
+  const profesor = req.query.profesor;
+
   let horarioProf = await getHorarioProf(profesor);
+
   horarioProf = horarioProf[0];
   console.log(horarioProf);
   res.status(200).json({horarioProf});
