@@ -9,6 +9,8 @@ import {
 } from '@devexpress/dx-react-scheduler-material-ui';
 import axios from 'axios';
 
+// prueba
+
 const resources = [{
   fieldName: 'id',
   title: 'Id',
