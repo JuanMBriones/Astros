@@ -63,22 +63,25 @@ export default function Demo() {
           },
         },
       );
-      console.log(res.data.horarioProf);
+      //console.log(res.data.horarioProf);
 
       const materias = res.data.horarioProf;
       let id = 0;
       // map the data to the format that the scheduler needs
       const mappedData = materias.map((materia) => {
-        console.log(materia);
+//        console.log(materia);
+        var horaInicio = new Date(materia.horario[0].horario_semana[0].hora_inicio);
+        var dia = materia.horario[0].horario_semana[0].dia;
+        var horaFin = new Date(materia.horario[0].horario_semana[0].hora_fin);
         return {
           title: materia.materia,
-          startDate: materia.horario[0].horario_semana[0].hora_inicio,
-          endDate: materia.horario[0].horario_semana[0].hora_fin,
+          startDate: new Date(2022, 4, dia+1, horaInicio.getHours(), horaInicio.getMinutes()),
+          endDate: new Date(2022, 4, dia+1, horaFin.getHours(), horaFin.getMinutes()),
           color: '#ff0000',
           id: id++,
         };
       });
-      console.log(mappedData);
+      //console.log(mappedData);
       setAppointments(mappedData);
       // setAppointments(res.data);
     };
@@ -93,7 +96,7 @@ export default function Demo() {
 
     >
       <ViewState
-        defaultCurrentDate="2022-02-08"
+        defaultCurrentDate="2022-05-01"
 
       />
       <WeekView

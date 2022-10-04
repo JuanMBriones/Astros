@@ -9,26 +9,72 @@ import Calendario from '../components/Calendario';
 
 export default function Horario() {
   const [professors, setProfessor] = useState([]);
+  const [materias, setMaterias] = useState([]);
+ 
+  var materiasParcial = []
 
-  useEffect(() => {
+  async function getMateriasParcial(numParcial, mat){
+    console.log("hola---------------------------")
+
+    for (let i = 0; i < mat.length; i++) {
+      for (let j = 0; j < mat[i].horario.length; j++) {
+        if(mat[i].horario[j].bloque == numParcial || mat[i].horario[j].bloque == 0) {
+          materiasParcial.push(mat[i]);
+          console.log(mat[i].horario)
+        }
+      }
+    }
+
+  }
+
+useEffect(() => {
+    const getData = async () => {
+      const res = await axios.get(
+        'http://localhost:3001/api/horarioProf/',
+        {
+          params: {
+            profesor: 'L00000000',
+          },
+        },
+      );
+      //console.log(res.data.horarioProf);
+
+      const materias = res.data.horarioProf;
+      setMaterias(res.data.horarioProf);
+      getMateriasParcial(1, materias);
+
+    }
+
+    
+    getData();
+
+
     const getDataProfessors = async () => {
       const res = await axios.get('http://localhost:3001/api/profesores');
       setProfessor(res.data.allProfessors);
-    };
+  };
+
 
     getDataProfessors();
+    
   }, []);
 
   return (
     <div>
       <center>
-        <h1>Horario de Nombre Profesor</h1>
-        <Button variant="outlined" style={{margin: 3}}>Periodo 1</Button>
-        <Button variant="outlined" style={{margin: 3}}>Semana Tec 1</Button>
-        <Button variant="outlined" style={{margin: 3}}>Periodo 2</Button>
-        <Button variant="outlined" style={{margin: 3}}>Semana Tec 2</Button>
-        <Button variant="outlined" style={{margin: 3}}>Periodo 3</Button>
-        <Button variant="outlined" style={{margin: 3}}>Semana 18</Button>
+         {
+              professors.map((professor) => (
+                <div key={professor._id}>
+                  <h1>{professor.nombre}</h1>
+                </div>
+              ))
+            }<h2>Horario</h2>
+        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materias)}>Periodo 1</Button>
+        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materias)}>Semana Tec 1</Button>
+        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(2, materias)}>Periodo 2</Button>
+        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(5, materias)}>Semana Tec 2</Button>
+        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(3, materias)}>Periodo 3</Button>
+        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(6, materias)}>Semana 18</Button>
       </center>
 
       <div style={{width: '100%'}}>
@@ -39,33 +85,24 @@ export default function Horario() {
           bgcolor: 'background.paper',
           borderRadius: 1}}>
           <div style={{padding: 20}}>
-            {
-              professors.map((professor) => (
-                <div key={professor._id}>
-                  <h2>{professor.nombre}</h2>
-                </div>
-              ))
-            }
             <h2 style={{color: 'red'}}>WARNINGS</h2>
             <ul>
               <li>Aqui van todas las advertencias que tenga el profesor</li>
             </ul>
+            
+          
+          {materias.map((materia) => (
             <Box sx={{display: 'flex',
+            flexDirection: 'column'}}>
+              <Box sx={{display: 'flex',
               justifyContent: 'flex-start'}}>
-              <h2 style={{color: '#9575cd', backgroundColor: '#9575cd'}}>_____  </h2>
-              <h2>Nombre materia 1</h2></Box>
-            <p> Dias, Hora, Periodo donde se imparte</p>
-            <Box sx={{display: 'flex',
-              justifyContent: 'flex-start'}}>
-              <h2 style={{color: '#2196f3', backgroundColor: '#2196f3'}}>_____  </h2>
-              <h2>Nombre materia 2</h2></Box>
-            <p> Dias, Hora, Periodo donde se imparte</p>
-            <Box sx={{display: 'flex',
-              justifyContent: 'flex-start'}}>
-              <h2 style={{color: '#00796b', backgroundColor: '#00796b'}}>_____  </h2>
-              <h2>Nombre materia 3</h2></Box>
-            <p> Dias, Hora, Periodo donde se imparte</p>
-          </div>
+                <h2 style={{color: '#9575cd', backgroundColor: '#9575cd'}}>_____  </h2>
+                <h2>{materia.materia}</h2></Box>
+              <p> Dias, Hora, Periodo donde se imparte</p>
+            </Box>
+          ))
+          }
+           </div>
           <div style={{padding: 20, width: '60%'}}><Calendario/></div>
 
         </Box>
