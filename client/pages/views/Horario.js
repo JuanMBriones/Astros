@@ -5,7 +5,12 @@ import {Button} from '@mui/material';
 import Box from '@mui/material/Box';
 import axios from 'axios';
 import Calendario from '../components/Calendario';
-
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
 
 export default function Horario() {
   const [professors, setProfessor] = useState([]);
@@ -85,6 +90,27 @@ useEffect(() => {
           bgcolor: 'background.paper',
           borderRadius: 1}}>
           <div style={{padding: 20}}>
+<<<<<<< HEAD
+=======
+            <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+              <nav aria-label="main mailbox folders">
+                {
+                  professors.map((professor) => (
+                    <List key={professor.id}>
+                      <ListItem disablePadding>
+                        <ListItemButton>
+                          <ListItemIcon>
+                            <InboxIcon />
+                          </ListItemIcon>
+                          <ListItemText primary={professor.nombre+' '+professor.nomina} />
+                        </ListItemButton>
+                      </ListItem>
+                    </List>
+                  ))
+                }
+              </nav>
+            </Box>
+>>>>>>> 05bfea967eb1969e378ae996690bd8a4d85e8426
             <h2 style={{color: 'red'}}>WARNINGS</h2>
             <ul>
               <li>Aqui van todas las advertencias que tenga el profesor</li>
