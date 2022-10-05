@@ -135,7 +135,7 @@ ctr.assignProf = () => async (req, res, next) => {
 
   // revisar 6 h seguidas
   horarioMateria.horario_semana.forEach((horarioDia) => {
-    horarioProf[horarioMateria.bloque][horarioDia.dia-1].forEach((hora) => {
+    horarioProf[horarioMateria.bloque-1][horarioDia.dia-1].forEach((hora) => {
       const minsActual = (hora[1].getTime() - hora[0].getTime()) / 60000;
       const minsMateria = (horarioDia.hora_fin.getTime() -
         horarioDia.hora_inicio.getTime()) / 60000;

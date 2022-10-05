@@ -7,7 +7,7 @@ import {
   Appointments,
   Resources,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import axios from 'axios';
+
 
 const resources = [{
   fieldName: 'id',
@@ -19,89 +19,59 @@ const resources = [{
   ],
 }];
 
-export default function Demo() {
-  const [appointments, setAppointments] = useState([
-    {
-      title: 'Materia 1',
-      startDate: '2022-05-01T09:45',
-      endDate: '2022-05-01T11:00',
-      id: 0,
-    },
-    {
-      title: 'Website Re-Design Plan',
-      startDate: new Date(2022, 4, 2, 9, 35),
-      endDate: new Date(2022, 4, 2, 11, 30),
-      id: 0,
-      rRule: 'FREQ=DAILY;COUNT=3',
-      exDate: '20180628T063500Z,20180626T063500Z',
-      color: '#ff0000',
-    }, {
-      title: 'Book Flights to San Fran for Sales Trip',
-      startDate: new Date(2022, 4, 2, 12, 11),
-      endDate: new Date(2022, 4, 2, 13, 0),
-      id: 1,
-      rRule: 'FREQ=DAILY;COUNT=4',
-      exDate: '20180627T091100Z',
-      color: '#ffccff',
-    }, {
-      title: 'Install New Router in Dev Room',
-      startDate: new Date(2022, 4, 2, 13, 30),
-      endDate: new Date(2022, 4, 2, 14, 35),
-      id: 2,
-      rRule: 'FREQ=DAILY;COUNT=5',
-      color: '#ff9747',
-    },
-  ]);
+let setApp;
+
+function mats(ar) {
+  setApp(ar);
+}
+
+function Calendario() {
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const getData = async () => {
-      const res = await axios.get(
-        'http://localhost:3001/api/horarioProf/',
-        {
-          params: {
-            profesor: 'L00000000',
-          },
-        },
-      );
-      //console.log(res.data.horarioProf);
-
-      const materias = res.data.horarioProf;
-      let id = 0;
-      // map the data to the format that the scheduler needs
-      const mappedData = materias.map((materia) => {
-//        console.log(materia);
-        var horaInicio = new Date(materia.horario[0].horario_semana[0].hora_inicio);
-        var dia = materia.horario[0].horario_semana[0].dia;
-        var horaFin = new Date(materia.horario[0].horario_semana[0].hora_fin);
-        return {
-          title: materia.materia,
-          startDate: new Date(2022, 4, dia+1, horaInicio.getHours(), horaInicio.getMinutes()),
-          endDate: new Date(2022, 4, dia+1, horaFin.getHours(), horaFin.getMinutes()),
-          color: '#ff0000',
-          id: id++,
-        };
-      });
-      //console.log(mappedData);
-      setAppointments(mappedData);
-      // setAppointments(res.data);
-    };
-
-    getData();
+    setAppointments([]);
   }, []);
 
+  setApp = function(ar) {
+    let id = 0;
+    const mappedData = [];
+
+    ar.map((materia) => {
+      materia.horario[0].horario_semana.map((horarioSemana) => {
+        const horaInicio = new Date(horarioSemana.hora_inicio);
+        const horaFin = new Date(horarioSemana.hora_fin);
+        const dia = horarioSemana.dia;
+        console.log(dia);
+        mappedData.push( {
+          title: materia.materia,
+          startDate: new Date(2022, 7, dia,
+            horaInicio.getUTCHours(), horaInicio.getUTCMinutes()),
+          endDate: new Date(2022, 7, dia,
+            horaFin.getUTCHours(), horaFin.getUTCMinutes()),
+          color: '#ff0000',
+          id: id,
+        });
+      });
+      id++;
+    });
+
+    // console.log('materias mapeadas');
+    // console.log(mappedData);
+    setAppointments(mappedData);
+  };
 
   return (
     <Scheduler
       data={appointments}
-
+      locale="es-ES"
     >
       <ViewState
-        defaultCurrentDate="2022-05-01"
-
+        defaultCurrentDate="2022-08-01"
       />
       <WeekView
         startDayHour={7}
         endDayHour={22}
+        excludedDays={[0, 6]}
       />
       <Appointments />
       <Resources
@@ -110,3 +80,5 @@ export default function Demo() {
     </Scheduler>
   );
 }
+
+export {Calendario, mats};
