@@ -11,6 +11,13 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 
+const instances = [
+  {id: 0, color: '#9575cd'},
+  {id: 1, color: '#2196f3'},
+  {id: 2, color: '#00796b'},
+];
+
+const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
 
 export default function Horario() {
   const [professors, setProfessor] = useState([]);
@@ -93,14 +100,21 @@ export default function Horario() {
             </ul>
 
 
-            {materiasBloque.map((materia) => (
+            {materiasBloque.map((materia, index) => (
               <Box sx={{display: 'flex',
                 flexDirection: 'column'}}>
                 <Box sx={{display: 'flex',
                   justifyContent: 'flex-start'}}>
-                  <h2 style={{color: '#9575cd', backgroundColor: '#9575cd'}}>_____  </h2>
-                  <h2>{materia.materia}</h2></Box>
-                <p> Dias, Hora, Periodo donde se imparte</p>
+                  <h2 style={{color: instances[index].color, backgroundColor: instances[index].color}}>_____  </h2>
+                  <h2 style={{paddingLeft: 5}}>{materia.materia}</h2>
+                </Box>
+                {materia.horario.map((horarioBloque) => (
+                  <p style={{marginBlockStart: 0}}>Bloque: {horarioBloque.bloque}
+                    {horarioBloque.horario_semana.map((dia) => (
+                      <div>Día: {dias[dia.dia-1]} {dia.hora_inicio.match(/[0-9]{2}:[0-9]{2}/)[0]} a {dia.hora_fin.match(/[0-9]{2}:[0-9]{2}/)[0]}</div>
+                    ))}
+                  </p>
+                ))}
               </Box>
             ))
             }
