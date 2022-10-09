@@ -18,11 +18,14 @@ const instances = [
 ];
 
 const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
+const periodos = ['Todo el semestre', 'Periodo 1', 'Periodo 2', 'Periodo 3', 'Semana tec 1', 'Semana tec 2', 'Semana 18'];
 
 export default function Horario() {
   const [professors, setProfessor] = useState([]);
   const [materiasBloque, setMaterias] = useState([]);
   const [materiasTodas, setAllMaterias] = useState([]);
+  const [warnings, setWarning] = useState([]);
+  const [periodo, setPeriodo] = useState(1);
 
   function getMateriasParcial(numParcial, mat) {
     const materiasParcial = [];
@@ -38,6 +41,7 @@ export default function Horario() {
     }
     setMaterias(materiasParcial);
     mats(materiasParcial);
+    setPeriodo(numParcial);
   }
 
   useEffect(() => {
@@ -59,6 +63,23 @@ export default function Horario() {
 
     getData();
 
+    const getWarnings = async () => {
+      const res = await axios.get(
+        'http://localhost:3001/api/warnings/',
+        {
+          params: {
+            profesor: 'L00000000',
+          },
+        },
+      );
+
+      const warningStr = res.data.message;
+      console.log(warningStr);
+      setWarning(warningStr);
+    };
+
+    getWarnings();
+
 
     const getDataProfessors = async () => {
       const res = await axios.get('http://localhost:3001/api/profesores');
@@ -77,7 +98,7 @@ export default function Horario() {
               <h1>{professor.nombre}</h1>
             </div>
           ))
-        }<h2>Horario</h2>
+        }<h2>Horario {periodos[periodo]}</h2>
         <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materiasTodas)}>Periodo 1</Button>
         <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materiasTodas)}>Semana Tec 1</Button>
         <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(2, materiasTodas)}>Periodo 2</Button>
@@ -96,7 +117,9 @@ export default function Horario() {
           <div style={{padding: 20}}>
             <h2 style={{color: 'red'}}>WARNINGS</h2>
             <ul>
-              <li>Aqui van todas las advertencias que tenga el profesor</li>
+              {warnings.map((warning) => (
+                <li key={warning}>{warning}</li>
+              ))}
             </ul>
 
 
@@ -109,7 +132,8 @@ export default function Horario() {
                   <h2 style={{paddingLeft: 5}}>{materia.materia}</h2>
                 </Box>
                 {materia.horario.map((horarioBloque) => (
-                  <p style={{marginBlockStart: 0}}>Bloque: {horarioBloque.bloque}
+                  <p style={{marginBlockStart: 0}}>
+                    Se imparte en: {periodos[horarioBloque.bloque]}
                     {horarioBloque.horario_semana.map((dia) => (
                       <div>Día: {dias[dia.dia-1]} {dia.hora_inicio.match(/[0-9]{2}:[0-9]{2}/)[0]} a {dia.hora_fin.match(/[0-9]{2}:[0-9]{2}/)[0]}</div>
                     ))}

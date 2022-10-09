@@ -5,6 +5,8 @@ const HorarioS = require('../../models/horario_semana');
 const CustomError = require('../../middleware/customError');
 const ctr = {};
 
+// carga es por periodo o por semestre?!!!!
+
 // get profesores
 ctr.getAll = () => async (req, res, next) => {
   const allProfessors = await Profesor.find().exec();
@@ -52,6 +54,44 @@ ctr.unassignProf = () => async (req, res, next) => {
   res.status(200).json({message: 'Materia and Profesor updated successfully'});
 };
 
+const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
+ctr.warnings = () => async (req, res, next) => {
+  // expected: nomina profesor
+  const profesor = req.query.profesor;
+  let idProfesor = await Profesor.findOne({nomina: profesor}).
+    select('_id').exec();
+  idProfesor = idProfesor._id.toString();
+
+  const returnMsg = [];
+
+  const cargaProfesor = await Profesor.findOne({_id: idProfesor}).
+    select('carga_perm carga_asig').exec();
+  if (cargaProfesor.carga_asig > cargaProfesor.carga_perm) {
+    returnMsg.push('La carga asignada al profesor excede la permitida.');
+    console.log(returnMsg);
+  }
+
+  let horarioProf = await getHorarioProf(profesor);
+  horarioProf = horarioProf[1];
+
+  for (let i = 0; i < horarioProf.length; i++) {
+    console.log(horarioProf[i]);
+    for (let j = 0; j < horarioProf[i].length; j++) {
+      console.log(horarioProf[i][j]);
+      for (let k = 0; k < horarioProf[i][j].length; k++) {
+        const minsActual = (horarioProf[i][j][k][1].getTime() -
+        horarioProf[i][j][k][0].getTime()) / 60000;
+        if (minsActual >= 360) {
+          returnMsg.push('Periodo ' + (i+1) +
+          ': El profesor tiene una carga mayor a 6 horas seguidas en el día: ' +
+          dias[j] + '.');
+        }
+      }
+    }
+  }
+
+  res.status(200).json({message: returnMsg});
+};
 
 // assign a class to a professor
 ctr.assignProf = () => async (req, res, next) => {

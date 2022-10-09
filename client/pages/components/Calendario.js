@@ -20,8 +20,12 @@ const resources = [{
 }];
 
 let setApp;
+let setApp2;
 
 function mats(ar) {
+  setApp2();
+  setApp(ar);
+  setApp2();
   setApp(ar);
 }
 
@@ -32,6 +36,10 @@ function Calendario() {
     setAppointments([]);
   }, []);
 
+  setApp2 = function() {
+    setAppointments([]);
+  };
+
   setApp = function(ar) {
     let id = 0;
     const mappedData = [];
@@ -41,7 +49,6 @@ function Calendario() {
         const horaInicio = new Date(horarioSemana.hora_inicio);
         const horaFin = new Date(horarioSemana.hora_fin);
         const dia = horarioSemana.dia;
-        console.log(dia);
         mappedData.push( {
           title: materia.materia,
           startDate: new Date(2022, 7, dia,
@@ -55,8 +62,9 @@ function Calendario() {
       id++;
     });
 
-    // console.log('materias mapeadas');
-    // console.log(mappedData);
+
+    console.log('materias mapeadas');
+    console.log(mappedData);
     setAppointments(mappedData);
   };
 

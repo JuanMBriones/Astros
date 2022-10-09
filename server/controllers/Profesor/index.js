@@ -17,4 +17,6 @@ router.put('/unassignProf', asyncHandler(profesorCtr.unassignProf()));
 
 router.get('/horarioProf', asyncHandler(profesorCtr.horarioProf()));
 
+router.get('/warnings', asyncHandler(profesorCtr.warnings()));
+
 module.exports = router;
