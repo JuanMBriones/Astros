@@ -67,6 +67,17 @@ export default function MuiNavbar() {
           </Button>
           <Button
             color='inherit'
+          >
+            <Link
+              href='/uploadfile'
+              underline='none'
+              color='inherit'
+            >
+              Upload CSV
+            </Link>
+          </Button>
+          <Button
+            color='inherit'
             id='resources-button'
             onClick={handleClick}
             aria-control={open ? 'resources-menu' : undefined }
@@ -108,12 +119,12 @@ export default function MuiNavbar() {
           <MenuItem
             onClick={handleClose}
           >
-            Blog
+            Horario
           </MenuItem>
           <MenuItem
             onClick={handleClose}
           >
-            Podcast
+            Clases
           </MenuItem>
         </Menu>
       </Toolbar>
