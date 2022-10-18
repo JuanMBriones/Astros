@@ -74,13 +74,7 @@ export default function MuiNavbar() {
             aria-expanded={open ? 'true' : undefined}
             endIcon={<KeyboardArrowDownIcon />}
           >
-            <Link
-              href='/resources'
-              underline='none'
-              color='inherit'
-            >
-              Resources
-            </Link>
+            Profesores
           </Button>
           <Button
             color='inherit'
@@ -111,8 +105,16 @@ export default function MuiNavbar() {
             horizontal: 'right',
           }}
         >
-          <MenuItem onClick={handleClose}>Blog</MenuItem>
-          <MenuItem onClick={handleClose}>Podcast</MenuItem>
+          <MenuItem
+            onClick={handleClose}
+          >
+            Blog
+          </MenuItem>
+          <MenuItem
+            onClick={handleClose}
+          >
+            Podcast
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
