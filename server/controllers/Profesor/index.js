@@ -9,6 +9,8 @@ router.get('/prof', (req, res) => res.status(200).json({msg:
 
 router.get('/profesores', asyncHandler(profesorCtr.getAll()));
 
+router.get('/profe', asyncHandler(profesorCtr.getDataProfe()));
+
 router.get('/profMaterias', asyncHandler(profesorCtr.getProfMaterias()));
 
 router.put('/assignProf', asyncHandler(profesorCtr.assignProf()));
