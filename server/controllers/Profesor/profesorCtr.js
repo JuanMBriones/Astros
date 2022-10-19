@@ -5,6 +5,7 @@ const HorarioS = require('../../models/horario_semana');
 const CustomError = require('../../middleware/customError');
 const ctr = {};
 
+// duda
 // carga es por periodo o por semestre?!!!!
 
 // get profesores
@@ -24,7 +25,7 @@ ctr.getDataProfe = () => async (req, res, next) => {
 // get materias que puede dar un profesor
 ctr.getProfMaterias = () => async (req, res, next) => {
   // expected: nomina profesor
-  const {profesor} = req.body;
+  const profesor = req.query.profesor;
   const profCip = await Profesor.find({nomina: profesor}).distinct('cip').exec();
   const profMaterias = await Clase.find({cip: {'$in': profCip}}).exec();
   console.log(profMaterias);
@@ -34,11 +35,18 @@ ctr.getProfMaterias = () => async (req, res, next) => {
 // unassign a class from a professor
 ctr.unassignProf = () => async (req, res, next) => {
   // expected: id materia, nomina profesor
-  const {idMateria, profesor} = req.body;
+  const idMateria = req.query.idMateria;
+  const profesor = req.query.profesor;
   console.log(idMateria, profesor);
 
   let idProfesor = await Profesor.findOne({nomina: profesor}).select('_id').exec();
   idProfesor = idProfesor._id.toString();
+
+  const checkClase = await Clase.find({_id: idMateria, profesor: idProfesor}).exec();
+  const checkProfe = await Profesor.find({_id: idProfesor, clases: idMateria}).exec();
+  if (checkClase.length == 0 || checkProfe.length == 0) {
+    throw new CustomError(400, 'El profesor no tiene asignada esa clase');
+  }
 
   const cargaProfesor = await Profesor.findOne({_id: idProfesor}).select('carga_asig').exec();
   const cargaMateria = await Clase.findOne({_id: idMateria}).select('carga').exec();
@@ -67,11 +75,11 @@ ctr.warnings = () => async (req, res, next) => {
 
   const returnMsg = [];
 
-  const cargaProfesor = await Profesor.findOne({_id: idProfesor}).
-    select('carga_perm carga_asig').exec();
-  if (cargaProfesor.carga_asig > cargaProfesor.carga_perm) {
-    returnMsg.push('La carga asignada al profesor excede la permitida.');
-    console.log(returnMsg);
+  const cargaProfesor = await Profesor.findOne({_id: idProfesor}).select('carga_perm carga_asig').exec();
+  const carga = cargaProfesor.carga_asig - cargaProfesor.carga_perm;
+  if (carga > 0) {
+    const unidad = carga > 1 ? ' unidades).' : ' unidad).';
+    returnMsg.push('La carga asignada al profesor excede la permitida (por ' + carga + unidad);
   }
 
   let horarioProf = await getHorarioProf(profesor);
@@ -85,7 +93,7 @@ ctr.warnings = () => async (req, res, next) => {
         const minsActual = (horarioProf[i][j][k][1].getTime() - horarioProf[i][j][k][0].getTime()) / 60000;
         if (minsActual >= 360) {
           returnMsg.push('Periodo ' + (i+1) +
-          ': El profesor tiene una carga mayor a 6 horas seguidas en el día: ' + dias[j] + '.');
+          ': El profesor tiene una carga mayor a 6 horas seguidas el día: ' + dias[j] + '.');
         }
       }
     }
@@ -97,7 +105,8 @@ ctr.warnings = () => async (req, res, next) => {
 // assign a class to a professor
 ctr.assignProf = () => async (req, res, next) => {
   // expected: id materia, nomina profesor
-  const {idMateria, profesor} = req.body;
+  const idMateria = req.query.idMateria;
+  const profesor = req.query.profesor;
   console.log(idMateria, profesor);
 
   let idProfesor = await Profesor.findOne({nomina: profesor}).select('_id').exec();
@@ -106,15 +115,23 @@ ctr.assignProf = () => async (req, res, next) => {
   // revisar que la clase no este ya asignada al mismo profesor
   const profAsignado = await Profesor.findOne({_id: idProfesor}).select('clases').exec();
   if (profAsignado.clases.includes(idMateria)) {
-    throw new CustomError(400, 'Esta clase ya esta asignada a este profesor');
+    throw new CustomError(400, 'Esta clase ya esta asignada al profesor');
   }
+
+  // revisar que la clase no este asignada ya a 2 profesores
+  const cantProf = await Clase.findOne({_id: idMateria}).select('profesor').exec();
+  if (cantProf.profesor.length > 1) {
+    throw new CustomError(400, 'No se puede asignar una clase a mas de 2 profesores');
+  }
+
+  const returnMsg = [];
 
   // revisar carga
   const cargaProfesor = await Profesor.findOne({_id: idProfesor}).select('carga_perm carga_asig').exec();
   const cargaMateria = await Clase.findOne({_id: idMateria}).select('carga').exec();
   const newCarga = cargaProfesor.carga_asig + cargaMateria.carga;
   if (newCarga > cargaProfesor.carga_perm) {
-    throw new CustomError(400, 'Carga excedida');
+    returnMsg.push('Carga excedida');
   }
 
   // revisar empalme de horario
@@ -133,14 +150,14 @@ ctr.assignProf = () => async (req, res, next) => {
     horarioMateria.horario_semana.forEach((horarioDia) => {
       // para cada uno de los 6 periodos del semestre en ese dia
       for (let i = 0; i < 6; i++) {
-        const inicioMateria = horarioDia.hora_inicio.getTime();
-        const inicioHorario = hora[0].getTime();
-        const finMateria = horarioDia.hora_fin.getTime();
-        const finHorario = hora[1].getTime();
         horarioProf[i][horarioDia.dia-1].forEach((hora) => {
-          if (inicioMateria >= inicioHorario && inicioMateria <= finHorario ||
-              finMateria >= inicioHorario && finMateria <= finHorario) {
-            throw new CustomError(400, 'Emaplme de horario');
+          const inicioMateria = horarioDia.hora_inicio.getTime();
+          const inicioHorario = hora[0].getTime();
+          const finMateria = horarioDia.hora_fin.getTime();
+          const finHorario = hora[1].getTime();
+          if (inicioMateria >= inicioHorario && inicioMateria < finHorario ||
+              inicioMateria < inicioHorario && finMateria > inicioHorario) {
+            throw new CustomError(400, 'Empalme de horario');
           }
         });
       }
@@ -152,9 +169,9 @@ ctr.assignProf = () => async (req, res, next) => {
         const inicioHorario = hora[0].getTime();
         const finMateria = horarioDia.hora_fin.getTime();
         const finHorario = hora[1].getTime();
-        if (inicioMateria >= inicioHorario && inicioMateria <= finHorario ||
-            finMateria >= inicioHorario && finMateria <= finHorario) {
-          throw new CustomError(400, 'Emaplme de horario');
+        if (inicioMateria >= inicioHorario && inicioMateria < finHorario ||
+            inicioMateria < inicioHorario && finMateria > inicioHorario) {
+          throw new CustomError(400, 'Empalme de horario');
         }
       });
     });
@@ -167,8 +184,8 @@ ctr.assignProf = () => async (req, res, next) => {
         let inicioNewMateria = horarioDia.hora_inicio;
         let finNewMateria = horarioDia.hora_fin;
         for (let j = 0; j < horarioProf[i][horarioDia.dia-1].length; j++) {
-          const horaInicio = horarioProf[i][horarioDia.dia-1][j].hora_inicio;
-          const horaFin = horarioProf[i][horarioDia.dia-1][j].hora_fin;
+          const horaInicio = horarioProf[i][horarioDia.dia-1][j][0];
+          const horaFin = horarioProf[i][horarioDia.dia-1][j][1];
           if (inicioNewMateria.getTime() == horaFin.getTime()) {
             inicioNewMateria = horaInicio;
             horarioProf[i][horarioDia.dia-1].splice(j, 1);
@@ -184,7 +201,7 @@ ctr.assignProf = () => async (req, res, next) => {
         horarioProf[i][horarioDia.dia-1].forEach((hora) => {
           const minsActual = (hora[1].getTime() - hora[0].getTime()) / 60000;
           if (minsActual >= 360) {
-            throw new CustomError(400, '6 horas seguidas o mas');
+            returnMsg.push('6 o más horas seguidas');
           }
         });
       }
@@ -194,8 +211,8 @@ ctr.assignProf = () => async (req, res, next) => {
       let inicioNewMateria = horarioDia.hora_inicio;
       let finNewMateria = horarioDia.hora_fin;
       for (let i = 0; i < horarioProf[horarioMateria.bloque-1][horarioDia.dia-1].length; i++) {
-        const horaInicio = horarioProf[horarioMateria.bloque-1][horarioDia.dia-1][i].hora_inicio;
-        const horaFin = horarioProf[horarioMateria.bloque-1][horarioDia.dia-1][i].hora_fin;
+        const horaInicio = horarioProf[horarioMateria.bloque-1][horarioDia.dia-1][i][0];
+        const horaFin = horarioProf[horarioMateria.bloque-1][horarioDia.dia-1][i][1];
         if (inicioNewMateria.getTime() == horaFin.getTime()) {
           inicioNewMateria = horaInicio;
           horarioProf[horarioMateria.bloque-1][horarioDia.dia-1].splice(i, 1);
@@ -207,17 +224,30 @@ ctr.assignProf = () => async (req, res, next) => {
         }
       }
       horarioProf[horarioMateria.bloque-1][horarioDia.dia-1].push([inicioNewMateria, finNewMateria]);
-    });
 
-    horarioProf[horarioMateria.bloque-1][horarioDia.dia-1].forEach((hora) => {
-      const minsActual = (hora[1].getTime() - hora[0].getTime()) / 60000;
-      if (minsActual >= 360) {
-        throw new CustomError(400, '6 horas seguidas o mas');
-      }
+      horarioProf[horarioMateria.bloque-1][horarioDia.dia-1].forEach((hora) => {
+        const minsActual = (hora[1].getTime() - hora[0].getTime()) / 60000;
+        if (minsActual >= 360) {
+          returnMsg.push('6 o más horas seguidas');
+        }
+      });
     });
   }
 
-  // advertencia: se puede asignar materia ya asignada a otro profe?
+  // duda
+  // advertencia: al asignarlo a una clase ya asignada a otro profe?
+  // duda
+  // empalme es advertencia o error?
+
+  res.status(200).json({message: returnMsg, idMateria: idMateria, profesor: idProfesor, carga: newCarga});
+};
+
+ctr.assignConfirm = () => async (req, res, next) => {
+  // expected: id materia, nomina profesor
+  const idMateria = req.query.idMateria;
+  const idProfesor = req.query.profesor;
+  const newCarga = req.query.carga;
+  console.log(idMateria, idProfesor, newCarga);
 
   const updatedMat = await Clase.findByIdAndUpdate(idMateria, {$addToSet: {profesor: idProfesor}}).exec();
   const updatedProf = await Profesor.findByIdAndUpdate(idProfesor,
