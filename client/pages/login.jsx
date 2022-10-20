@@ -20,6 +20,7 @@ export default function Login() {
         clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
       >
         <GoogleLogin
+          hosted_domain={'tec.mx'}
           onSuccess={async (credentialResponse) =>{
             console.log(credentialResponse);
 
