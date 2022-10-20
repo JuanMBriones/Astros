@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/api', require('./controllers/Profesor'));
 
-app.use('/api', require('./controllers/Clase'));
+app.use('/api/clase', require('./controllers/Clase'));
 
 // error handling middleware
 app.use(eHandler());

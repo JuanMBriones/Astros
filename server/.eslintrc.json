@@ -22,6 +22,7 @@
             "error", 
             2
         ],
-        "new-cap": ["error", { "capIsNewExceptions": ["Router"] }]
+        "new-cap": ["error", { "capIsNewExceptions": ["Router"] }],
+        "max-len": 0
     }
 }
