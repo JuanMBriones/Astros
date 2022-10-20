@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
+import {useRouter} from 'next/router';
 
 /**
  * @return {Component}
@@ -7,6 +8,7 @@ import {GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
 export default function Login() {
   // eslint-disable-next-line no-unused-vars
   const [loginData, setLoginData] = React.useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (localStorage.getItem('loginData')) {
@@ -21,7 +23,10 @@ export default function Login() {
       >
         <GoogleLogin
           hosted_domain={
-            'tec.mx'
+            [
+              'tec.mx',
+              'itesm.mx',
+            ]
           }
           onSuccess={async (credentialResponse) =>{
             console.log(credentialResponse);
@@ -40,6 +45,8 @@ export default function Login() {
             const data = await res.json();
             setLoginData(data);
             localStorage.setItem('loginData', JSON.stringify(data));
+
+            router.push('/');
           }}
           onError={() => {
             console.log('Login Failed');
