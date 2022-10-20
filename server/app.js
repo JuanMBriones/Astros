@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(require('cors')());
 
-// initialize db.
+// initialize db
 dbConfig();
 
 app.get('/', (req, res) => {
