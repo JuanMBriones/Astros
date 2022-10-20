@@ -48,7 +48,7 @@ export default function MuiNavbar() {
           component='div'
           sx={{flexGrow: 1}}
         >
-          Pokemon
+          Sistema de Inscripciones+
         </Typography>
         <Stack
           direction='row'
