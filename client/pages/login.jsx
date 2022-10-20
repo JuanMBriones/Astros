@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
 
 /**
  * @return {Component}
  */
 export default function Login() {
+  // eslint-disable-next-line no-unused-vars
   const [loginData, setLoginData] = React.useState(null);
 
   useEffect(() => {
