@@ -24,7 +24,8 @@ export default function Login() {
           onSuccess={async (credentialResponse) =>{
             console.log(credentialResponse);
 
-            const res = await fetch('http://localhost:3001/api/login', {
+            // eslint-disable-next-line max-len
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
               method: 'POST',
               body: JSON.stringify({
                 token: credentialResponse.credential,
