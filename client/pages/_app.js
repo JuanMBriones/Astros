@@ -15,9 +15,8 @@ function MyApp({Component, pageProps}) {
 
   useEffect(() => {
     // setUser('test');
-    localStorage.setItem('user', 'test');
-    if (localStorage.getItem('user')) {
-      setUser(localStorage.getItem('user'));
+    if (localStorage.getItem('loginData')) {
+      setUser(localStorage.getItem('loginData'));
     }
   }, []);
 
@@ -25,9 +24,12 @@ function MyApp({Component, pageProps}) {
     <>
       <MuiNavbar />
       {
-        user !== undefined ?
-          <Login /> :
-          <h1>Test</h1>
+        user === undefined ?
+          (
+            <Login />
+          ) : (
+            <h1>Authenticated</h1>
+          )
       }
       <Component
         {...pageProps}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   AppBar,
   Toolbar,
@@ -12,22 +12,37 @@ import {
 } from '@mui/material';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-import {useState} from 'react';
+import {useRouter} from 'next/router';
 
 /**
  * @name MuiNavbar
  * @return {React.Component}
  */
 export default function MuiNavbar() {
+  const [userData, setUserData] = useState(undefined);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const router = useRouter();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  useEffect(() => {
+    if (localStorage.getItem('loginData')) {
+      setUserData(localStorage.getItem('loginData'));
+    }
+  }, []);
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('loginData');
+    setUserData(undefined);
+
+    router.push('/');
   };
 
   return (
@@ -90,13 +105,26 @@ export default function MuiNavbar() {
           <Button
             color='inherit'
           >
-            <Link
-              href='/login'
-              underline='none'
-              color='inherit'
-            >
-              Login
-            </Link>
+            {
+              userData === undefined ?
+                (
+                  <Link
+                    href='/login'
+                    underline='none'
+                    color='inherit'
+                  >
+                    Login
+                  </Link>
+                ) :
+                (
+                  <Button
+                    color='inherit'
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                )
+            }
           </Button>
         </Stack>
         <Menu
