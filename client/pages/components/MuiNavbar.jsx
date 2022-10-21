@@ -95,12 +95,23 @@ export default function MuiNavbar() {
             color='inherit'
             id='resources-button'
             onClick={handleClick}
-            aria-control={open ? 'resources-menu' : undefined }
+            aria-control={open ? 'resources-profesores' : undefined }
             aria-haspopup='true'
             aria-expanded={open ? 'true' : undefined}
             endIcon={<KeyboardArrowDownIcon />}
           >
             Profesores
+          </Button>
+          <Button
+            color='inherit'
+            id='resources-button'
+            onClick={handleClick}
+            aria-control={open ? 'resources-clases' : undefined }
+            aria-haspopup='true'
+            aria-expanded={open ? 'true' : undefined}
+            endIcon={<KeyboardArrowDownIcon />}
+          >
+            Clases
           </Button>
           <Button
             color='inherit'
@@ -128,7 +139,7 @@ export default function MuiNavbar() {
           </Button>
         </Stack>
         <Menu
-          id='resources-menu'
+          id='resources-profesores'
           anchorEl={anchorEl}
           open={open}
           MenuListProps={{
@@ -147,12 +158,54 @@ export default function MuiNavbar() {
           <MenuItem
             onClick={handleClose}
           >
-            Horario
+            <Link
+              href='/views/Horario'
+              underline='none'
+              color='inherit'
+            >
+              Horario
+            </Link>
+
           </MenuItem>
           <MenuItem
             onClick={handleClose}
           >
             Clases
+          </MenuItem>
+        </Menu>
+        <Menu
+          id='resources-clases'
+          anchorEl={anchorEl}
+          open={open}
+          MenuListProps={{
+            'aria-labelledby': 'resourced-button',
+          }}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <MenuItem
+            onClick={handleClose}
+          >
+            <Link
+              href='/views/ClasesProfesor'
+              underline='none'
+              color='inherit'
+            >
+              Asignar Profesores
+            </Link>
+
+          </MenuItem>
+          <MenuItem
+            onClick={handleClose}
+          >
+            Agregar clase
           </MenuItem>
         </Menu>
       </Toolbar>
