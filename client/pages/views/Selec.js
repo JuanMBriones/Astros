@@ -1,14 +1,32 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from '@mui/material';
 // import Box from '@mui/material/Box';
-// import axios from 'axios';
+import axios from 'axios';
 // import Calendario from '../components/Calendario';
 import TextField from '@mui/material/TextField';
 
 
 export default function Selec() {
+  const [professors, setProfessor] = useState([]);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const getDataProfessors = async () => {
+      const res = await axios.get('http://localhost:3001/api/profesores');
+      setProfessor(res.data.allProfessors);
+    };
+
+    getDataProfessors();
+  }, []);
+
+  const handleChange = (event) => {
+    setMessage(event.target.value);
+
+    console.log('value is:', event.target.value);
+  };
+
   return (
     <div>
       <center>
@@ -21,6 +39,14 @@ export default function Selec() {
         <TextField id="outlined-basic" label="Apellido" variant="outlined" />
         <Button variant="outlined" style={{margin: 3}}>Aceptar</Button>
       </center>
+
+      {
+        professors.map((professor) => (
+          <div key={professor._id}>
+            <h2>{professor.nombre}</h2>
+          </div>
+        ))
+      }
 
       {/* <div style={{width: '100%'}}>
         <Box sx={{display: 'flex',
@@ -62,8 +88,15 @@ export default function Selec() {
         </Box>
 
       </div> */}
+      <input
+        type="text"
+        id="message"
+        name="message"
+        onChange={handleChange}
+        value={message}
+      />
 
+      <h2>Message: {message}</h2>
     </div>
-
   );
 }
