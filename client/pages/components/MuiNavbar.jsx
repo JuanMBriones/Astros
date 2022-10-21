@@ -23,6 +23,8 @@ export default function MuiNavbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorEl2, setAnchorEl2] = useState(null);
   const open = Boolean(anchorEl);
+  const open2 = Boolean(anchorEl2);
+
   const router = useRouter();
 
   const handleClick = (event) => {
@@ -41,6 +43,10 @@ export default function MuiNavbar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClose2 = () => {
+    setAnchorEl2(null);
   };
 
   const handleLogout = () => {
@@ -180,12 +186,12 @@ export default function MuiNavbar() {
         </Menu>
         <Menu
           id='resources-clases'
-          anchorEl2={anchorEl2}
-          open={open}
+          anchorEl={anchorEl2}
+          open={open2}
           MenuListProps={{
             'aria-labelledby': 'resourced-button',
           }}
-          onClose={handleClose}
+          onClose={handleClose2}
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'right',
@@ -196,7 +202,7 @@ export default function MuiNavbar() {
           }}
         >
           <MenuItem
-            onClick={handleClose}
+            onClick={handleClose2}
           >
             <Link
               href='/views/ClasesProfesor'
@@ -208,7 +214,7 @@ export default function MuiNavbar() {
 
           </MenuItem>
           <MenuItem
-            onClick={handleClose}
+            onClick={handleClose2}
           >
             Agregar clase
           </MenuItem>

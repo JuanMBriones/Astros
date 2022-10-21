@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell, {tableCellClasses} from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import TextField from "@mui/material/TextField";
+import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import {Button} from '@mui/material';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#001489',
     color: theme.palette.common.white,
@@ -21,7 +21,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(({theme}) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
@@ -31,8 +31,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+/**
+ * @param {*} id
+ * @param {*} nombreClase
+ * @param {*} clave
+ * @param {*} detalles
+ * @return {Object} The render component
+ */
 function createData(id, nombreClase, clave, detalles) {
-  return { id, nombreClase, clave, detalles};
+  return {id, nombreClase, clave, detalles};
 }
 
 const rows = [
@@ -54,48 +61,52 @@ const rows = [
   createData(16, 'Calidad', 'TC4567', 'Detalles de la clase'),
 ];
 
+/**
+ * @param {Object} props to be passed to the component
+ * @return {Object} The render component
+ */
 export default function CustomizedTables() {
-    return (
-        <div>
-            <center>
-    <h1> Clases a asignar </h1>
-    <Box sx={{ width: '70%',  padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
-        <TextField
-          id="outlined-basic"
-          fullWidth
-          variant="outlined"
-          label="Buscar"
-        />
-        <Button variant="outlined" sx={{ width: '15%', marginLeft: 3 }}>Buscar</Button>
-    </Box>
-        <TableContainer component={Paper} sx={{ maxWidth: '80%' }}>
-            <Table aria-label="customized table">
-                <TableHead>
-                    <TableRow>
-                      <StyledTableCell>Nombre de la clase</StyledTableCell>
-                      <StyledTableCell>Clave</StyledTableCell>
-                      <StyledTableCell>Detalles</StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                <TableBody>
-                    {rows.map((row) => (
-                      <StyledTableRow key={row.id}>
-                        <StyledTableCell component="th" scope="row">
-                          {row.nombreClase}
-                        </StyledTableCell>
-                        <StyledTableCell component="th" scope="row">
-                          {row.clave}
-                        </StyledTableCell>
-                        <StyledTableCell component="th" scope="row">
-                          {row.detalles}
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              </center>
-              </div>
+  return (
+    <div>
+      <center>
+        <h1> Clases a asignar </h1>
+        <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
+          <TextField
+            id="outlined-basic"
+            fullWidth
+            variant="outlined"
+            label="Buscar"
+          />
+          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
+        </Box>
+        <TableContainer component={Paper} sx={{maxWidth: '80%'}}>
+          <Table aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Nombre de la clase</StyledTableCell>
+                <StyledTableCell>Clave</StyledTableCell>
+                <StyledTableCell>Detalles</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <StyledTableRow key={row.id}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.nombreClase}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row.clave}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row.detalles}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </center>
+    </div>
 
   );
 }
