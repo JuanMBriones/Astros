@@ -21,11 +21,16 @@ import {useRouter} from 'next/router';
 export default function MuiNavbar() {
   const [userData, setUserData] = useState(undefined);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl2, setAnchorEl2] = useState(null);
   const open = Boolean(anchorEl);
   const router = useRouter();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClick2 = (event) => {
+    setAnchorEl2(event.currentTarget);
   };
 
   useEffect(() => {
@@ -93,7 +98,7 @@ export default function MuiNavbar() {
           </Button>
           <Button
             color='inherit'
-            id='resources-button'
+            id='resources-profesores'
             onClick={handleClick}
             aria-control={open ? 'resources-profesores' : undefined }
             aria-haspopup='true'
@@ -104,8 +109,8 @@ export default function MuiNavbar() {
           </Button>
           <Button
             color='inherit'
-            id='resources-button'
-            onClick={handleClick}
+            id='resources-clases'
+            onClick={handleClick2}
             aria-control={open ? 'resources-clases' : undefined }
             aria-haspopup='true'
             aria-expanded={open ? 'true' : undefined}
@@ -175,7 +180,7 @@ export default function MuiNavbar() {
         </Menu>
         <Menu
           id='resources-clases'
-          anchorEl={anchorEl}
+          anchorEl2={anchorEl2}
           open={open}
           MenuListProps={{
             'aria-labelledby': 'resourced-button',
