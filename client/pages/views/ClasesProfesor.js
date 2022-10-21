@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import {styled} from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -42,7 +42,7 @@ function createData(id, nombreClase, clave, detalles) {
   return {id, nombreClase, clave, detalles};
 }
 
-const rows = [
+const rawRows = [
   createData(1, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
   createData(2, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
   createData(3, 'Compiladores', 'TC1234', 'Detalles de la clase'),
@@ -66,6 +66,8 @@ const rows = [
  * @return {Object} The render component
  */
 export default function CustomizedTables() {
+  const [rows, setRows] = useState(rawRows);
+
   return (
     <div>
       <center>
@@ -76,6 +78,12 @@ export default function CustomizedTables() {
             fullWidth
             variant="outlined"
             label="Buscar"
+            onChange={(e) => {
+              const filteredRows = rawRows.filter((row) => {
+                return row.nombreClase.toLowerCase().includes(e.target.value.toLowerCase());
+              });
+              setRows(filteredRows);
+            }}
           />
           <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
         </Box>
