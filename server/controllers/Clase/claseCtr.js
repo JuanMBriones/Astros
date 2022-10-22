@@ -14,6 +14,13 @@ ctr.getProfesores = () => async (req, res, next) => {
   const clase = req.query.clase;
   const claseCip = await Clase.find({id: clase}).distinct('cip').exec();
   const profesores = await Profesor.find({cip: {'$in': claseCip}}).exec();
+  profesores.forEach((profesor) => {
+    if (profesor.clases.includes(clase)) {
+      profesor.asignada = 1;
+    } else {
+      profesor.asignada = 0;
+    }
+  });
   console.log(profesores);
   res.status(200).json({profesores});
 };

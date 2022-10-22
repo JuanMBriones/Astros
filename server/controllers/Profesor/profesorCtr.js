@@ -239,11 +239,12 @@ ctr.assignProf = () => async (req, res, next) => {
   // duda
   // empalme es advertencia o error?
 
+  console.log(returnMsg, idMateria, idProfesor, newCarga);
   res.status(200).json({message: returnMsg, idMateria: idMateria, profesor: idProfesor, carga: newCarga});
 };
 
 ctr.assignConfirm = () => async (req, res, next) => {
-  // expected: id materia, nomina profesor
+  // expected: id materia, nomina profesor, newCarga
   const idMateria = req.query.idMateria;
   const idProfesor = req.query.profesor;
   const newCarga = req.query.carga;
@@ -259,6 +260,7 @@ ctr.assignConfirm = () => async (req, res, next) => {
   if (!updatedProf) {
     throw new CustomError(500, 'Error updating Profesor');
   }
+  console.log(updatedMat, updatedProf);
   res.status(200).json({message: 'Materia and Profesor updated successfully'});
 };
 
