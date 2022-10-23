@@ -60,15 +60,15 @@ ctr.addClass = () => async (req, res, next) => {
 
   // create new record
   const newClase = new Clase({
-    clave,
-    grupoApg,
-    materia,
-    propuesta,
-    carga,
-    horario,
-    modalidadGrupo,
-    profesor,
-    cip,
+    clave: clave,
+    grupo_apg: grupoApg,
+    materia: materia,
+    propuesta: propuesta,
+    carga: carga,
+    horario: horario,
+    modalidad_grupo: modalidadGrupo,
+    profesor: profesor,
+    cip: cip,
   });
 
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
@@ -76,9 +76,9 @@ ctr.addClass = () => async (req, res, next) => {
     res.status(200).json({message: 'Clase actualizada'});
   } else {
     await newClase.save();
+    res.status(201).json({msg: 'Clase agregada'});
   }
   // update profesor
-  res.status(201).json({msg: 'Clase agregada'});
 };
 
 module.exports = ctr;
