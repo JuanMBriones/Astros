@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import {Button} from '@mui/material';
+import {Button, Link, Popover, Typography} from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -40,15 +40,14 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 
 /**
  * @param {*} id
- * @param {*} nombreProfesor
- * @param {*} infoAdicional
- * @param {*} nomina
+ * @param {*} nombreClase
+ * @param {*} detalles
  * @param {*} asignada
  * @param {*} dbId
  * @return {Object} The render component
  */
-function createData(id, nombreProfesor, infoAdicional, nomina, asignada, dbId) {
-  return {id, nombreProfesor, infoAdicional, nomina, asignada, dbId};
+function createData(id, nombreClase, detalles, asignada, dbId) {
+  return {id, nombreClase, detalles, asignada, dbId};
 }
 
 /* const rows = [
@@ -71,63 +70,82 @@ function createData(id, nombreProfesor, infoAdicional, nomina, asignada, dbId) {
  */
 export default function AsignarClasesProfesor() {
   const [open, setOpen] = useState(false);
-  const [allProfesores, setAllProfesores] = useState([]);
-  const [profesores, setProfesores] = useState([]);
-  const [selectedProfesor, setSelectedProfesor] = useState('');
-  const [materia, setMateria] = useState('');
+  const [allMaterias, setallMaterias] = useState([]);
+  const [materias, setMaterias] = useState([]);
+  const [selectedMateria, setSelectedMateria] = useState('');
+  const [profesor, setProfesor] = useState('');
   const [messages, setMessages] = useState([]);
   const [errorFlag, setErrorFlag] = useState(false);
   const [newCarga, setNewCarga] = useState(0);
+  const [anchor, setAnchor] = useState(null);
+  const [popMsg, setPopMsg] = useState([]);
+
+  const handleClick = (msgs, event) => {
+    setPopMsg(msgs);
+    setAnchor(event.currentTarget);
+  };
+
+  const handleClosePop = () => {
+    setAnchor(null);
+  };
+
+  const openPop = Boolean(anchor);
 
   useEffect(() => {
-    const mat = JSON.parse(localStorage.getItem('selectedMateria'));
-    setMateria(mat);
+    const prof = JSON.parse(localStorage.getItem('selectedProfesor'));
+    setProfesor(prof);
 
-    const getProfesores = async () => {
-      const res = await axios.get('http://localhost:3001/api/clase/profesores?clase=' + mat.dbId);
-      const rawProfesores = res.data.profesores;
-      const profesores = [];
-      rawProfesores.forEach((profesor, index) => {
-        profesores.push(createData(index, profesor.nombre, 'Info extra', profesor.nomina, profesor.asignada, null));
+    const getMaterias = async () => {
+      const res = await axios.get('http://localhost:3001/api/profMaterias?profesor=' + prof.dbId);
+      const rawMaterias = res.data.clases;
+      const materias = [];
+      rawMaterias.forEach((materia, index) => {
+        const horario = [materia.horario[0]];
+        for (let i = 1; i < materia.horario.length; i++) {
+          horario.push(materia.horario[i][0] + ': ' + materia.horario[i][1] + ' - ' + materia.horario[i][2]);
+        }
+        materias.push(createData(index, materia.materia, horario, materia.asignada, materia._id));
       });
-      setAllProfesores(profesores);
-      setProfesores(profesores);
+      setallMaterias(materias);
+      setMaterias(materias);
     };
-    getProfesores();
+    getMaterias();
   }, []);
 
-  const handleClickOpen = (prof) => {
-    setSelectedProfesor(prof);
+  const handleClickOpen = (mat) => {
+    setSelectedMateria(mat);
     setOpen(true);
     setErrorFlag(false);
 
     let msgs = [];
-    if (!prof.asignada) {
+    if (!mat.asignada) {
       const getWarnings = async () => {
         try {
-          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + materia.dbId + '&profesor=' + prof.nomina);
+          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + mat.dbId + '&profesor=' + profesor.nomina);
           msgs = res.data.message;
           if (msgs.length > 0) {
             msgs.unshift('Advertencias:');
           } else {
             msgs.push('No hay advertencias ni conflictos.');
           }
-          msgs.unshift('Confirme que desea asignar a: ' + prof.nombreProfesor + ' a la clase: ' + materia.nombreClase + '.');
-          prof.dbId = res.data.profesor;
+          msgs.unshift('Confirme que desea asignar a: ' + profesor.nombreProfesor + ' a la clase: ' + mat.nombreClase + '.');
           setNewCarga(res.data.carga);
+          console.log(msgs);
           setMessages(msgs);
         } catch (err) {
-          msgs.push('No se puede asignar a: ' + prof.nombreProfesor + ' a la clase: ' + materia.nombreClase + '.');
+          msgs.push('No se puede asignar a: ' + profesor.nombreProfesor + ' a la clase: ' + mat.nombreClase + '.');
           console.log(err.response.data.message);
           msgs.push(err.response.data.message);
           setErrorFlag(true);
+          console.log(msgs);
           setMessages(msgs);
         }
       };
       getWarnings();
     } else {
       msgs.push('Eliminar de la clase.');
-      msgs.push('¿Confirma que desea desasignar a: ' + prof.nombreProfesor + ' de la clase: ' + materia.nombreClase + '?');
+      msgs.push('¿Confirma que desea desasignar a: ' + profesor.nombreProfesor + ' de la clase: ' + mat.nombreClase + '?');
+      console.log(msgs);
       setMessages(msgs);
     }
   };
@@ -137,28 +155,28 @@ export default function AsignarClasesProfesor() {
   };
 
   const handleCloseOk = () => {
-    if (selectedProfesor.asignada) {
+    if (selectedMateria.asignada) {
       const unassign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/unassignProf?idMateria=' + materia.dbId + '&profesor=' + selectedProfesor.nomina);
+          const res = await axios.put('http://localhost:3001/api/unassignProf?idMateria=' + selectedMateria.dbId + '&profesor=' + profesor.nomina);
           console.log(res);
         } catch (err) {
           console.log(err);
         }
       };
       unassign();
-      selectedProfesor.asignada = !selectedProfesor.asignada;
+      selectedMateria.asignada = !selectedMateria.asignada;
     } else if (!errorFlag) {
       const assign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/assignConfirm?idMateria=' + materia.dbId + '&profesor=' + selectedProfesor.dbId + '&carga=' + newCarga);
+          const res = await axios.put('http://localhost:3001/api/assignConfirm?idMateria=' + selectedMateria.dbId + '&profesor=' + profesor.dbId + '&carga=' + newCarga);
           console.log(res);
         } catch (err) {
           console.log(err);
         }
       };
       assign();
-      selectedProfesor.asignada = !selectedProfesor.asignada;
+      selectedMateria.asignada = !selectedMateria.asignada;
     }
     setOpen(false);
   };
@@ -166,7 +184,7 @@ export default function AsignarClasesProfesor() {
   return (
     <div>
       <center>
-        <h1>Asignar {materia.nombreClase} a Profesores</h1>
+        <h1>Asignar Clases a {profesor.nombreProfesor}</h1>
         <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
           <TextField
             id="outlined-basic"
@@ -174,13 +192,13 @@ export default function AsignarClasesProfesor() {
             variant="outlined"
             label="Buscar"
             onChange={(e) => {
-              const filteredProfesores = allProfesores.filter((profesor) => {
-                const nombre = removeDiacritics(profesor.nombreProfesor.toString().toLowerCase());
+              const filteredMaterias = allMaterias.filter((materia) => {
+                const nombre = removeDiacritics(materia.nombreClase.toString().toLowerCase());
                 if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
-                  return profesor;
+                  return materia;
                 }
               });
-              setProfesores(filteredProfesores);
+              setMaterias(filteredMaterias);
             }}
           />
           <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
@@ -190,30 +208,40 @@ export default function AsignarClasesProfesor() {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>Nombre del profesor</StyledTableCell>
-                <StyledTableCell>Info extra</StyledTableCell>
+                <StyledTableCell>Nombre de la materia</StyledTableCell>
+                <StyledTableCell>Detalles</StyledTableCell>
                 <StyledTableCell>Asignar Clase</StyledTableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {profesores.map((profesor) => (
-                <StyledTableRow key={profesor.id}>
+              {materias.map((materia) => (
+                <StyledTableRow key={materia.id}>
                   <StyledTableCell component="th" scope="row">
-                    {profesor.nombreProfesor}
+                    {materia.nombreClase}
                   </StyledTableCell>
 
                   <StyledTableCell component="th" scope="row">
-                    {profesor.infoAdicional}
+                    <Link aria-owns={openPop ? 'pop' : undefined} aria-haspopup="true" onMouseEnter={(event) => {
+                      handleClick(materia.detalles, event);
+                    }} onMouseLeave={handleClosePop}>
+                      Detalles de la clase
+                    </Link>
+                    <Popover id='pop' open={openPop} sx={{pointerEvents: 'none'}} anchorEl={anchor} onClose={handleClosePop} anchorOrigin={{vertical: 'top', horizontal: 'right'}} disableScrollLock>
+                      {popMsg.map((horario, index) => (
+                        <Typography key={index} sx={{p: 1.5, lineHeight: '10px'}}>{horario}</Typography>
+                      ))}
+                    </Popover>
+                    {/* {materia.detalles} */}
                   </StyledTableCell>
 
                   <StyledTableCell component="th" scope="row">
-                    {profesor.asignada ?
+                    {materia.asignada ?
                       (<Button variant="contained" color="error" onClick={() => {
-                        handleClickOpen(profesor);
+                        handleClickOpen(materia);
                       }}>Eliminar</Button>) :
                       (<Button variant="contained" color="success" onClick={() => {
-                        handleClickOpen(profesor);
+                        handleClickOpen(materia);
                       }}>Asignar</Button>)
                     }
 
@@ -222,7 +250,7 @@ export default function AsignarClasesProfesor() {
                       onClose={handleClose}
                       aria-labelledby="alert-dialog-title"
                       aria-describedby="alert-dialog-description"
-                      BackdropProps={{style: {backgroundColor: '#000000', opacity: 0.5}}}
+                      BackdropProps={{style: {backgroundColor: '#000000', opacity: 0.2}}}
                     >
                       <DialogTitle id="alert-dialog-title">
                         {messages[0]}

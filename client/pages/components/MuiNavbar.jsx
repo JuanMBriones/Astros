@@ -66,6 +66,7 @@ export default function MuiNavbar() {
           edge='start'
           color='inherit'
           aria-label='logo'
+          href='/'
         >
           <CatchingPokemonIcon />
         </IconButton>
@@ -170,18 +171,18 @@ export default function MuiNavbar() {
             onClick={handleClose}
           >
             <Link
-              href='/views/Horario'
+              href='/views/Profesores'
               underline='none'
               color='inherit'
             >
-              Horario
+              Horario & Clases
             </Link>
 
           </MenuItem>
           <MenuItem
             onClick={handleClose}
           >
-            Clases
+            Agregar Profesores
           </MenuItem>
         </Menu>
         <Menu
@@ -216,7 +217,7 @@ export default function MuiNavbar() {
           <MenuItem
             onClick={handleClose2}
           >
-            Agregar clase
+            Agregar Clases
           </MenuItem>
         </Menu>
       </Toolbar>

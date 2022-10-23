@@ -46,6 +46,9 @@ const claseSchema = new mongoose.Schema({
   horario: [{
     type: mongoose.Schema.Types.Mixed,
   }],
+  asignada: {
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model('clase', claseSchema, 'clase');
