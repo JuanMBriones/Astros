@@ -3,7 +3,7 @@ import {React, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import MuiNavbar from './components/MuiNavbar';
 import Login from './login';
-import Footer from './components/footer';
+import Footer from './components/Footer';
 
 /**
  *
