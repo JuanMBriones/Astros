@@ -2,101 +2,141 @@
 /* eslint-disable max-len */
 import React, {useEffect, useState} from 'react';
 import {Button} from '@mui/material';
-// import Box from '@mui/material/Box';
 import axios from 'axios';
 // import Calendario from '../components/Calendario';
 import TextField from '@mui/material/TextField';
+import removeDiacritics from '../components/removeDiacritics';
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, {tableCellClasses} from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import {styled} from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
 
+const StyledTableCell = styled(TableCell)(({theme}) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: '#001489',
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({theme}) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+/**
+ * @param {*} id
+ * @param {*} nombreProfesor
+ * @param {*} nomina
+ * @param {*} dbId
+ * @return {Object} The render component
+ */
+function createData(id, nombreProfesor, nomina, dbId) {
+  return {id, nombreProfesor, nomina, dbId};
+}
 
 export default function Selec() {
-  const [professors, setProfessor] = useState([]);
-  const [message, setMessage] = useState('');
+  const [profesores, setProfesores] = useState([]);
+  const [allProfesores, setallProfesores] = useState([]);
 
+
+  // useEffect(() => {
+  //   const getDataProfessors = async () => {
+  //     const res = await axios.get('http://localhost:3001/api/profesores');
+  //     setProfessor(res.data.allProfessors);
+  //   };
+
+  //   getDataProfessors();
+  // }, []);
   useEffect(() => {
-    const getDataProfessors = async () => {
+    const getProfesores = async () => {
       const res = await axios.get('http://localhost:3001/api/profesores');
-      setProfessor(res.data.allProfessors);
+      const rawProfesores = res.data.allProfessors;
+      const profesores = [];
+      rawProfesores.forEach((profesor, index) => {
+        const nombre = profesor.nombre;
+        const nomina = profesor.nomina;
+        const dbId = profesor._id;
+        profesores.push(createData(index, nombre, nomina, dbId));
+      });
+      setallProfesores(profesores);
+      setProfesores(profesores);
     };
-
-    getDataProfessors();
+    getProfesores();
   }, []);
-
-  const handleChange = (event) => {
-    setMessage(event.target.value);
-
-    console.log('value is:', event.target.value);
-  };
 
   return (
     <div>
       <center>
         <h1>Horario por profesor</h1>
-        <h3>Escribe el id del profesor para mostrar su horario</h3>
-        <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-        <Button variant="outlined" style={{margin: 3}}>Aceptar</Button>
-        <h3>O escribe su nombre y apellido para buscarlo</h3>
-        <TextField id="outlined-basic" label="Nombre" variant="outlined" />
-        <TextField id="outlined-basic" label="Apellido" variant="outlined" />
-        <Button variant="outlined" style={{margin: 3}}>Aceptar</Button>
+        <h3>Escribe el nombre del profesor para consultar su horario</h3>
       </center>
-
       {
-        professors.map((professor) => (
+        profesores.map((professor) => (
           <div key={professor._id}>
             <h2>{professor.nombre}</h2>
           </div>
         ))
       }
+      <center>
 
-      {/* <div style={{width: '100%'}}>
-        <Box sx={{display: 'flex',
-          justifyContent: 'space-evenly',
-          p: 1,
-          m: 1,
-          bgcolor: 'background.paper',
-          borderRadius: 1}}>
-          <div style={{padding: 20}}>
-            {
-              professors.map((professor) => (
-                <div key={professor._id}>
-                  <h2>{professor.nombre}</h2>
-                </div>
-              ))
-            }
-            <h2 style={{color: 'red'}}>WARNINGS</h2>
-            <ul>
-              <li>Aqui van todas las advertencias que tenga el profesor</li>
-            </ul>
-            <Box sx={{display: 'flex',
-              justifyContent: 'flex-start'}}>
-              <h2 style={{color: '#9575cd', backgroundColor: '#9575cd'}}>_____  </h2>
-              <h2>Nombre materia 1</h2></Box>
-            <p> Dias, Hora, Periodo donde se imparte</p>
-            <Box sx={{display: 'flex',
-              justifyContent: 'flex-start'}}>
-              <h2 style={{color: '#2196f3', backgroundColor: '#2196f3'}}>_____  </h2>
-              <h2>Nombre materia 2</h2></Box>
-            <p> Dias, Hora, Periodo donde se imparte</p>
-            <Box sx={{display: 'flex',
-              justifyContent: 'flex-start'}}>
-              <h2 style={{color: '#00796b', backgroundColor: '#00796b'}}>_____  </h2>
-              <h2>Nombre materia 3</h2></Box>
-            <p> Dias, Hora, Periodo donde se imparte</p>
-          </div>
-          <div style={{padding: 20, width: '60%'}}><Calendario/></div>
+        <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
+          <TextField
+            id="outlined-basic"
+            fullWidth
+            variant="outlined"
+            label="Buscar"
+            onChange={(e) => {
+              const filteredProfesores = allProfesores.filter((profesor) => {
+                const nombre = removeDiacritics(profesor.nombreProfesor.toString().toLowerCase());
+                if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
+                  return profesor;
+                }
+              });
+              setProfesores(filteredProfesores);
+            }}
+          />
 
         </Box>
-
-      </div> */}
-      <input
-        type="text"
-        id="message"
-        name="message"
-        onChange={handleChange}
-        value={message}
-      />
-
-      <h2>Message: {message}</h2>
+        <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
+          <Table aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Nombre del profesor</StyledTableCell>
+                <StyledTableCell>Nómina</StyledTableCell>
+                <StyledTableCell>Horario</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {profesores.map((profesor) => (
+                <StyledTableRow key={profesor.id}>
+                  <StyledTableCell component="th" scope="row">
+                    {profesor.nombreProfesor}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {profesor.nomina}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    <Button variant="contained" color="success" onClick={() => saveProfesor(profesor)} href='./Horario'>Horario</Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </center>
     </div>
   );
 }
