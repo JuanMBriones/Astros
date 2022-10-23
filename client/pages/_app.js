@@ -1,6 +1,8 @@
 import '../styles/globals.css';
-import {React} from 'react';
+import {React, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
+import MuiNavbar from './components/MuiNavbar';
+import Login from './login';
 
 /**
  *
@@ -9,10 +11,30 @@ import PropTypes from 'prop-types';
  * @return {Object} The render component
  */
 function MyApp({Component, pageProps}) {
+  const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    // setUser('test');
+    if (localStorage.getItem('loginData')) {
+      setUser(localStorage.getItem('loginData'));
+    }
+  }, []);
+
   return (
-    <Component
-      {...pageProps}
-    />
+    <>
+      <MuiNavbar />
+      {
+        user === undefined ?
+          (
+            <Login />
+          ) : (
+            <h1>Authenticated</h1>
+          )
+      }
+      <Component
+        {...pageProps}
+      />
+    </>
   );
 }
 

@@ -16,17 +16,33 @@ const profesorSchema = new mongoose.Schema({
   correo: {
     type: String,
   },
+  cip: {
+    type: Number,
+  },
   modalidad: {
     type: String,
   },
   rol: {
     type: String,
   },
+  carga_perm: {
+    type: Number,
+  },
+  carga_asig: {
+    type: Number,
+  },
+  clases: [{
+    type: mongoose.Schema.Types.ObjectId,
+  }],
   comentarios: {
     type: String,
   },
+  // date or timestamp?
   ultima_mod: {
     type: Date,
+  },
+  asignada: {
+    type: Number,
   },
 });
 
