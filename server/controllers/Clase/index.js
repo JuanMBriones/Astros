@@ -10,4 +10,6 @@ router.get('/clases', asyncHandler(claseCtr.getClases()));
 
 router.get('/profesores', asyncHandler(claseCtr.getProfesores()));
 
+router.post('/add', asyncHandler(claseCtr.addClass()));
+
 module.exports = router;

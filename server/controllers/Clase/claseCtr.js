@@ -42,4 +42,40 @@ ctr.getProfesores = () => async (req, res, next) => {
   res.status(200).json({profesores});
 };
 
+ctr.addClass = () => async (req, res, next) => {
+  // expected: id clase, id profesor
+  const {
+    clave,
+    grupoApg,
+    materia,
+    propuesta,
+    carga,
+    horario, // array
+    modalidadGrupo,
+    profesor, // array
+    cip,
+  } = req.body;
+
+  // const cip = [];
+
+  // create new record
+  const newClase = new Clase({
+    clave,
+    grupoApg,
+    materia,
+    propuesta,
+    carga,
+    horario,
+    modalidadGrupo,
+    profesor,
+    cip,
+  });
+
+  // save new record
+  await newClase.save();
+  console.log('newClase', newClase);
+  // update profesor
+  res.status(201).json({msg: 'Clase agregada'});
+};
+
 module.exports = ctr;

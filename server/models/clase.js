@@ -19,9 +19,9 @@ const claseSchema = new mongoose.Schema({
   aula: {
     type: String,
   },
-  cip: {
+  cip: [{
     type: Number,
-  },
+  }],
   // mejor array?
   profesor: [{
     type: mongoose.Schema.Types.ObjectId,
