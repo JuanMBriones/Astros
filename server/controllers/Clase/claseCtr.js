@@ -71,9 +71,12 @@ ctr.addClass = () => async (req, res, next) => {
     cip,
   });
 
-  // save new record
-  await newClase.save();
-  console.log('newClase', newClase);
+  if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
+    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor}}).exec();
+    res.status(200).json({message: 'Clase actualizada'});
+  } else {
+    await newClase.save();
+  }
   // update profesor
   res.status(201).json({msg: 'Clase agregada'});
 };
