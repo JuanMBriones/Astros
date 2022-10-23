@@ -21,11 +21,18 @@ import {useRouter} from 'next/router';
 export default function MuiNavbar() {
   const [userData, setUserData] = useState(undefined);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl2, setAnchorEl2] = useState(null);
   const open = Boolean(anchorEl);
+  const open2 = Boolean(anchorEl2);
+
   const router = useRouter();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClick2 = (event) => {
+    setAnchorEl2(event.currentTarget);
   };
 
   useEffect(() => {
@@ -36,6 +43,10 @@ export default function MuiNavbar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClose2 = () => {
+    setAnchorEl2(null);
   };
 
   const handleLogout = () => {
@@ -55,6 +66,7 @@ export default function MuiNavbar() {
           edge='start'
           color='inherit'
           aria-label='logo'
+          href='/'
         >
           <CatchingPokemonIcon />
         </IconButton>
@@ -93,14 +105,25 @@ export default function MuiNavbar() {
           </Button>
           <Button
             color='inherit'
-            id='resources-button'
+            id='resources-profesores'
             onClick={handleClick}
-            aria-control={open ? 'resources-menu' : undefined }
+            aria-control={open ? 'resources-profesores' : undefined }
             aria-haspopup='true'
             aria-expanded={open ? 'true' : undefined}
             endIcon={<KeyboardArrowDownIcon />}
           >
             Profesores
+          </Button>
+          <Button
+            color='inherit'
+            id='resources-clases'
+            onClick={handleClick2}
+            aria-control={open ? 'resources-clases' : undefined }
+            aria-haspopup='true'
+            aria-expanded={open ? 'true' : undefined}
+            endIcon={<KeyboardArrowDownIcon />}
+          >
+            Clases
           </Button>
           <Button
             color='inherit'
@@ -128,7 +151,7 @@ export default function MuiNavbar() {
           </Button>
         </Stack>
         <Menu
-          id='resources-menu'
+          id='resources-profesores'
           anchorEl={anchorEl}
           open={open}
           MenuListProps={{
@@ -147,12 +170,54 @@ export default function MuiNavbar() {
           <MenuItem
             onClick={handleClose}
           >
-            Horario
+            <Link
+              href='/views/Profesores'
+              underline='none'
+              color='inherit'
+            >
+              Horario & Clases
+            </Link>
+
           </MenuItem>
           <MenuItem
             onClick={handleClose}
           >
-            Clases
+            Agregar Profesores
+          </MenuItem>
+        </Menu>
+        <Menu
+          id='resources-clases'
+          anchorEl={anchorEl2}
+          open={open2}
+          MenuListProps={{
+            'aria-labelledby': 'resourced-button',
+          }}
+          onClose={handleClose2}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <MenuItem
+            onClick={handleClose2}
+          >
+            <Link
+              href='/views/ClasesProfesor'
+              underline='none'
+              color='inherit'
+            >
+              Asignar Profesores
+            </Link>
+
+          </MenuItem>
+          <MenuItem
+            onClick={handleClose2}
+          >
+            Agregar Clases
           </MenuItem>
         </Menu>
       </Toolbar>

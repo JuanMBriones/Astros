@@ -24,12 +24,30 @@ ctr.getDataProfe = () => async (req, res, next) => {
 
 // get materias que puede dar un profesor
 ctr.getProfMaterias = () => async (req, res, next) => {
-  // expected: nomina profesor
+  // expected: id profesor
   const profesor = req.query.profesor;
-  const profCip = await Profesor.find({nomina: profesor}).distinct('cip').exec();
-  const profMaterias = await Clase.find({cip: {'$in': profCip}}).exec();
-  console.log(profMaterias);
-  res.status(200).json({profMaterias});
+  const profCip = await Profesor.find({id: profesor}).distinct('cip').exec();
+  const clases = await Clase.find({cip: {'$in': profCip}}).exec();
+  for (let i = 0; i < clases.length; i++) {
+    if (clases[i].profesor.includes(profesor)) {
+      clases[i].asignada = 1;
+    } else {
+      clases[i].asignada = 0;
+    }
+    const bloque = await HorarioB.find({_id: {'$in': clases[i].horario}}).exec();
+    const semana = await HorarioS.find({_id: {'$in': bloque[0].horario_semana}}).exec();
+    const periodos = ['Todo el semestre', 'Periodo 1', 'Periodo 2', 'Periodo 3', 'Semana tec 1', 'Semana tec 2', 'Semana 18'];
+    const horario = [[periodos[bloque[0].bloque]]];
+    semana.forEach((dia) => {
+      const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+      const hi = dia.hora_inicio.toISOString().slice(11, 16);
+      const hf = dia.hora_fin.toISOString().slice(11, 16);
+      horario.push([dias[dia.dia-1], hi, hf]);
+    });
+    clases[i].horario = horario;
+  }
+  console.log(clases);
+  res.status(200).json({clases});
 };
 
 // unassign a class from a professor
@@ -239,11 +257,12 @@ ctr.assignProf = () => async (req, res, next) => {
   // duda
   // empalme es advertencia o error?
 
+  console.log(returnMsg, idMateria, idProfesor, newCarga);
   res.status(200).json({message: returnMsg, idMateria: idMateria, profesor: idProfesor, carga: newCarga});
 };
 
 ctr.assignConfirm = () => async (req, res, next) => {
-  // expected: id materia, nomina profesor
+  // expected: id materia, nomina profesor, newCarga
   const idMateria = req.query.idMateria;
   const idProfesor = req.query.profesor;
   const newCarga = req.query.carga;
@@ -259,6 +278,7 @@ ctr.assignConfirm = () => async (req, res, next) => {
   if (!updatedProf) {
     throw new CustomError(500, 'Error updating Profesor');
   }
+  console.log(updatedMat, updatedProf);
   res.status(200).json({message: 'Materia and Profesor updated successfully'});
 };
 

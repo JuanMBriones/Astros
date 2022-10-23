@@ -72,15 +72,9 @@ export default function Horario() {
   }, [materiasBloque]);
 
   useEffect(() => {
+    const nomina = JSON.parse(localStorage.getItem('selectedProfesor')).nomina;
     const getMateriasProfe = async () => {
-      const res = await axios.get(
-        'http://localhost:3001/api/horarioProf/',
-        {
-          params: {
-            profesor: 'L00000000',
-          },
-        },
-      );
+      const res = await axios.get('http://localhost:3001/api/horarioProf?profesor=' + nomina);
       const materias = res.data.horarioProf;
       setAllMaterias(materias);
       setMaterias(materias);
@@ -89,28 +83,14 @@ export default function Horario() {
     getMateriasProfe();
 
     const getWarnings = async () => {
-      const res = await axios.get(
-        'http://localhost:3001/api/warnings/',
-        {
-          params: {
-            profesor: 'L00000000',
-          },
-        },
-      );
-      const warningStr = res.data.message;
-      setWarning(warningStr);
+      const res = await axios.get('http://localhost:3001/api/warnings?profesor=' + nomina);
+      const warningArr = res.data.message.length < 1 ? ['No hay advertencias.'] : res.data.message;
+      setWarning(warningArr);
     };
     getWarnings();
 
     const getDataProfe = async () => {
-      const res = await axios.get(
-        'http://localhost:3001/api/profe',
-        {
-          params: {
-            profesor: 'L00000000',
-          },
-        },
-      );
+      const res = await axios.get('http://localhost:3001/api/profe?profesor=' + nomina);
       setProfessor(res.data.profe);
     };
     getDataProfe();

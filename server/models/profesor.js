@@ -41,6 +41,9 @@ const profesorSchema = new mongoose.Schema({
   ultima_mod: {
     type: Date,
   },
+  asignada: {
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model('profesor', profesorSchema, 'profesor');
