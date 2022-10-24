@@ -46,4 +46,43 @@ ctr.getProfesores = () => async (req, res, next) => {
   res.status(200).json({profesores});
 };
 
+ctr.addClass = () => async (req, res, next) => {
+  // expected: id clase, id profesor
+  const {
+    clave,
+    grupoApg,
+    materia,
+    propuesta,
+    carga,
+    horario, // array
+    modalidadGrupo,
+    profesor, // array
+    cip,
+  } = req.body;
+
+  // const cip = [];
+
+  // create new record
+  const newClase = new Clase({
+    clave: clave,
+    grupo_apg: grupoApg,
+    materia: materia,
+    propuesta: propuesta,
+    carga: carga,
+    horario: horario,
+    modalidad_grupo: modalidadGrupo,
+    profesor: profesor,
+    cip: cip,
+  });
+
+  if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
+    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor}}).exec();
+    res.status(200).json({message: 'Clase actualizada'});
+  } else {
+    await newClase.save();
+    res.status(201).json({msg: 'Clase agregada'});
+  }
+  // update profesor
+};
+
 module.exports = ctr;

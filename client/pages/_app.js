@@ -3,6 +3,7 @@ import {React, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import MuiNavbar from './components/MuiNavbar';
 import Login from './login';
+import Footer from './components/Footer';
 
 /**
  *
@@ -34,6 +35,7 @@ function MyApp({Component, pageProps}) {
       <Component
         {...pageProps}
       />
+      <Footer />
     </>
   );
 }
