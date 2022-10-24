@@ -101,7 +101,7 @@ for (let i=0; i < defaultDiacriticsRemovalMap .length; i++) {
  * @return {string}
  */
 export default function removeDiacritics(str) {
-  return str.replace(/[^\u0000-\u007E]/g, function(a) {
+  return str.toString().replace(/[^\u0000-\u007E]/g, function(a) {
     return diacriticsMap[a] || a;
   });
 }
