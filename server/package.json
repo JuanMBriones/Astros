@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "lint": "eslint \"**/*.js\" --ignore-pattern node_modules/ --color",
+    "lint": "eslint \"**/*.js\" --ignore-pattern node_modules/ --color --fix",
     "lint-fix": "eslint '**/*.js' --ignore-pattern node_modules/ --color --fix",
     "prettier": "prettier . --check"
   },
