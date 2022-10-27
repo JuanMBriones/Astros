@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import MuiNavbar from './components/MuiNavbar';
 import Login from './login';
 import Footer from './components/Footer';
+import {useRouter} from 'next/router';
 
 /**
  *
@@ -12,10 +13,16 @@ import Footer from './components/Footer';
  * @return {Object} The render component
  */
 function MyApp({Component, pageProps}) {
+  const [hideNavbarFooter, setHideNavbarFooter] = useState(false);
   const [user, setUser] = useState(undefined);
+  const {asPath} = useRouter();
 
   useEffect(() => {
+    if (asPath === '/') {
+      setHideNavbarFooter(true);
+    }
     // setUser('test');
+
     if (localStorage.getItem('loginData')) {
       setUser(localStorage.getItem('loginData'));
     }
@@ -23,19 +30,19 @@ function MyApp({Component, pageProps}) {
 
   return (
     <>
-      <MuiNavbar />
       {
-        user === undefined ?
-          (
-            <Login />
-          ) : (
-            <h1>Authenticated</h1>
-          )
+        !hideNavbarFooter ? (
+          <MuiNavbar />
+        ) : null
       }
       <Component
         {...pageProps}
       />
-      <Footer />
+      {
+        !hideNavbarFooter ? (
+          <Footer />
+        ) : null
+      }
     </>
   );
 }
