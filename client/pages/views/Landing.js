@@ -1,11 +1,12 @@
 import React from 'react';
-import Landing from './views/Landing';
 
 /**
  * @return {Object} The render component
  */
-export default function Home() {
+export default function Landing() {
   return (
-    <Landing/>
+    <div>
+      <h1>Home</h1>
+    </div>
   );
 };

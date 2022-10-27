@@ -124,44 +124,38 @@ ctr.warnings = () => async (req, res, next) => {
 ctr.assignProf = () => async (req, res, next) => {
   // expected: id materia, nomina profesor
   const idMateria = req.query.idMateria;
-  const profesor = req.query.profesor;
-  console.log(idMateria, profesor);
-
-  let idProfesor = await Profesor.findOne({nomina: profesor}).select('_id').exec();
-  idProfesor = idProfesor._id.toString();
+  const idProfesor = req.query.profesor;
+  const profesor = await Profesor.findOne({_id: idProfesor}).exec();
+  const clase = await Clase.findOne({_id: idMateria}).exec();
 
   // revisar que la clase no este ya asignada al mismo profesor
-  const profAsignado = await Profesor.findOne({_id: idProfesor}).select('clases').exec();
-  if (profAsignado.clases.includes(idMateria)) {
+  if (profesor.clases.includes(idMateria)) {
     throw new CustomError(400, 'Esta clase ya esta asignada al profesor');
   }
 
   // revisar que la clase no este asignada ya a 2 profesores
-  const cantProf = await Clase.findOne({_id: idMateria}).select('profesor').exec();
-  if (cantProf.profesor.length > 1) {
+  if (clase.profesor.length > 1) {
     throw new CustomError(400, 'No se puede asignar una clase a mas de 2 profesores');
   }
 
   const returnMsg = [];
 
   // revisar carga
-  const cargaProfesor = await Profesor.findOne({_id: idProfesor}).select('carga_perm carga_asig').exec();
-  const cargaMateria = await Clase.findOne({_id: idMateria}).select('carga').exec();
-  const newCarga = cargaProfesor.carga_asig + cargaMateria.carga;
-  if (newCarga > cargaProfesor.carga_perm) {
+  const cargaPermitidaProfesor = profesor.carga_perm;
+  const cargaAsignadaProfesor = profesor.carga_asig;
+  const cargaMateria = clase.carga;
+  const newCarga = cargaAsignadaProfesor + cargaMateria;
+  if (newCarga > cargaPermitidaProfesor) {
     returnMsg.push('Carga excedida');
   }
 
   // revisar empalme de horario
-  let horarioProf = await getHorarioProf(profesor);
+  let horarioProf = await getHorarioProf(profesor.nomina);
   horarioProf = horarioProf[1];
 
-  let horarioMateria = await Clase.findOne({_id: idMateria}).select('horario').exec();
-  horarioMateria = horarioMateria.horario;
-  horarioMateria = await HorarioB.findOne({_id: horarioMateria}).exec();
+  let horarioMateria = clase.horario;
+  horarioMateria = await HorarioB.findOne({_id: {'$in': horarioMateria}}).exec();
   horarioMateria.horario_semana = await HorarioS.find({_id: {'$in': horarioMateria.horario_semana}}).exec();
-  console.log(horarioMateria);
-  console.log(horarioProf);
 
   if (horarioMateria.bloque == 0) {
     // para cada dia que se imparte la materia
@@ -257,7 +251,6 @@ ctr.assignProf = () => async (req, res, next) => {
   // duda
   // empalme es advertencia o error?
 
-  console.log(returnMsg, idMateria, idProfesor, newCarga);
   res.status(200).json({message: returnMsg, idMateria: idMateria, profesor: idProfesor, carga: newCarga});
 };
 
