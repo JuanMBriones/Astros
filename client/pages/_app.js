@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import {React, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import MuiNavbar from './components/MuiNavbar';
+// import MuiNavbar from './components/MuiNavbar';
 // import Login from './login';
 import Footer from './components/Footer';
 import {useRouter} from 'next/router';
@@ -18,7 +18,6 @@ function MyApp({Component, pageProps}) {
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
-  const colors = ['orange', 'blue', 'purple', 'green', 'red'];
   const navInfo = {
     'Home': {
       'url': '/',

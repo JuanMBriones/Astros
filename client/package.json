@@ -28,6 +28,7 @@
     "react-dom": "18.2.0",
     "react-drag-drop-files": "^2.3.7",
     "react-konva": "^18.2.2",
+    "react-typed": "^1.2.0",
     "sass": "^1.55.0"
   },
   "devDependencies": {
