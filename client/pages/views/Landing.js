@@ -1,22 +1,24 @@
+/* eslint-disable require-jsdoc */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
 
 const anchors = ['firstPage', 'secondPage', 'thirdPage'];
 
+class MySection extends React.Component {
+  render() {
+    return (
+      <div className="section">
+        <h3>{this.props.content}</h3>
+      </div>
+    );
+  }
+}
+
 /**
  * @return {Object} The render component
- * @param {Object} hideNavbarFooter
- * @param {Object} setHideNavbarFooter
  */
-export default function Landing(hideNavbarFooter, setHideNavbarFooter) {
-  // get props
-  // get page props
-  // const setHideNavbarFooter = props;
-  // setHideNavbarFooter(true);
-  // setHideNavbarFooter(true);
-  console.log(hideNavbarFooter);
-
+export default function Landing() {
   return (
     <ReactFullpage
       anchors={anchors}
@@ -30,20 +32,11 @@ export default function Landing(hideNavbarFooter, setHideNavbarFooter) {
         console.log('render prop change', state, fullpageApi); // eslint-disable-line no-console
 
         return (
-          <ReactFullpage.Wrapper>
-            <div className="section">
-              <p>Section 1 (welcome to fullpage.js)</p>
-              <button onClick={() => fullpageApi.moveSectionDown()}>
-                Click me to move down
-              </button>
-            </div>
-            <div className="section">
-              <p>Section 2</p>
-            </div>
-            <div className="section">
-              <p>Section 3</p>
-            </div>
-          </ReactFullpage.Wrapper>
+          <div>
+            <MySection content={'Slide down!'} />
+            <MySection content={'Keep going!'} />
+            <MySection content={'Slide up!'} />
+          </div>
         );
       }}
     />

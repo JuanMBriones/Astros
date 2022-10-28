@@ -2,9 +2,10 @@ import '../styles/globals.css';
 import {React, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import MuiNavbar from './components/MuiNavbar';
-import Login from './login';
+// import Login from './login';
 import Footer from './components/Footer';
 import {useRouter} from 'next/router';
+import AnimatedNav from './components/NavBar/AnimatedNav';
 
 /**
  *
@@ -14,14 +15,40 @@ import {useRouter} from 'next/router';
  */
 function MyApp({Component, pageProps}) {
   const [hideNavbarFooter, setHideNavbarFooter] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
+  const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
+  const colors = ['orange', 'blue', 'purple', 'green', 'red'];
+  const navInfo = {
+    'Home': {
+      'url': '/',
+      'color': 'orange',
+    },
+    'About': {
+      'url': '/about',
+      'color': 'blue',
+    },
+    'Contact': {
+      'url': '/contact',
+      'color': 'purple',
+    },
+    'Blog': {
+      'url': '/blog',
+      'color': 'green',
+    },
+    'Support': {
+      'url': '/support',
+      'color': 'red',
+    },
+  };
   const {asPath} = useRouter();
+  // barLabels.forEach((key, i) => (navInfo[key] = colors[i]));
 
   useEffect(() => {
     if (asPath === '/') {
       setHideNavbarFooter(true);
     }
-    // setUser('test');
+    setUser('test');
 
     if (localStorage.getItem('loginData')) {
       setUser(localStorage.getItem('loginData'));
@@ -32,7 +59,7 @@ function MyApp({Component, pageProps}) {
     <>
       {
         !hideNavbarFooter ? (
-          <MuiNavbar />
+          <AnimatedNav barLabels={barLabels} navInfo={navInfo} />
         ) : null
       }
       <Component
