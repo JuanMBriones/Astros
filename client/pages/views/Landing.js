@@ -5,7 +5,6 @@ import ReactFullpage from '@fullpage/react-fullpage';
 import styles from '../../styles/Landing.module.css';
 import Typed from 'react-typed';
 import Stack from '@mui/material/Stack';
-import Image from 'next/image';
 
 const anchors = ['firstPage', 'secondPage', 'thirdPage'];
 const bannerStrings = [
