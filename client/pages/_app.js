@@ -18,28 +18,68 @@ function MyApp({Component, pageProps}) {
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
-  const navInfo = {
+  const backMenu = {
+    'color': 'orange',
+    'onClick': () => {
+      setNavInfo(defaultNavInfo);
+    },
+  };
+
+  let defaultNavInfo = {
     'Home': {
+      'condition': 1,
       'url': '/',
       'color': 'orange',
     },
-    'About': {
-      'url': '/about',
+    'Profesores': {
+      'condition': 1,
+      'color': 'orange',
+      'children': {
+        'Horario & clases': {
+          'url': '/',
+          'color': 'orange',
+        },
+        'Agregar profesores': {
+          'url': '/',
+          'color': 'orange',
+        },
+        '←': backMenu,
+      },
+      'onClick': () => {
+        setNavInfo(defaultNavInfo.Profesores.children);
+      },
+    },
+    'Clases': {
+      'condition': 1,
+      'children': {
+        'Asignar Profesores': {
+          'url': '/',
+          'color': 'orange',
+        },
+        'Agregar Clases': {
+          'url': '/',
+          'color': 'orange',
+        },
+        'Agregar Clases por Archivo': {
+          'url': '/',
+          'color': 'orange',
+        },
+        '←': backMenu,
+      },
+      'onClick': () => {
+        setNavInfo(defaultNavInfo.Clases.children);
+      },
       'color': 'blue',
     },
-    'Contact': {
-      'url': '/contact',
-      'color': 'purple',
-    },
-    'Blog': {
-      'url': '/blog',
-      'color': 'green',
-    },
-    'Support': {
+    'Logout': {
+      'condition': 1,
       'url': '/support',
       'color': 'red',
     },
   };
+
+  const [navInfo, setNavInfo] = useState(defaultNavInfo);
+
   const {asPath} = useRouter();
   // barLabels.forEach((key, i) => (navInfo[key] = colors[i]));
 
@@ -52,6 +92,10 @@ function MyApp({Component, pageProps}) {
     if (localStorage.getItem('loginData')) {
       setUser(localStorage.getItem('loginData'));
     }
+
+    defaultNavInfo = Object.fromEntries(Object.entries(defaultNavInfo).filter(([key, value]) => value.condition == 1)); // for filtering
+    console.log(defaultNavInfo);
+    setNavInfo(defaultNavInfo);
   }, []);
 
   return (

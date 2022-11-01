@@ -35,6 +35,7 @@ const AnimatedNav = (props) => {
     const info = Object.keys(navInfo.navInfo).map(function(key, i) {
       return (
         <a
+          onClick={navInfo.navInfo[key].onClick}
           href={navInfo.navInfo[key].url}
           className={`${styles.nav_item} ${styles.is_active}`}
           active-color={navInfo.navInfo[key].color}

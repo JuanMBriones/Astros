@@ -24,6 +24,7 @@ body {
   padding: 0 20px;
   border-radius: 40px;
   box-shadow: 0 10px 40px rgba(159, 162, 177, 0.8);
+  transition:width 1s ease-in-out;
 }
 
 .nav_item {
