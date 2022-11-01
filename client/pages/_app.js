@@ -36,7 +36,7 @@ function MyApp({Component, pageProps}) {
       'color': 'orange',
       'children': {
         'Horario & clases': {
-          'url': '/',
+          'url': '/views/Profesores',
           'color': 'orange',
         },
         'Agregar profesores': {
@@ -53,7 +53,7 @@ function MyApp({Component, pageProps}) {
       'condition': 1,
       'children': {
         'Asignar Profesores': {
-          'url': '/',
+          'url': '/views/ClasesProfesor',
           'color': 'orange',
         },
         'Agregar Clases': {
@@ -61,7 +61,7 @@ function MyApp({Component, pageProps}) {
           'color': 'orange',
         },
         'Agregar Clases por Archivo': {
-          'url': '/',
+          'url': '/uploadFile',
           'color': 'orange',
         },
         '←': backMenu,
@@ -73,7 +73,7 @@ function MyApp({Component, pageProps}) {
     },
     'Logout': {
       'condition': 1,
-      'url': '/support',
+      'url': '/login',
       'color': 'red',
     },
   };
