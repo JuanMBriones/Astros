@@ -18,7 +18,6 @@ function MyApp({Component, pageProps}) {
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
-  // const colors = ['orange', 'blue', 'purple', 'green', 'red'];
   const navInfo = {
     'Home': {
       'url': '/',
