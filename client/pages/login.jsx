@@ -26,6 +26,9 @@ export default function Login() {
         contentAlign: 'center',
         border: '1px solid #ccc',
         borderRadius: '0.5rem',
+        width: '500px',
+        height: '200px',
+        marginTop: '150px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
         Login
