@@ -12,6 +12,27 @@ import Box from '@mui/material/Box';
 import {Button} from '@mui/material';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
+import IconButton from '@mui/material/IconButton';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'; //en proceso
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead'; //enviado
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // terminado
+import DoneAllIcon from '@mui/icons-material/DoneAll'; //actualizado
+import CircleIcon from '@mui/icons-material/Circle'; // carga cero
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Chip from '@mui/material/Chip';
+
+const estados = [
+  {id: 0, color: '#ffcc00', estado: 'AccessTimeFilledIcon'},
+  {id: 1, color: '#218aff', estado: 'MarkEmailReadIcon'},
+  {id: 2, color: '#9c27b0', estado: 'CheckCircleIcon'},
+  {id: 3, color: '#99cc33', estado: 'DoneAllIcon'},
+  {id: 4, color: '#000000', estado: 'CircleIcon'},
+];
+
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -72,6 +93,16 @@ export default function Profesores() {
     getProfesores();
   }, []);
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div>
       <center>
@@ -98,6 +129,7 @@ export default function Profesores() {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
+              <StyledTableCell>Estado</StyledTableCell>
                 <StyledTableCell>Nombre del profesor</StyledTableCell>
                 <StyledTableCell>Nómina</StyledTableCell>
                 <StyledTableCell>Horario</StyledTableCell>
@@ -105,8 +137,97 @@ export default function Profesores() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {profesores.map((profesor) => (
+              {profesores.map((profesor, index) => (
                 <StyledTableRow key={profesor.id}>
+                  <StyledTableCell component="th" scope="row">
+                  <div>
+                      <IconButton style={{color: estados[profesor.id].color}} onClick={handleClickOpen}>
+                      <Chip
+                        icon={
+                          profesor.id == 0 ? (
+                            <AccessTimeFilledIcon style={{color: estados[profesor.id].color}}/>
+                          ) : profesor.id == 1 ? (
+                            <MarkEmailReadIcon style={{color: estados[profesor.id].color}}/>
+                          ) : profesor.id == 2 ? (
+                            <CheckCircleIcon style={{color: estados[profesor.id].color}}/>
+                          ) : profesor.id == 3 ? (
+                            <DoneAllIcon style={{color: estados[profesor.id].color}}/>
+                          ) : (
+                            <CircleIcon style={{color: estados[profesor.id].color}}/>
+                          )
+                        }
+                        variant="outlined"
+                      />
+                      </IconButton>
+                      <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                      >
+                        <DialogTitle id="alert-dialog-title">
+                          {"Seleccione el nuevo estado del profesor NombreProfesor:"}
+                        </DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="alert-dialog-description">
+                          <center>
+                          <TableContainer component={Paper} sx={{maxWidth: '90%', marginBottom: 3}}>
+                            <Table aria-label="customized table">
+                              <TableHead>
+                                <TableRow>
+                                  <StyledTableCell>Estado</StyledTableCell>
+                                  <StyledTableCell>Nombre del estado</StyledTableCell>
+                                  <StyledTableCell>  </StyledTableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                              <StyledTableRow>
+                                <StyledTableCell component="th" scope="row">
+                                  <AccessTimeFilledIcon style={{color: '#ffcc00'}}/>
+                                </StyledTableCell>
+                                <StyledTableCell component="th" scope="row"> En proceso </StyledTableCell>
+                                <StyledTableCell component="th" scope="row"><Button variant="outlined"> Cambiar </Button></StyledTableCell>
+                              </StyledTableRow>
+                              <StyledTableRow>
+                                <StyledTableCell component="th" scope="row">
+                                  <MarkEmailReadIcon style={{color: '#218aff'}}/> 
+                                </StyledTableCell>
+                                <StyledTableCell component="th" scope="row"> Enviado </StyledTableCell>
+                                <StyledTableCell component="th" scope="row"><Button variant="outlined"> Cambiar </Button></StyledTableCell>
+                              </StyledTableRow>
+                              <StyledTableRow>
+                                <StyledTableCell component="th" scope="row">
+                                  <CheckCircleIcon style={{color: '#9c27b0'}}/>
+                                </StyledTableCell>
+                                <StyledTableCell component="th" scope="row"> Terminado </StyledTableCell>
+                                <StyledTableCell component="th" scope="row"><Button variant="outlined"> Cambiar </Button></StyledTableCell>
+                                </StyledTableRow>
+                                <StyledTableRow>
+                                  <StyledTableCell component="th" scope="row">
+                                    <DoneAllIcon style={{color: '#99cc33'}}/>
+                                  </StyledTableCell>
+                                  <StyledTableCell component="th" scope="row"> Actualizado </StyledTableCell>
+                                  <StyledTableCell component="th" scope="row"><Button variant="outlined"> Cambiar </Button></StyledTableCell>
+                                </StyledTableRow>
+                                <StyledTableRow>
+                                  <StyledTableCell component="th" scope="row">
+                                    <CircleIcon style={{color: '#000000'}}/>
+                                  </StyledTableCell> 
+                                  <StyledTableCell component="th" scope="row"> Carga cero </StyledTableCell>
+                                  <StyledTableCell component="th" scope="row"><Button variant="outlined"> Cambiar </Button></StyledTableCell>
+                                </StyledTableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                          </center>
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleClose}>Cerrar</Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
+                  </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {profesor.nombreProfesor}
                   </StyledTableCell>
