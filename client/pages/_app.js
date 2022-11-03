@@ -84,7 +84,9 @@ function MyApp({Component, pageProps}) {
   // barLabels.forEach((key, i) => (navInfo[key] = colors[i]));
 
   useEffect(() => {
-    if (asPath === '/') {
+    const rawUrl = asPath.split('#')[0].split('?');
+    console.log(rawUrl[0]);
+    if (rawUrl[0] === '/') {
       setHideNavbarFooter(true);
     }
     setUser('test');
