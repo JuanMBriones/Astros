@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import {Button} from '@mui/material';
+import {Button, CircularProgress} from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -78,6 +78,7 @@ export default function AsignarClasesProfesor() {
   const [messages, setMessages] = useState([]);
   const [errorFlag, setErrorFlag] = useState(false);
   const [newCarga, setNewCarga] = useState(0);
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
     const mat = JSON.parse(localStorage.getItem('selectedMateria'));
@@ -88,7 +89,7 @@ export default function AsignarClasesProfesor() {
       const rawProfesores = res.data.profesores;
       const profesores = [];
       rawProfesores.forEach((profesor, index) => {
-        profesores.push(createData(index, profesor.nombre, 'Info extra', profesor.nomina, profesor.asignada, null));
+        profesores.push(createData(index, profesor.nombre, 'Info extra', profesor.nomina, profesor.asignada, profesor._id));
       });
       setAllProfesores(profesores);
       setProfesores(profesores);
@@ -98,14 +99,16 @@ export default function AsignarClasesProfesor() {
 
   const handleClickOpen = (prof) => {
     setSelectedProfesor(prof);
-    setOpen(true);
     setErrorFlag(false);
+    setMessages(['Validando...']);
+    setCargando(true);
+    setOpen(true);
 
     let msgs = [];
     if (!prof.asignada) {
       const getWarnings = async () => {
         try {
-          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + materia.dbId + '&profesor=' + prof.nomina);
+          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + materia.dbId + '&profesor=' + prof.dbId);
           msgs = res.data.message;
           if (msgs.length > 0) {
             msgs.unshift('Advertencias:');
@@ -113,15 +116,14 @@ export default function AsignarClasesProfesor() {
             msgs.push('No hay advertencias ni conflictos.');
           }
           msgs.unshift('Confirme que desea asignar a: ' + prof.nombreProfesor + ' a la clase: ' + materia.nombreClase + '.');
-          prof.dbId = res.data.profesor;
           setNewCarga(res.data.carga);
-          setMessages(msgs);
         } catch (err) {
           msgs.push('No se puede asignar a: ' + prof.nombreProfesor + ' a la clase: ' + materia.nombreClase + '.');
-          console.log(err.response.data.message);
           msgs.push(err.response.data.message);
           setErrorFlag(true);
+        } finally {
           setMessages(msgs);
+          setCargando(false);
         }
       };
       getWarnings();
@@ -129,6 +131,7 @@ export default function AsignarClasesProfesor() {
       msgs.push('Eliminar de la clase.');
       msgs.push('¿Confirma que desea desasignar a: ' + prof.nombreProfesor + ' de la clase: ' + materia.nombreClase + '?');
       setMessages(msgs);
+      setCargando(false);
     }
   };
 
@@ -228,15 +231,16 @@ export default function AsignarClasesProfesor() {
                         {messages[0]}
                       </DialogTitle>
                       <DialogContent>
-                        {messages.slice(1).map((msg, index) => (
-                          <DialogContentText id="alert-dialog-description" key={index}>
-                            {msg}
-                          </DialogContentText>
-                        ))}
+                        {cargando ? (<CircularProgress />) : (
+                          messages.slice(1).map((msg, index) => (
+                            <DialogContentText id="alert-dialog-description" key={index}>
+                              {msg}
+                            </DialogContentText>
+                          )))}
                       </DialogContent>
                       <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button onClick={handleCloseOk} autoFocus> OK </Button>
+                        <Button onClick={handleClose} disabled={cargando}>Cancelar</Button>
+                        <Button onClick={handleCloseOk} disabled={cargando} autoFocus> OK </Button>
                       </DialogActions>
                     </Dialog>
 

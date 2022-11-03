@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import {Button, Link, Popover, Typography} from '@mui/material';
+import {Button, Link, Popover, Typography, CircularProgress} from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -79,6 +79,7 @@ export default function AsignarClasesProfesor() {
   const [newCarga, setNewCarga] = useState(0);
   const [anchor, setAnchor] = useState(null);
   const [popMsg, setPopMsg] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
   const handleClick = (msgs, event) => {
     setPopMsg(msgs);
@@ -114,14 +115,16 @@ export default function AsignarClasesProfesor() {
 
   const handleClickOpen = (mat) => {
     setSelectedMateria(mat);
-    setOpen(true);
     setErrorFlag(false);
+    setMessages(['Validando...']);
+    setCargando(true);
+    setOpen(true);
 
     let msgs = [];
     if (!mat.asignada) {
       const getWarnings = async () => {
         try {
-          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + mat.dbId + '&profesor=' + profesor.nomina);
+          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + mat.dbId + '&profesor=' + profesor.dbId);
           msgs = res.data.message;
           if (msgs.length > 0) {
             msgs.unshift('Advertencias:');
@@ -130,23 +133,21 @@ export default function AsignarClasesProfesor() {
           }
           msgs.unshift('Confirme que desea asignar a: ' + profesor.nombreProfesor + ' a la clase: ' + mat.nombreClase + '.');
           setNewCarga(res.data.carga);
-          console.log(msgs);
-          setMessages(msgs);
         } catch (err) {
           msgs.push('No se puede asignar a: ' + profesor.nombreProfesor + ' a la clase: ' + mat.nombreClase + '.');
-          console.log(err.response.data.message);
           msgs.push(err.response.data.message);
           setErrorFlag(true);
-          console.log(msgs);
+        } finally {
           setMessages(msgs);
+          setCargando(false);
         }
       };
       getWarnings();
     } else {
       msgs.push('Eliminar de la clase.');
       msgs.push('¿Confirma que desea desasignar a: ' + profesor.nombreProfesor + ' de la clase: ' + mat.nombreClase + '?');
-      console.log(msgs);
       setMessages(msgs);
+      setCargando(false);
     }
   };
 
@@ -256,15 +257,16 @@ export default function AsignarClasesProfesor() {
                         {messages[0]}
                       </DialogTitle>
                       <DialogContent>
-                        {messages.slice(1).map((msg, index) => (
-                          <DialogContentText id="alert-dialog-description" key={index}>
-                            {msg}
-                          </DialogContentText>
-                        ))}
+                        {cargando ? (<CircularProgress />) : (
+                          messages.slice(1).map((msg, index) => (
+                            <DialogContentText id="alert-dialog-description" key={index}>
+                              {msg}
+                            </DialogContentText>
+                          )))}
                       </DialogContent>
                       <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button onClick={handleCloseOk} autoFocus> OK </Button>
+                        <Button onClick={handleClose} disabled={cargando}>Cancelar</Button>
+                        <Button onClick={handleCloseOk} disabled={cargando} autoFocus> OK </Button>
                       </DialogActions>
                     </Dialog>
 
