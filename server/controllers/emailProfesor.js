@@ -12,9 +12,9 @@ const mail = nodemailer.createTransport({
 
 /**
  * emailNotificationHorario
- * @param {*} profesorEmail 
- * @param {*} nameUser 
- * @param {*} adminEmail 
+ * @param {*} profesorEmail
+ * @param {*} nameUser
+ * @param {*} adminEmail
  */
 function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
   const mailOptions = {
@@ -39,8 +39,8 @@ function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
                                 <p style="text-align: center;
                             
                                 ">--------------------------</p>
-                                <p style="text-align: center; font-size:12px"><br/>
-                                This mail is informative, please do not respond to this address, because is is not allowed to recibe messages.</p>
+                                <p style="text-align: center; font-size:120px"><br/>
+                                This mail is informative, please do not respond to this address, because it is not allowed to receive messages.</p>
                             </div>
                         </div> 
                     </body>
