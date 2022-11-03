@@ -32,20 +32,34 @@ const AnimatedNav = (props) => {
   });
 
   function MakeTabs(navInfo) {
-    const info = Object.keys(navInfo.navInfo).map(function(key, i) {
+    // check if navInfo has navInfo as a property
+
+    if (navInfo && typeof navInfo === 'object' && navInfo.navInfo !== undefined) {
+      const info = Object.keys(navInfo.navInfo).map(function(key, i) {
+        return (
+          <a
+            onClick={navInfo.navInfo[key].onClick}
+            href={navInfo.navInfo[key].url}
+            className={`${styles.nav_item} ${styles.is_active}`}
+            active-color={navInfo.navInfo[key].color}
+            key={i}
+          >
+            {key}
+          </a>
+        );
+      });
+      return info;
+    } else {
       return (
         <a
-          onClick={navInfo.navInfo[key].onClick}
-          href={navInfo.navInfo[key].url}
+          href={'#'}
           className={`${styles.nav_item} ${styles.is_active}`}
-          active-color={navInfo.navInfo[key].color}
-          key={i}
+          active-color={'orange'}
         >
-          {key}
+          {'Home'}
         </a>
       );
-    });
-    return info;
+    }
   }
 
   return (
