@@ -26,17 +26,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Chip from '@mui/material/Chip';
 import {MenuItem, InputLabel, FormControl, Select} from '@mui/material';
 
-
 // agregar o eliminar clase lo cambia a 'en proceso'
 // para enviar horario el estatus debe ser 'terminado'
 const estados = [
-  {id: 0, color: '#ffcc00', estado: 'AccessTimeFilledIcon'},
-  {id: 1, color: '#218aff', estado: 'MarkEmailReadIcon'},
-  {id: 2, color: '#9c27b0', estado: 'CheckCircleIcon'},
-  {id: 3, color: '#99cc33', estado: 'DoneAllIcon'},
-  {id: 4, color: '#000000', estado: 'CircleIcon'},
+  {id: 0, color: '#ffcc00', icon: <AccessTimeFilledIcon style={{color: '#ffcc00'}}/>, name: 'En proceso'},
+  {id: 1, color: '#218aff', icon: <MarkEmailReadIcon style={{color: '#218aff'}}/>, name: 'Enviado'},
+  {id: 2, color: '#9c27b0', icon: <CheckCircleIcon style={{color: '#9c27b0'}}/>, name: 'Terminado'},
+  {id: 3, color: '#99cc33', icon: <DoneAllIcon style={{color: '#99cc33'}}/>, name: 'Actualizado'},
+  {id: 4, color: '#000000', icon: <CircleIcon style={{color: '#000000'}}/>, name: 'Carga cero'},
 ];
-
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -142,10 +140,10 @@ export default function Profesores() {
               setProfesores(filteredProfesores);
             }}
           />
-          
+
           <FormControl variant="outlined" sx={{width: '15%', marginLeft: 3}}>
-            <InputLabel id="demo-simple-select-label">Estados</InputLabel>
-            <Select labelId="demo-simple-select-label" label='Estados' onChange={(e) => {
+            <InputLabel id="demo-simple-select-label">Estado</InputLabel>
+            <Select labelId="demo-simple-select-label" label='Estado' onChange={(e) => {
               const filteredProfesores = allProfesores.filter((profesor) => {
                 if (e.target.value == 5 || profesor.estatus == e.target.value) {
                   return profesor;
@@ -153,12 +151,10 @@ export default function Profesores() {
               });
               setProfesores(filteredProfesores);
             }}>
-              <MenuItem value={'5'}><em>Todos</em></MenuItem>
-              <MenuItem value={'0'}>En proceso</MenuItem>
-              <MenuItem value={'1'}>Enviado</MenuItem>
-              <MenuItem value={'2'}>Terminado</MenuItem>
-              <MenuItem value={'3'}>Actualizado</MenuItem>
-              <MenuItem value={'4'}>Carga cero</MenuItem>
+              <MenuItem value={'5'}><b>Todos</b></MenuItem>
+              {estados.map((estado) => {
+                return <MenuItem key={estado.id} value={estado.id}>{estado.name}</MenuItem>;
+              })}
             </Select>
           </FormControl>
         </Box>
@@ -174,29 +170,14 @@ export default function Profesores() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {profesores.map((profesor, index) => (
+              {profesores.map((profesor) => (
                 <StyledTableRow key={profesor.id}>
                   <StyledTableCell component="th" scope="row">
                     <div>
                       <IconButton style={{color: estados[profesor.estatus].color}} onClick={() => {
                         handleClickOpen(profesor);
                       }}>
-                        <Chip
-                          icon={
-                            profesor.estatus == 0 ? (
-                              <AccessTimeFilledIcon style={{color: estados[profesor.estatus].color}}/>
-                            ) : profesor.estatus == 1 ? (
-                              <MarkEmailReadIcon style={{color: estados[profesor.estatus].color}}/>
-                            ) : profesor.estatus == 2 ? (
-                              <CheckCircleIcon style={{color: estados[profesor.estatus].color}}/>
-                            ) : profesor.estatus == 3 ? (
-                              <DoneAllIcon style={{color: estados[profesor.estatus].color}}/>
-                            ) : (
-                              <CircleIcon style={{color: estados[profesor.estatus].color}}/>
-                            )
-                          }
-                          variant="outlined"
-                        />
+                        <Chip icon={estados[profesor.estatus].icon} variant="outlined"/>
                       </IconButton>
                       <Dialog
                         open={open}
@@ -220,51 +201,15 @@ export default function Profesores() {
                                     </TableRow>
                                   </TableHead>
                                   <TableBody>
-                                    <StyledTableRow>
-                                      <StyledTableCell component="th" scope="row">
-                                        <AccessTimeFilledIcon style={{color: '#ffcc00'}}/>
-                                      </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"> En proceso </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
-                                        changeStatus(0);
-                                      }}> {currentEstatus == 0 ? 'Actual':'Cambiar'} </Button></StyledTableCell>
-                                    </StyledTableRow>
-                                    <StyledTableRow>
-                                      <StyledTableCell component="th" scope="row">
-                                        <MarkEmailReadIcon style={{color: '#218aff'}}/>
-                                      </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"> Enviado </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
-                                        changeStatus(1);
-                                      }}> {currentEstatus == 1 ? 'Actual':'Cambiar'} </Button></StyledTableCell>
-                                    </StyledTableRow>
-                                    <StyledTableRow>
-                                      <StyledTableCell component="th" scope="row">
-                                        <CheckCircleIcon style={{color: '#9c27b0'}}/>
-                                      </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"> Terminado </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
-                                        changeStatus(2);
-                                      }}> {currentEstatus == 2 ? 'Actual':'Cambiar'} </Button></StyledTableCell>
-                                    </StyledTableRow>
-                                    <StyledTableRow>
-                                      <StyledTableCell component="th" scope="row">
-                                        <DoneAllIcon style={{color: '#99cc33'}}/>
-                                      </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"> Actualizado </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
-                                        changeStatus(3);
-                                      }}> {currentEstatus == 3 ? 'Actual':'Cambiar'} </Button></StyledTableCell>
-                                    </StyledTableRow>
-                                    <StyledTableRow>
-                                      <StyledTableCell component="th" scope="row">
-                                        <CircleIcon style={{color: '#000000'}}/>
-                                      </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"> Carga cero </StyledTableCell>
-                                      <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
-                                        changeStatus(4);
-                                      }}> {currentEstatus == 4 ? 'Actual':'Cambiar'} </Button></StyledTableCell>
-                                    </StyledTableRow>
+                                    {estados.map((estado) => (
+                                      <StyledTableRow key={estado.id}>
+                                        <StyledTableCell component="th" scope="row"> {estado.icon} </StyledTableCell>
+                                        <StyledTableCell component="th" scope="row"> {estado.name} </StyledTableCell>
+                                        <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
+                                          changeStatus(estado.id);
+                                        }}>{currentEstatus == estado.id ? 'Actual':'Cambiar'}</Button> </StyledTableCell>
+                                      </StyledTableRow>
+                                    ))}
                                   </TableBody>
                                 </Table>
                               </TableContainer>
