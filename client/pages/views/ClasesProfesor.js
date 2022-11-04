@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import {Button, Link, Popover, Typography} from '@mui/material';
+import {Link, Popover, Typography} from '@mui/material';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
 
@@ -128,7 +128,6 @@ export default function CustomizedTables() {
               setMaterias(filteredMaterias);
             }}
           />
-          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
         </Box>
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
           <Table aria-label="customized table">

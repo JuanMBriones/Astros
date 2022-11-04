@@ -51,21 +51,6 @@ function createData(id, nombreProfesor, infoAdicional, nomina, asignada, dbId) {
   return {id, nombreProfesor, infoAdicional, nomina, asignada, dbId};
 }
 
-/* const rows = [
-  createData(1, 'Israel Lobo', 'Info extra'),
-  createData(2, 'Rita de la Torre', 'Info extra'),
-  createData(3, 'Manuel Gonzalez', 'Info extra'),
-  createData(4, 'Laura de la Fuente', 'Info extra'),
-  createData(5, 'Israel Lobo', 'Info extra'),
-  createData(6, 'Rita de la Torre', 'Info extra'),
-  createData(7, 'Manuel Gonzalez', 'Info extra'),
-  createData(8, 'Laura de la Fuente', 'Info extra'),
-  createData(9, 'Israel Lobo', 'Info extra'),
-  createData(10, 'Rita de la Torre', 'Info extra'),
-  createData(11, 'Manuel Gonzalez', 'Info extra'),
-  createData(12, 'Laura de la Fuente', 'Info extra'),
-]; */
-
 /**
  * @return {Object} The render component
  */
@@ -186,7 +171,6 @@ export default function AsignarClasesProfesor() {
               setProfesores(filteredProfesores);
             }}
           />
-          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
         </Box>
 
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
