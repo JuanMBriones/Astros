@@ -24,7 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Chip from '@mui/material/Chip';
-import Filter from '../components/Filter';
+import {MenuItem, InputLabel, FormControl, Select} from '@mui/material';
 
 
 // agregar o eliminar clase lo cambia a 'en proceso'
@@ -92,7 +92,6 @@ export default function Profesores() {
     cambiarEstatus();
   };
 
-
   useEffect(() => {
     const getProfesores = async () => {
       const res = await axios.get('http://localhost:3001/api/profesores');
@@ -143,7 +142,25 @@ export default function Profesores() {
               setProfesores(filteredProfesores);
             }}
           />
-          <Filter></Filter>
+          
+          <FormControl variant="outlined" sx={{width: '15%', marginLeft: 3}}>
+            <InputLabel id="demo-simple-select-label">Estados</InputLabel>
+            <Select labelId="demo-simple-select-label" label='Estados' onChange={(e) => {
+              const filteredProfesores = allProfesores.filter((profesor) => {
+                if (e.target.value == 5 || profesor.estatus == e.target.value) {
+                  return profesor;
+                }
+              });
+              setProfesores(filteredProfesores);
+            }}>
+              <MenuItem value={'5'}><em>Todos</em></MenuItem>
+              <MenuItem value={'0'}>En proceso</MenuItem>
+              <MenuItem value={'1'}>Enviado</MenuItem>
+              <MenuItem value={'2'}>Terminado</MenuItem>
+              <MenuItem value={'3'}>Actualizado</MenuItem>
+              <MenuItem value={'4'}>Carga cero</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
           <Table aria-label="customized table">
