@@ -44,6 +44,10 @@ const profesorSchema = new mongoose.Schema({
   asignada: {
     type: Number,
   },
+  estatus: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model('profesor', profesorSchema, 'profesor');

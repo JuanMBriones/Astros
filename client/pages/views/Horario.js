@@ -100,7 +100,7 @@ export default function Horario() {
   return (
     <div>
       <center>
-        <h1>{profesor.nombre}</h1>
+        <h1>{profesor.nombre + ' - ' + profesor.nomina}</h1>
         <h2>Horario {periodos[periodo]}</h2>
         <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materiasTodas)}>Periodo 1</Button>
         <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materiasTodas)}>Semana Tec 1</Button>
