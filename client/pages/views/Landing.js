@@ -1,71 +1,73 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import ReactFullpage from '@fullpage/react-fullpage';
-import styles from '../../styles/Landing.module.css';
-import Typed from 'react-typed';
-import Stack from '@mui/material/Stack';
-
-const anchors = ['firstPage', 'secondPage', 'thirdPage'];
-const bannerStrings = [
-  'Crea un horario nuevo 🚀',
-  'Organiza tu vida en el Tec ✨',
-  'Una vida sin problemas de horarios 🤩',
-];
-
-class MySection extends React.Component {
-  render() {
-    return (
-      <div className="section">
-        <h3>{this.props.content}</h3>
-        <h3>{this.props.content}</h3>
-      </div>
-    );
-  }
-}
+import {useState} from 'react';
+import {
+  Button,
+  Link,
+} from '@mui/material';
 
 /**
  * @return {Object} The render component
  */
 export default function Landing() {
-  return (
-    <ReactFullpage
-      anchors={anchors}
-      navigation
-      navigationTooltips={anchors}
-      sectionsColor={['#282c34', '#ff5f45', '#0798ec']}
-      onLeave={(origin, destination, direction) => {
-        console.log('onLeave event', {origin, destination, direction});
-      }}
-      className={styles.landing}
-      render={({state, fullpageApi}) => {
-        console.log('render prop change', state, fullpageApi); // eslint-disable-line no-console
+  // const navigate = useNavigate();
+  const [isActive, setIsActive] = useState(false);
+  const handleClick = () => {
+    setIsActive((current) => !current);
+  };
 
-        return (
-          <div>
-            <div className="section"
-              style={{
-                height: '100vh',
-              }}
-            >
-              <Stack direction="row" spacing={2}>
-                <Typed
-                  strings={bannerStrings}
-                  typeSpeed={40}
-                  backSpeed={50}
-                  loop
-                  style={{
-                    fontSize: '5rem',
-                    color: 'white',
-                  }}
-                />
-              </Stack>
-            </div>
-            <MySection className={styles.landing} content={'Keep going!'} />
-            <MySection className={styles.landing} content={'Slide up!'} />
-          </div>
-        );
-      }}
-    />
+  return (
+    <div
+      // style={{
+      //   display: 'flex',
+      //   alignItems: 'center',
+      //   justifyContent: 'center',
+      //   height: '100vh',
+      // }}
+    >
+      <br />
+      <br />
+
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/4/47/Logo_del_ITESM.svg"
+        alt="Trees"
+        height="250"
+      />
+
+      <br />
+      <br />
+
+      <span
+        style={{
+          color: 'blue',
+          fontSize: '1.2em',
+          fontWeight: 'bold',
+        }}
+      >
+        Sistema de Inscripciones
+      </span>
+
+      <br />
+      <br />
+
+      <Button
+        color='inherit'
+        style={{
+          backgroundColor: isActive ? '#2196F3' : '',
+          color: isActive ? 'white' : '',
+        }}
+        onClick={handleClick}
+      >
+        <Link
+          href='/../login'
+          underline='none'
+          color='blue'
+        >
+          Login
+        </Link>
+      </Button>
+    </div>
+    // <Login/>
   );
 };
