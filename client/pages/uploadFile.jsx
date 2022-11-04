@@ -4,11 +4,32 @@ import Papa from 'papaparse';
 import {Button, Grid} from '@mui/material';
 import {FileUploader} from 'react-drag-drop-files';
 import axios from 'axios';
+import DataTable from 'react-data-table-component';
+import SaveIcon from '@mui/icons-material/Save';
 
 const allowedExtensions = ['csv'];
 
 export default function uploadFile() {
+  const columns = [
+    {
+      name: 'Materia',
+      selector: (row) => row.Materia,
+      sortable: true,
+    },
+    {
+      name: 'Clave',
+      selector: (row) => row.Clave,
+      sortable: true,
+    },
+    {
+      name: 'TipoUf',
+      selector: (row) => row.TipoUf,
+      sortable: true,
+    },
+  ];
+
   const [data, setData] = useState([]);
+  const [dataTable, setDataTable] = useState([]);
   // const [error, setError] = useState('');
   const [file, setFile] = useState('');
   let flag = 0;
@@ -82,49 +103,133 @@ export default function uploadFile() {
 
       const slice = parsedData.slice(0, 2);
       setData(slice);
+      setDataTable(parsedData);
     };
     reader.readAsText(file);
 
     // console.log(await professorExists('L12345678'));
   };
 
+  useEffect(() => {
+    async function parse() {
+      if (file !== '') {
+        await handleParse();
+      }
+    }
+    parse();
+  }, [file]);
+
   return (
-    <Grid
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      style={{minHeight: '100vh'}}
-    >
+    <>
+      {
+        file !== '' ? (
+          <>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              spacing={2}
+              sx={{
+                marginTop: '0.5rem',
+              }}
+            >
+              <Grid item xs={3}>
+                <Button
+                  variant='contained'
+                  style={{
+                    borderRadius: 10,
+                    backgroundColor: '#252323',
+                  }}
+                  onClick={() => {
+                    setFile('');
+                  } }
+                >
+                  Cargar otro archivo 📁
+                </Button>
+              </Grid>
+              <Grid item xs={3}>
+                <Button
+                  variant='contained'
+                  startIcon={<SaveIcon />}
+                  style={{
+                    borderRadius: 10,
+                    backgroundColor: '#252323',
+                  }}
+                  onClick={() => {
+                    setFile('');
+                  } }
+                >
+                Guardar
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              // alignItems='center'
+              justifyContent='center'
+              style={{minHeight: '100vh'}}
+              spacing={2}
+              sx={{mt: 4}}
+            >
+              <Grid item xs={9} alignItems='center'>
+                <DataTable
+                  title="Clases a ser cargadas"
+                  columns={columns}
+                  data={dataTable}
+                  pagination
+                  sx={{
+                    display: 'flex',
+                    width: '100%',
+                  }} />
+              </Grid>
+            </Grid>
+          </>
+        ) : (
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{minHeight: '100vh'}}
+          >
 
-      <Grid item xs={3} alignItems='center'>
-        <h1
-          style={{textAlign: 'center'}}
-        >
-          Upload a file
-        </h1>
-        <FileUploader
-          handleChange={handleFileChange}
-          name="file"
-          types={allowedExtensions}
-        />
-        <br />
-        <Button
-          variant="contained"
-          onClick={handleParse}
-          // center button
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          Upload
-        </Button>
-      </Grid>
-
-    </Grid>
+            <Grid
+              item
+              xs={3}
+              alignItems='center'
+              sx={{
+                mt: 4,
+              }}
+            >
+              <h1
+                style={{textAlign: 'center'}}
+              >
+              Upload a file
+              </h1>
+              <FileUploader
+                handleChange={handleFileChange}
+                name="file"
+                types={allowedExtensions}
+              />
+              <br />
+              <Button
+                variant="contained"
+                onClick={handleParse}
+                // center button
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+              >
+              Upload
+              </Button>
+            </Grid>
+          </Grid>
+        )
+      }
+    </>
   );
 };
