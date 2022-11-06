@@ -2,6 +2,29 @@ import React, {useEffect} from 'react';
 import {GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
 import {useRouter} from 'next/router';
 import {Typography, Box} from '@mui/material';
+import axios from 'axios';
+
+/**
+ * getProfessrInfo
+ * @return {Object}
+ */
+async function getProfessorInfo() {
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profe/`,
+    {
+      params: {
+        mail: await JSON.parse(localStorage.getItem('loginData')).email,
+      },
+    },
+  ).then((res) => {
+    const professors = res.data;
+
+    return professors;
+  });
+
+  console.log('response', response);
+
+  return response;
+}
 
 /**
  * @return {Component}
@@ -74,6 +97,12 @@ export default function Login() {
                 setLoginData(data);
                 localStorage.setItem('loginData', JSON.stringify(data));
 
+                const professor = await getProfessorInfo();
+
+                if (professor.profe) {
+                  console.log('profeinfo', professor);
+                  localStorage.setItem('professor', JSON.stringify(professor));
+                }
                 router.push('/');
               }}
               onError={() => {

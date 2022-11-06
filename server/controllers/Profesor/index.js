@@ -8,7 +8,7 @@ router.get('/prof', (req, res) => res.status(200).json({msg: 'Hello from profeso
 
 router.get('/profesores', asyncHandler(profesorCtr.getAll()));
 
-router.get('/profe', asyncHandler(profesorCtr.getDataProfe()));
+router.get('/profe', profesorCtr.getDataProfe());
 
 router.post('/profe', asyncHandler(profesorCtr.postProfesor()));
 

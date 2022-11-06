@@ -18,7 +18,14 @@ ctr.getAll = () => async (req, res, next) => {
 ctr.getDataProfe = () => async (req, res, next) => {
   // expected: nomina profesor
   const profesor = req.query.profesor;
-  const profe = await Profesor.findOne({nomina: profesor}).exec();
+  const mail = req.query.mail;
+
+  let profe = {};
+  if (mail) {
+    profe = await Profesor.findOne({correo: mail}).exec();
+  } else {
+    profe = await Profesor.findOne({nomina: profesor}).exec();
+  }
   res.status(200).json({profe});
 };
 
@@ -425,13 +432,6 @@ ctr.nerfProfessor = () => async (req, res, next) => {
     throw new CustomError(500, 'Error saving Profesor');
   }
   res.status(201).json({message: 'Profesor has been nerfed'});
-};
-
-ctr.getDataProfe = () => async (req, res, next) => {
-  // expected: nomina profesor
-  const profesor = req.query.profesor;
-  const profe = await Profesor.findOne({nomina: profesor}).exec();
-  res.status(200).json({profe});
 };
 
 ctr.isAdmin = () => async (req, res, next) => {

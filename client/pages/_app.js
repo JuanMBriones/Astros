@@ -43,6 +43,10 @@ function MyApp({Component, pageProps}) {
           'url': '/',
           'color': 'orange',
         },
+        'Agregar profesores con archivo': {
+          'url': '/',
+          'color': 'orange',
+        },
         '←': backMenu,
       },
       'onClick': () => {
