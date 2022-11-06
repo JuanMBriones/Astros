@@ -10,6 +10,14 @@ router.get('/profesores', asyncHandler(profesorCtr.getAll()));
 
 router.get('/profe', asyncHandler(profesorCtr.getDataProfe()));
 
+router.post('/profe', asyncHandler(profesorCtr.postProfesor()));
+
+router.post('/giveAdmin', asyncHandler(profesorCtr.givePower()));
+
+router.post('/quitAdmin', asyncHandler(profesorCtr.nerfProfessor()));
+
+router.post('/isAdmin', asyncHandler(profesorCtr.isAdmin()));
+
 router.get('/profMaterias', asyncHandler(profesorCtr.getProfMaterias()));
 
 router.get('/assignProf', asyncHandler(profesorCtr.assignProf()));
