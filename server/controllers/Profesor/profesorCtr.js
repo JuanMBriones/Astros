@@ -18,7 +18,14 @@ ctr.getAll = () => async (req, res, next) => {
 ctr.getDataProfe = () => async (req, res, next) => {
   // expected: nomina profesor
   const profesor = req.query.profesor;
-  const profe = await Profesor.findOne({nomina: profesor}).exec();
+  const mail = req.query.mail;
+
+  let profe = {};
+  if (mail) {
+    profe = await Profesor.findOne({correo: mail}).exec();
+  } else {
+    profe = await Profesor.findOne({nomina: profesor}).exec();
+  }
   res.status(200).json({profe});
 };
 
@@ -354,6 +361,99 @@ getHorarioProf = async (profesor) => {
   }
 
   return [profClases, horarioCompleto];
+};
+
+ctr.postProfesor = () => async (req, res, next) => {
+  const {deptoProf, entrada, nomina, nombre, correo, cip, modalidad} = req.body;
+
+  if (!deptoProf || !nomina || !nombre || !correo) {
+    throw new CustomError(400, 'Missing parameters');
+  }
+
+  // check if profesor already exists
+  const profesor = await Profesor.findOne({nomina: nomina}).exec();
+  if (profesor) {
+    throw new CustomError(400, 'Profesor already exists');
+  }
+
+  const newProfesor = new Profesor({
+    depto_prof: deptoProf,
+    entrada: entrada,
+    nomina: nomina,
+    nombre: nombre,
+    correo: correo,
+    cip: cip,
+    modalidad: modalidad,
+  });
+
+  const savedProfesor = await newProfesor.save();
+  if (!savedProfesor) {
+    throw new CustomError(500, 'Error saving Profesor');
+  }
+  res.status(201).json({message: 'Profesor saved successfully'});
+};
+
+// give power to a profesor 🤑🔥
+ctr.givePower = () => async (req, res, next) => {
+  const {nomina} = req.body;
+
+  if (!nomina) {
+    throw new CustomError(400, 'Missing parameters');
+  }
+
+  const profesor = await Profesor.findOne({nomina: nomina}).exec();
+  if (!profesor) {
+    throw new CustomError(400, 'Profesor does not exist');
+  }
+
+  profesor.rol = 'admin';
+  const savedProfesor = await profesor.save();
+  if (!savedProfesor) {
+    throw new CustomError(500, 'Error saving Profesor');
+  }
+  res.status(201).json({message: 'Profesor has been given a power up'});
+};
+
+ctr.nerfProfessor = () => async (req, res, next) => {
+  const {nomina} = req.body;
+
+  if (!nomina) {
+    throw new CustomError(400, 'Missing parameters');
+  }
+
+  const profesor = await Profesor.findOne({nomina: nomina}).exec();
+  if (!profesor) {
+    throw new CustomError(400, 'Profesor does not exist');
+  }
+
+  profesor.rol = 'user';
+  const savedProfesor = await profesor.save();
+  if (!savedProfesor) {
+    throw new CustomError(500, 'Error saving Profesor');
+  }
+  res.status(201).json({message: 'Profesor has been nerfed'});
+};
+
+ctr.isAdmin = () => async (req, res, next) => {
+  console.log(req.body);
+  const {nomina} = req.body; // body;
+
+  if (!nomina) {
+    throw new CustomError(400, 'Missing parameters');
+  }
+
+  const profesor = await Profesor.findOne({nomina: nomina}).exec();
+  if (!profesor) {
+    throw new CustomError(400, 'Profesor does not exist');
+  }
+
+  if (profesor.rol == 'admin') {
+    res.status(200).json({message: 'Profesor is admin'});
+    console.log('Profesor is admin');
+  } else {
+    res.status(200).json({message: 'Profesor is not admin'});
+    console.log('Profesor is not admin');
+  }
 };
 
 module.exports = ctr;

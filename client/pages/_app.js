@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Footer from './components/Footer';
 import {useRouter} from 'next/router';
 import AnimatedNav from './components/NavBar/AnimatedNav';
+import axios from 'axios';
 
 /**
  *
@@ -17,6 +18,7 @@ function MyApp({Component, pageProps}) {
   const [hideNavbarFooter, setHideNavbarFooter] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
+  // const [isAdmin, setIsAdmin] = useState(false);
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
   const backMenu = {
     'color': 'orange',
@@ -25,6 +27,34 @@ function MyApp({Component, pageProps}) {
     },
   };
 
+  useEffect(() => {
+    const profInfo = localStorage.getItem('professor');
+    if (profInfo) {
+      const profInfoJson = JSON.parse(profInfo);
+      axios({
+        method: 'post',
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/isAdmin/`,
+        data: {
+          nomina: profInfoJson.profe.nomina,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((res) => {
+        if (res.data.message === 'Profesor is admin') {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    } else {
+      console.log('not logged in');
+    }
+  }, []);
+
+  // TODO: Refactor this to use a context
   let defaultNavInfo = {
     'Home': {
       'condition': 1,
@@ -40,7 +70,11 @@ function MyApp({Component, pageProps}) {
           'color': 'orange',
         },
         'Agregar profesores': {
-          'url': '/',
+          'url': '/newProfe',
+          'color': 'orange',
+        },
+        'Agregar profesores con archivo': {
+          'url': '/uploadProfe',
           'color': 'orange',
         },
         '←': backMenu,
@@ -57,11 +91,11 @@ function MyApp({Component, pageProps}) {
           'color': 'orange',
         },
         'Agregar Clases': {
-          'url': '/',
+          'url': '/newClase',
           'color': 'orange',
         },
         'Agregar Clases por Archivo': {
-          'url': '/uploadFile',
+          'url': '/uploadClase',
           'color': 'orange',
         },
         '←': backMenu,
