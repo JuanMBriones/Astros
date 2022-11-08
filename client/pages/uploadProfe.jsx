@@ -9,81 +9,68 @@ import SaveIcon from '@mui/icons-material/Save';
 
 const allowedExtensions = ['csv'];
 
-export default function uploadFile() {
+export default function uploadProfe() {
   const columns = [
     {
-      name: 'Materia',
-      selector: (row) => row.Materia,
+      name: 'Nomina',
+      selector: (row) => row.Nomina,
       sortable: true,
     },
     {
-      name: 'Clave',
-      selector: (row) => row.Clave,
+      name: 'Nombre',
+      selector: (row) => row.Nombre,
       sortable: true,
     },
     {
-      name: 'TipoUf',
-      selector: (row) => row.TipoUf,
+      name: 'Correo',
+      selector: (row) => row.Correo,
+      sortable: true,
+    },
+    {
+      name: 'Departamento',
+      selector: (row) => row.DeptoProf,
+      sortable: true,
+    },
+    {
+      name: 'CIP',
+      selector: (row) => row.CIP,
+      sortable: true,
+    },
+    {
+      name: 'Modalidad',
+      selector: (row) => row.Modalidad,
+      sortable: true,
+    },
+    {
+      name: 'Carga Permitida',
+      selector: (row) => row.CargaPermitida,
       sortable: true,
     },
   ];
 
   const [data, setData] = useState([]);
   const [dataTable, setDataTable] = useState([]);
-  // const [error, setError] = useState('');
   const [file, setFile] = useState('');
-  let flag = 0;
 
   const handleFileChange = (file) => {
     setFile(file);
   };
 
-  const professorGetId = async (id) => {
-    const professor = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profe/`,
-      {
-        params:
-          {
-            profesor: id,
-          },
-      },
-    ).then((res) => {
-      const professors = res.data;
-
-      return professors;
-    });
-
-    if (await professor.profe) {
-      console.log('professor exists');
-    }
-    if (await professor.profe === null) {
-      console.log('professor does not exist');
-      if (flag === 0) {
-        return '632e0c989d2a84fb1f9b2b5f';
-      } else {
-        return '634fb0298970745a8a5ae90d';
-      }
-    }
-    return await professor.profe._id;
-  };
-
   useEffect(() => {
     async function postRecords() {
-      data.forEach(async (clase) => {
-        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/add`, {
-          clave: clase['Clave'],
-          grupoApg: clase['Grupo APG'],
-          materia: clase['Materia'],
-          propuesta: 'Tec20',
-          carga: clase['Carga'],
-          horario: '',
-          modalidadGrupo: clase['Modalidad Grupo'],
-          profesor: await professorGetId(clase['Nomina']),
-          cip: [],
+      data.forEach(async (profesores) => {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profe`, {
+          deptoProf: profesores.DeptoProf,
+          nombre: profesores.Nombre,
+          correo: profesores.Correo,
+          nomina: profesores.Nomina,
+          modalidad: profesores.Modalidad,
+          cargaPermitida: profesores.CargaPermitida,
+          cip: profesores.CIP,
+          entrada: profesores.Entrada,
         });
-
-        flag++;
-        console.log(clase);
       });
+
       console.log(data);
     };
 
@@ -97,7 +84,6 @@ export default function uploadFile() {
     reader.onload = async ({target}) => {
       const csv = Papa.parse(target.result, {header: true});
       const parsedData = csv?.data;
-      // const columns = Object.keys(parsedData[0]);
 
       console.log(parsedData);
 
@@ -165,7 +151,6 @@ export default function uploadFile() {
             </Grid>
             <Grid
               container
-              // alignItems='center'
               justifyContent='center'
               style={{minHeight: '100vh'}}
               spacing={2}
@@ -173,7 +158,7 @@ export default function uploadFile() {
             >
               <Grid item xs={9} alignItems='center'>
                 <DataTable
-                  title="Clases a ser cargadas"
+                  title="Profesores a ser cargados"
                   columns={columns}
                   data={dataTable}
                   pagination
@@ -216,7 +201,6 @@ export default function uploadFile() {
               <Button
                 variant="contained"
                 onClick={handleParse}
-                // center button
                 sx={{
                   display: 'flex',
                   justifyContent: 'center',

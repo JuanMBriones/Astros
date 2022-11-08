@@ -9,7 +9,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 const allowedExtensions = ['csv'];
 
-export default function uploadFile() {
+export default function uploadClase() {
   const columns = [
     {
       name: 'Materia',
