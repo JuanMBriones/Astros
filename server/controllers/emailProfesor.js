@@ -1,15 +1,19 @@
 
 const nodemailer = require('nodemailer');
-const myUser = 'alexcg24600@gmail.com';
+const myUser = 'a00824742@tec.mx';
 
 const mail = nodemailer.createTransport({
-  service: 'gmail',
+  service: 'hotmail',
   auth: {
     user: myUser,
-    pass: 'fscastimjinvwjbp',
+    pass: 'Alex.24==6',
   },
 });
 
+// Datos del semestre
+let periodo = 'Febrero-Junio 2023'
+let fechaInicio = '13 de Febrero'
+let fechasPeriodosAcademicos = 'Planes anteriores(17 semanas): Febrero 13 – Junio 16'
 /**
  * emailNotificationHorario
  * @param {*} profesorEmail
@@ -19,32 +23,29 @@ const mail = nodemailer.createTransport({
 function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
   const mailOptions = {
     from: myUser,
-    bcc: profesorEmail,
+    to: profesorEmail,
     subject: 'Confimación de horario',
-    html: `<html>
+    html: `
+    <html>
                     <head>
                         <link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Share+Tech" rel="stylesheet">
                     </head>
-                    <body style="margin: auto; width: fit-content!important;">
-                        <div style="padding: 10px; background: #333c87; border-radius: 17px;">
-                            <div style="background-color: #fff; padding: 20px;border-radius: 10px;">
-                        
-                                <h4 style="font-weight: 400;">
-                                El siguiente correo es referenta a la confirmación pendiente resepcto a tu horario para el siguiente semestre.
-                            
-                                </h4>
-                                <container style="align-content: center">
-                                    <button type="button" >Ver horario</button>
-                                </container>
-                                <p style="text-align: center;
-                            
-                                ">--------------------------</p>
-                                <p style="text-align: center; font-size:120px"><br/>
-                                This mail is informative, please do not respond to this address, because it is not allowed to receive messages.</p>
-                            </div>
-                        </div> 
-                    </body>
-                </html>`,
+        <body>
+          <p>Buenos días, <br>
+            A nombre del Departamento de Computación nos da gusto saludarte nuevamente. Se está iniciando la programación de grupos para el próximo semestre <b>`+periodo+`.</b>
+
+            <br>
+            <br>
+
+            El semestre ahora inicia el <b>`+fechaInicio+`</b>, las fechas de los distintos períodos académicos son las siguientes: 
+            <li>`+fechasPeriodosAcademicos +`</li>
+            <br>
+            Para conocer los grupos en los que te estamos considerando te pido que accedas con tu cuenta @tec.mx a la siguiente liga: <a href="#"> Ver horario</a>
+
+          </p>
+        </body>
+    </html>
+                `,
   };
   mail.sendMail(mailOptions, function(error, info) {
     if (error) {
@@ -55,7 +56,7 @@ function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
   });
 }
 
-const destinatario = 'alex.cg@kalypso.com';
+const destinatario = 'alexcg24600@gmail.com';
 
 
 // TODO cambiar 2do y 3er parametro
