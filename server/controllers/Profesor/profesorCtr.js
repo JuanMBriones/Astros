@@ -435,7 +435,8 @@ ctr.nerfProfessor = () => async (req, res, next) => {
 };
 
 ctr.isAdmin = () => async (req, res, next) => {
-  const {nomina} = req.body;
+  console.log(req.body);
+  const {nomina} = req.body; // body;
 
   if (!nomina) {
     throw new CustomError(400, 'Missing parameters');
@@ -448,8 +449,10 @@ ctr.isAdmin = () => async (req, res, next) => {
 
   if (profesor.rol == 'admin') {
     res.status(200).json({message: 'Profesor is admin'});
+    console.log('Profesor is admin');
   } else {
-    res.status(400).json({message: 'Profesor is not admin'});
+    res.status(200).json({message: 'Profesor is not admin'});
+    console.log('Profesor is not admin');
   }
 };
 
