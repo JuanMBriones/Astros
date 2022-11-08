@@ -1,19 +1,19 @@
 
 const nodemailer = require('nodemailer');
-const myUser = 'a00824742@tec.mx';
+const myUser = 'alexcg24600@gmail.com';
 
 const mail = nodemailer.createTransport({
-  service: 'hotmail',
+  service: 'gmail',
   auth: {
     user: myUser,
-    pass: 'Alex.24==6',
+    pass: 'grwfjcdiclnmskmb',
   },
 });
 
 // Datos del semestre
-let periodo = 'Febrero-Junio 2023'
-let fechaInicio = '13 de Febrero'
-let fechasPeriodosAcademicos = 'Planes anteriores(17 semanas): Febrero 13 – Junio 16'
+const periodo = 'Febrero-Junio 2023';
+const fechaInicio = '13 de Febrero';
+const fechasPeriodosAcademicos = 'Planes anteriores(17 semanas): Febrero 13 – Junio 16';
 /**
  * emailNotificationHorario
  * @param {*} profesorEmail
@@ -56,7 +56,7 @@ function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
   });
 }
 
-const destinatario = 'alexcg24600@gmail.com';
+const destinatario = 'a00824742@tec.mx';
 
 
 // TODO cambiar 2do y 3er parametro
