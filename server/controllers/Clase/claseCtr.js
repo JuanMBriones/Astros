@@ -63,7 +63,7 @@ ctr.addClass = () => async (req, res, next) => {
     salon,
     tipo,
     semestre,
-    periodo
+    periodo,
   } = req.body;
 
   // const cip = [];
