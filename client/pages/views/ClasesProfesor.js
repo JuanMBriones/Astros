@@ -12,6 +12,8 @@ import Box from '@mui/material/Box';
 import {Link, Popover, Typography} from '@mui/material';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,24 +46,6 @@ function createData(id, nombreClase, clave, detalles, dbId) {
   return {id, nombreClase, clave, detalles, dbId};
 }
 
-/* const rawRows = [
-  createData(1, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(2, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(3, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(4, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(5, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(6, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(7, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(8, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(9, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(10, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(11, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(12, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(13, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(14, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(15, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(16, 'Calidad', 'TC4567', 'Detalles de la clase'),
-]; */
 
 /**
  * @param {Object} props to be passed to the component
@@ -133,6 +117,7 @@ export default function CustomizedTables() {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
+                <StyledTableCell>  </StyledTableCell>
                 <StyledTableCell>Nombre de la clase</StyledTableCell>
                 <StyledTableCell>Clave</StyledTableCell>
                 <StyledTableCell>Detalles</StyledTableCell>
@@ -141,6 +126,11 @@ export default function CustomizedTables() {
             <TableBody>
               {materias.map((materia) => (
                 <StyledTableRow key={materia.id}>
+                  <StyledTableCell component="th" scope="row">
+                    <IconButton>
+                        <EditIcon style={{color: '#335687'}} />
+                    </IconButton>
+                  </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     <Link onClick={() => saveMateria(materia)} href='./AsignarClasesProfesor'>
                       {materia.nombreClase}
