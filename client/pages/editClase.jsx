@@ -2,15 +2,15 @@ import React from 'react';
 import Clase from './components/Clase';
 
 /**
- * newClase
+ * editClase
  * @return {React.Component}
  */
-export default function newClase() {
+export default function editClase() {
   return (
     <>
       <Clase
-        titulo = 'Nueva Clase'
-        flagEdit = {false}
+        titulo = 'Modificar Clase'
+        flagEdit = {true}
       />
     </>
   );

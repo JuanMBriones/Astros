@@ -46,8 +46,9 @@ ctr.getProfesores = () => async (req, res, next) => {
   res.status(200).json({profesores});
 };
 
+// post clase
 ctr.addClass = () => async (req, res, next) => {
-  // expected: id clase, id profesor
+  // expected: attributes clase json
   const {
     clave,
     grupoApg,
@@ -57,13 +58,14 @@ ctr.addClass = () => async (req, res, next) => {
     horario, // array
     modalidadGrupo,
     profesor, // array
-    cip,
+    cip, // array
     paquete,
     edificio,
     salon,
     tipo,
     semestre,
     periodo,
+    ingles,
   } = req.body;
 
   // const cip = [];
@@ -85,6 +87,7 @@ ctr.addClass = () => async (req, res, next) => {
     tipo: tipo,
     semestre: semestre,
     periodo: periodo,
+    ingles: ingles,
   });
 
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {

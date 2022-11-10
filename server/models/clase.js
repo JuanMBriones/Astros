@@ -55,6 +55,9 @@ const claseSchema = new mongoose.Schema({
   tipo: {
     type: String,
   },
+  ingles: {
+    type: Boolean,
+  },
 });
 
 module.exports = mongoose.model('clase', claseSchema, 'clase');

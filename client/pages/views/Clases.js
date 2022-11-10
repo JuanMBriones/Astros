@@ -127,12 +127,12 @@ export default function CustomizedTables() {
               {materias.map((materia) => (
                 <StyledTableRow key={materia.id}>
                   <StyledTableCell component="th" scope="row">
-                    <IconButton>
+                    <IconButton onClick={() => saveMateria(materia)} href='../editClase'>
                       <EditIcon style={{color: '#335687'}} />
                     </IconButton>
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
-                    <Link onClick={() => saveMateria(materia)} href='./AsignarClasesProfesor'>
+                    <Link onClick={() => saveMateria(materia)} href='./ClasesAsignar'>
                       {materia.nombreClase}
                     </Link>
                   </StyledTableCell>
