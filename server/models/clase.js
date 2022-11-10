@@ -49,6 +49,12 @@ const claseSchema = new mongoose.Schema({
   asignada: {
     type: Number,
   },
+  edificio: {
+    type: String,
+  },
+  tipo: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('clase', claseSchema, 'clase');

@@ -26,6 +26,66 @@ export default function uploadClase() {
       selector: (row) => row.TipoUf,
       sortable: true,
     },
+    {
+      name: 'Paquete',
+      selector: (row) => row.Paquete,
+      sortable: true,
+    },
+    {
+      name: 'Grupo APG',
+      selector: (row) => row.GrupoAPG,
+      sortable: true,
+    },
+    {
+      name: 'Salon',
+      selector: (row) => row.Salon,
+      sortable: true,
+    },
+    {
+      name: 'Aula',
+      selector: (row) => row.Aula,
+      sortable: true,
+    },
+    {
+      name: 'DeptoProf',
+      selector: (row) => row.DeptoProf,
+      sortable: true,
+    },
+    {
+      name: 'Nomina',
+      selector: (row) => row.Nomina,
+      sortable: true,
+    },
+    {
+      name: 'Nombre',
+      selector: (row) => row.Nombre,
+      sortable: true,
+    },
+    {
+      name: 'Correo',
+      selector: (row) => row.Correo,
+      sortable: true,
+    },
+    {
+      name: 'CIP',
+      selector: (row) => row.CIP,
+      sortable: true,
+    },
+    {
+      name: 'Modalidad',
+      selector: (row) => row.Modalidad,
+      sortable: true,
+    },
+    {
+      name: 'Carga Permitida',
+      selector: (row) => row.CargaPermitida,
+      sortable: true,
+    },
+    {
+      name: 'Horario',
+      selector: (row) => row.HorarioBloqueCompleto,
+      sortable: true,
+    },
   ];
 
   const [data, setData] = useState([]);
@@ -71,12 +131,12 @@ export default function uploadClase() {
       data.forEach(async (clase) => {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/add`, {
           clave: clase['Clave'],
-          grupoApg: clase['Grupo APG'],
+          grupoApg: clase['GrupoAPG'],
           materia: clase['Materia'],
-          propuesta: 'Tec20',
+          propuesta: clase['Modelo'],
           carga: clase['Carga'],
           horario: '',
-          modalidadGrupo: clase['Modalidad Grupo'],
+          modalidadGrupo: clase['ModalidadGrupo'],
           profesor: await professorGetId(clase['Nomina']),
           cip: [],
         });

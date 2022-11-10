@@ -52,12 +52,18 @@ ctr.addClass = () => async (req, res, next) => {
     clave,
     grupoApg,
     materia,
-    propuesta,
+    modelo,
     carga,
     horario, // array
     modalidadGrupo,
     profesor, // array
     cip,
+    paquete,
+    edificio,
+    salon,
+    tipo,
+    semestre,
+    periodo,
   } = req.body;
 
   // const cip = [];
@@ -67,12 +73,18 @@ ctr.addClass = () => async (req, res, next) => {
     clave: clave,
     grupo_apg: grupoApg,
     materia: materia,
-    propuesta: propuesta,
+    propuesta: modelo,
     carga: carga,
     horario: horario,
     modalidad_grupo: modalidadGrupo,
     profesor: profesor,
     cip: cip,
+    paquete: paquete,
+    edificio: edificio,
+    salon: salon,
+    tipo: tipo,
+    semestre: semestre,
+    periodo: periodo,
   });
 
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
