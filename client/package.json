@@ -35,7 +35,7 @@
     "styled-components": "^5.3.6"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^12.3.1",
+    "@next/eslint-plugin-next": "^12.3.3",
     "eslint": ">=5.16.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-next": "12.3.0",
