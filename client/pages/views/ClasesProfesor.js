@@ -128,7 +128,7 @@ export default function CustomizedTables() {
                 <StyledTableRow key={materia.id}>
                   <StyledTableCell component="th" scope="row">
                     <IconButton>
-                        <EditIcon style={{color: '#335687'}} />
+                      <EditIcon style={{color: '#335687'}} />
                     </IconButton>
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">

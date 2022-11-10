@@ -16,8 +16,8 @@ import axios from 'axios';
  * @return {React.Component}
  */
 export default function newClase() {
-  const objetoClase = {paquete:null, clave:null, grupo:null, nombre:null, edificio:null, salon:null,
-  modalidad:null, tipo:null, modelo:null, carga:null, semestre:null, periodo:null, horario:null, ingles:null};
+  const objetoClase = {paquete: null, clave: null, grupo: null, nombre: null, edificio: null, salon: null,
+    modalidad: null, tipo: null, modelo: null, carga: null, semestre: null, periodo: null, horario: null, ingles: null};
   const [objClase, setAtributos] = React.useState(objetoClase);
   const [modalidad, setModalidad] = React.useState('');
   const [tipo, setTipo] = React.useState('');
@@ -47,26 +47,26 @@ export default function newClase() {
     });
   };
 
-  const handleModalidad = event => {
+  const handleModalidad = (event) => {
     setModalidad(event.target.value);
   };
 
-  const handleTipo = event => {
+  const handleTipo = (event) => {
     setTipo(event.target.value);
   };
 
-  const handleModelo = event => {
+  const handleModelo = (event) => {
     setModelo(event.target.value);
   };
 
-  const handlePeriodo = event => {
+  const handlePeriodo = (event) => {
     setPeriodo(event.target.value);
   };
 
 
   return (
     <>
-    <Box sx={{
+      <Box sx={{
         maxWidth: '50rem',
         margin: 'auto',
         padding: '1rem',
@@ -165,7 +165,9 @@ export default function newClase() {
               <Select
                 value={modalidad}
                 label="Modalidad"
-                onChange={(e) => {handleModalidad(e); setAtributos({...objClase, modalidad: e.target.value});}}
+                onChange={(e) => {
+                  handleModalidad(e); setAtributos({...objClase, modalidad: e.target.value});
+                }}
               >
                 <MenuItem value={'Presencial'}>Presencial</MenuItem>
                 <MenuItem value={'MFDL'}>MFDL</MenuItem>
@@ -178,7 +180,9 @@ export default function newClase() {
               <Select
                 value={tipo}
                 label="Tipo"
-                onChange={(e) => {handleTipo(e); setAtributos({...objClase, tipo: e.target.value});}}
+                onChange={(e) => {
+                  handleTipo(e); setAtributos({...objClase, tipo: e.target.value});
+                }}
               >
                 <MenuItem value={'Bloque'}>Bloque</MenuItem>
                 <MenuItem value={'Topico'}>Tópico</MenuItem>
@@ -191,7 +195,9 @@ export default function newClase() {
               <Select
                 value={modelo}
                 label="Modelo"
-                onChange={(e) => {handleModelo(e); setAtributos({...objClase, modelo: e.target.value});}}
+                onChange={(e) => {
+                  handleModelo(e); setAtributos({...objClase, modelo: e.target.value});
+                }}
               >
                 <MenuItem value={'Tec 20'}>Tec 20</MenuItem>
                 <MenuItem value={'Tec 21'}>Tec 21</MenuItem>
@@ -226,12 +232,14 @@ export default function newClase() {
               }}
               onChange={(e) => setAtributos({...objClase, semestre: e.target.value})}
             />
-             <FormControl fullWidth>
+            <FormControl fullWidth>
               <InputLabel >Periodo</InputLabel>
               <Select
                 value={periodo}
                 label="Periodo"
-                onChange={(e) => {handlePeriodo(e); setAtributos({...objClase, periodo: e.target.value});}}
+                onChange={(e) => {
+                  handlePeriodo(e); setAtributos({...objClase, periodo: e.target.value});
+                }}
               >
                 <MenuItem value={'PMT1'}>PMT1</MenuItem>
                 <MenuItem value={'PMT2'}>PMT2</MenuItem>
@@ -257,17 +265,16 @@ export default function newClase() {
                 if (/^(((Lu|Ma|Mi|Ju|Vi)+ ([01]?[0-9]|2[0-3]):[0-5][0-9])(\/)*)+$/.test(e.target.value)) {
                   e.target.style.color = 'green';
                   setAtributos({...objClase, horario: e.target.value});
-                }
-                else{
+                } else {
                   e.target.style.color = 'red';
                 }
               }}
             />
             <FormGroup>
-                <FormControlLabel control={<Checkbox onChange={(e) => setAtributos({...objClase, ingles: e.target.checked})}/>} label={
-                  <Typography variant="body1" gutterBottom>
+              <FormControlLabel control={<Checkbox onChange={(e) => setAtributos({...objClase, ingles: e.target.checked})}/>} label={
+                <Typography variant="body1" gutterBottom>
                     Inglés
-                  </Typography> }/>
+                </Typography> }/>
             </FormGroup>
           </Stack>
           <Button
