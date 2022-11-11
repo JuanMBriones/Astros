@@ -5,12 +5,12 @@ import Profe from './components/Profe';
  * editProfe
  * @return {React.Component}
  */
-export default function newProfe() {
+export default function editProfe() {
   return (
     <>
       <Profe
-        titulo = 'Nuevo Profesor'
-        flagEdit = {false}
+        titulo = 'Modificar Profesor'
+        flagEdit = {true}
       />
     </>
   );

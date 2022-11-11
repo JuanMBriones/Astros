@@ -84,7 +84,7 @@ export default function Clase({titulo, flagEdit}) {
         borderRadius: '0.5rem',
         width: '800px',
         height: '620',
-        marginTop: '75px',
+        marginTop: '50px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
           {titulo}
