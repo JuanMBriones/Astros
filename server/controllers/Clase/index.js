@@ -8,6 +8,8 @@ router.get('/class', (req, res) => res.status(200).json({msg: 'Hello from clase 
 
 router.get('/clases', asyncHandler(claseCtr.getClases()));
 
+router.get('/clase', asyncHandler(claseCtr.getClase()));
+
 router.get('/profesores', asyncHandler(claseCtr.getProfesores()));
 
 router.post('/add', asyncHandler(claseCtr.addClass()));

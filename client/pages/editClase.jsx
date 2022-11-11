@@ -9,7 +9,7 @@ export default function editClase() {
   return (
     <>
       <Clase
-        titulo = 'Modificar Clase'
+        personalizado={{titulo: 'Modificar Clase', boton: 'Modificar', mensaje: 'Clase modificada correctamente'}}
         flagEdit = {true}
       />
     </>

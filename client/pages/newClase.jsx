@@ -9,7 +9,7 @@ export default function newClase() {
   return (
     <>
       <Clase
-        titulo = 'Nueva Clase'
+        personalizado = {{titulo: 'Nueva Clase', boton: 'Crear', mensaje: 'Clase creada correctamente'}}
         flagEdit = {false}
       />
     </>

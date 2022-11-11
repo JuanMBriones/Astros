@@ -29,6 +29,12 @@ ctr.getClases = () => async (req, res, next) => {
   }
 };
 
+// get clase individual
+ctr.getClase = () => async (req, res, next) => {
+  const clase = await Clase.findById(req.query.id).exec();
+  res.status(200).json({clase});
+};
+
 // get profesores que pueden dar una clase
 ctr.getProfesores = () => async (req, res, next) => {
   // expected: id clase
@@ -91,7 +97,10 @@ ctr.addClass = () => async (req, res, next) => {
   });
 
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
-    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor}}).exec();
+    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor},
+      clave: clave, grupo_apg: grupoApg, materia: materia, propuesta: modelo, carga: carga, horario: horario,
+      modalidad_grupo: modalidadGrupo, paquete: paquete, edificio: edificio, salon: salon, tipo: tipo, semestre: semestre,
+      periodo: periodo, ingles: ingles}).exec();
     res.status(200).json({message: 'Clase actualizada'});
   } else {
     await newClase.save();

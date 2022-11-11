@@ -16,9 +16,6 @@ const claseSchema = new mongoose.Schema({
   salon: {
     type: String,
   },
-  aula: {
-    type: String,
-  },
   cip: [{
     type: Number,
   }],

@@ -40,10 +40,11 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
  * @param {*} clave
  * @param {*} detalles
  * @param {*} dbId
+ * @param {*} grupo
  * @return {Object} The render component
  */
-function createData(id, nombreClase, clave, detalles, dbId) {
-  return {id, nombreClase, clave, detalles, dbId};
+function createData(id, nombreClase, clave, detalles, dbId, grupo) {
+  return {id, nombreClase, clave, detalles, dbId, grupo};
 }
 
 
@@ -81,10 +82,11 @@ export default function CustomizedTables() {
         const clave = clase.clave;
         const dbid = clase._id;
         const horario = [clase.horario[0]];
+        const grupo = clase.grupo_apg;
         for (let i = 1; i < clase.horario.length; i++) {
           horario.push(clase.horario[i][0] + ': ' + clase.horario[i][1] + ' - ' + clase.horario[i][2]);
         }
-        clases.push(createData(index, nombre, clave, horario, dbid));
+        clases.push(createData(index, nombre, clave, horario, dbid, grupo));
       });
       setAllMaterias(clases);
       setMaterias(clases);
@@ -119,6 +121,7 @@ export default function CustomizedTables() {
               <TableRow>
                 <StyledTableCell>  </StyledTableCell>
                 <StyledTableCell>Nombre de la clase</StyledTableCell>
+                <StyledTableCell>Grupo</StyledTableCell>
                 <StyledTableCell>Clave</StyledTableCell>
                 <StyledTableCell>Detalles</StyledTableCell>
               </TableRow>
@@ -135,6 +138,9 @@ export default function CustomizedTables() {
                     <Link onClick={() => saveMateria(materia)} href='./ClasesAsignar'>
                       {materia.nombreClase}
                     </Link>
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {materia.grupo}
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {materia.clave}
