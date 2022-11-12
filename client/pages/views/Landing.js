@@ -11,7 +11,6 @@ import {
  * @return {Object} The render component
  */
 export default function Landing() {
-  // const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
   const handleClick = () => {
     setIsActive((current) => !current);
@@ -26,6 +25,9 @@ export default function Landing() {
       //   height: '100vh',
       // }}
     >
+
+      <br />
+      <br />
       <br />
       <br />
 
@@ -68,6 +70,5 @@ export default function Landing() {
         </Link>
       </Button>
     </div>
-    // <Login/>
   );
 };
