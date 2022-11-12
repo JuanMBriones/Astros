@@ -97,6 +97,11 @@ export default function Horario() {
     getDataProfe();
   }, []);
 
+
+  function handleMail(){
+    console.log(profesor);
+        
+  }
   return (
     <div>
       <center>
@@ -161,7 +166,7 @@ export default function Horario() {
 
         </Box>
         <center style={{padding: 10}}>
-          <Button variant="contained" style={{padding: 10}} endIcon={<SendIcon />} > Enviar Horario</Button>
+          <Button variant="contained" style={{padding: 10}} endIcon={<SendIcon />} onClick={handleMail}> Enviar Horario</Button>
         </center>
       </div>
 
