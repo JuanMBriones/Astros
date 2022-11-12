@@ -9,7 +9,7 @@ export default function newProfe() {
   return (
     <>
       <Profe
-        titulo = 'Nuevo Profesor'
+        personalizado = {{titulo: 'Nuevo Profesor', boton: 'Crear', mensaje: 'Profesor creado correctamente'}}
         flagEdit = {false}
       />
     </>

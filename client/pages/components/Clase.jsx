@@ -58,13 +58,17 @@ export default function Clase({personalizado, flagEdit}) {
         setPeriodo(res.data.clase.periodo ? res.data.clase.periodo:'');
         setHorario(res.data.clase.horario ? res.data.clase.horario:null);
         setIngles(res.data.clase.ingles ? res.data.clase.ingles:false);
-        console.log(res.data.clase.paquete);
       };
       getClase();
     }
   }, []);
 
   const submitForm = () => {
+    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !periodo || !horario) {
+      alert('Favor de llenar todos los campos');
+      return;
+    }
+
     axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/add/`,
       {
         paquete: paquete,
@@ -84,9 +88,11 @@ export default function Clase({personalizado, flagEdit}) {
       },
     ).then((res) => {
       console.log(res);
-      if (res.status === 200) {
+      if (res.status == 200 || res.status == 201) {
         alert(personalizado.mensaje);
         window.location.href = '../views/Clases';
+      } else {
+        alert('Error al guardar la información');
       }
     });
   };
@@ -240,8 +246,37 @@ export default function Clase({personalizado, flagEdit}) {
           >
             <TextField
               id='outlined-basic'
+              label='Horario'
+              placeholder="LuJu 08:00-10:00/Mi 10:00-12:00"
+              variant='outlined'
+              style = {{width: 400}}
+              onChange={(e) => {
+                if (/^(((Lu|Ma|Mi|Ju|Vi)+ ([01]?[0-9]|2[0-3]):[0-5][0-9]-([01]?[0-9]|2[0-3]):[0-5][0-9])(\/)*)+$/.test(e.target.value)) {
+                  e.target.style.color = 'green';
+                  setHorario(e.target.value);
+                } else {
+                  e.target.style.color = 'red';
+                }
+              }}
+            />
+            <FormGroup>
+              <FormControlLabel control={<Checkbox value={ingles} onChange={(e) => setIngles(e.target.checked)}/>} label={
+                <Typography variant="body1" gutterBottom>
+                    Inglés
+                </Typography> }/>
+            </FormGroup>
+          </Stack>
+          <Stack
+            direction='row'
+            spacing={2}
+            sx={{mb: '1rem'}}
+            fullWidth
+          >
+            <TextField
+              id='outlined-basic'
               label='Carga'
               variant='outlined'
+              style={{maxWidth: 150}}
               onKeyPress={(event) => {
                 if (!/[0-9]/.test(event.key)) {
                   event.preventDefault();
@@ -254,6 +289,7 @@ export default function Clase({personalizado, flagEdit}) {
               id='outlined-basic'
               label='Semestre'
               variant='outlined'
+              style={{maxWidth: 150}}
               onKeyPress={(event) => {
                 if (!/[0-9]/.test(event.key)) {
                   event.preventDefault();
@@ -262,7 +298,7 @@ export default function Clase({personalizado, flagEdit}) {
               value={semestre}
               onChange={(e) => setSemestre(e.target.value)}
             />
-            <FormControl fullWidth>
+            <FormControl style={{width: 150}}>
               <InputLabel >Periodo</InputLabel>
               <Select
                 value={periodo}
@@ -277,33 +313,6 @@ export default function Clase({personalizado, flagEdit}) {
                 <MenuItem value={'PMT6'}>PMT6</MenuItem>
               </Select>
             </FormControl>
-          </Stack>
-          <Stack
-            direction='row'
-            spacing={2}
-            sx={{mb: '1rem'}}
-            fullWidth
-          >
-            <TextField
-              id='outlined-basic'
-              label='Horario'
-              variant='outlined'
-              style = {{width: 400}}
-              onChange={(e) => {
-                if (/^(((Lu|Ma|Mi|Ju|Vi)+ ([01]?[0-9]|2[0-3]):[0-5][0-9])(\/)*)+$/.test(e.target.value)) {
-                  e.target.style.color = 'green';
-                  setHorario(e.target.value);
-                } else {
-                  e.target.style.color = 'red';
-                }
-              }}
-            />
-            <FormGroup>
-              <FormControlLabel control={<Checkbox value={ingles} onChange={(e) => setIngles(e.target.checked)}/>} label={
-                <Typography variant="body1" gutterBottom>
-                    Inglés
-                </Typography> }/>
-            </FormGroup>
           </Stack>
           <Button
             variant='contained'

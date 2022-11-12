@@ -9,7 +9,7 @@ export default function editProfe() {
   return (
     <>
       <Profe
-        titulo = 'Modificar Profesor'
+        personalizado = {{titulo: 'Modificar Profesor', boton: 'Modificar', mensaje: 'Profesor modificado correctamente'}}
         flagEdit = {true}
       />
     </>

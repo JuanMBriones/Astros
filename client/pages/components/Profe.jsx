@@ -5,39 +5,57 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {TimePicker} from '@mui/x-date-pickers/TimePicker';
 import {Stack} from '@mui/system';
+import {FormControl, InputLabel, Select, MenuItem} from '@mui/material';
 import axios from 'axios';
 
 Profe.propTypes = {
-  titulo: PropTypes.object,
-  flagEdit: PropTypes.object,
+  personalizado: PropTypes.object,
+  flagEdit: PropTypes.bool,
 };
 
 /**
  * newProfe
- * @param {String} titulo
+ * @param {String} personalizado
  * @param {Boolean} flagEdit
  * @return {React.Component}
  */
-export default function Profe({titulo, flagEdit}) {
+export default function Profe({personalizado, flagEdit}) {
   const [valueHour, setValueHour] = React.useState(null);
-  const [valueName, setValueName] = React.useState(null);
-  const [valueNomina, setValueNomina] = React.useState(null);
-  const [valueCorreo, setValueCorreo] = React.useState(null);
-  const [valueCIP, setValueCIP] = React.useState(null);
-  const [valueModalidad, setValueModalidad] = React.useState(null);
-  const [valueDepartamento, setValueDepartamento] = React.useState(null);
+  const [valueName, setValueName] = React.useState(undefined);
+  const [valueNomina, setValueNomina] = React.useState(undefined);
+  const [valueCorreo, setValueCorreo] = React.useState(undefined);
+  const [valueCIP, setValueCIP] = React.useState(undefined);
+  const [valueModalidad, setValueModalidad] = React.useState(undefined);
+  const [valueDepartamento, setValueDepartamento] = React.useState(undefined);
 
   useEffect(() => {
     if (flagEdit) {
       const profe = JSON.parse(localStorage.getItem('selectedProfe'));
-      setValueName(profe.nombreProfesor);
-      setValueNomina(profe.nomina);
+      const getProfe = async () => {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profe?profesor=${profe.nomina}`);
+        setValueHour(res.data.entrada ? new Date(res.data.entrada) : null);
+        setValueName(res.data.nombre ? res.data.nombre : undefined);
+        setValueNomina(res.data.nomina ? res.data.nomina : undefined);
+        setValueCorreo(res.data.correo ? res.data.correo : undefined);
+        setValueCIP(res.data.cip ? res.data.cip : undefined);
+        setValueModalidad(res.data.modalidad ? res.data.modalidad : undefined);
+        setValueDepartamento(res.data.depto_prof ? res.data.depto_prof : undefined);
+      };
+      getProfe();
     }
   }, []);
 
   // TODO: Notify user when the professor alreay exists
   const handleOnClick = () => {
-    const humanReadable = valueHour.$H + ':' + valueHour.$m;
+    if (!valueDepartamento || !valueNomina || !valueName || !valueCorreo) {
+      alert('Favor de llenar todos los campos');
+      return;
+    }
+
+    let humanReadable = '';
+    if (valueHour != null) {
+      humanReadable = valueHour.$H + ':' + valueHour.$m;
+    }
 
     axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profe/`,
       {
@@ -51,6 +69,12 @@ export default function Profe({titulo, flagEdit}) {
       },
     ).then((res) => {
       console.log(res);
+      if (res.status == 200 || res.status == 201) {
+        alert(personalizado.mensaje);
+        window.location.href = '../views/Profesores';
+      } else {
+        alert('Error al guardar la información');
+      }
     });
   };
 
@@ -68,7 +92,7 @@ export default function Profe({titulo, flagEdit}) {
         marginTop: '50px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
-          {titulo}
+          {personalizado.titulo}
         </Typography>
         <Box
           component='form'
@@ -147,24 +171,34 @@ export default function Profe({titulo, flagEdit}) {
               label='CIP'
               variant='outlined'
               sx={{mb: '1rem'}}
+              onKeyPress={(event) => {
+                if (!/[0-9]/.test(event.key)) {
+                  event.preventDefault();
+                }
+              }}
               value={valueCIP}
               onChange={(event) => setValueCIP(event.target.value)}
             />
-            <TextField
-              id='outlined-basic'
-              label='Modalidad'
-              variant='outlined'
-              sx={{mb: '1rem'}}
-              value={valueModalidad}
-              onChange={(event) => setValueModalidad(event.target.value)}
-            />
+            <FormControl style={{minWidth: 180}}>
+              <InputLabel >Modalidad</InputLabel>
+              <Select
+                value={valueModalidad}
+                label="Modalidad"
+                onChange={(e) => setValueModalidad(e.target.value)}
+              >
+                <MenuItem value={'Presencial'}>Presencial</MenuItem>
+                <MenuItem value={'MFDL'}>MFDL</MenuItem>
+                <MenuItem value={'En linea'}>En línea</MenuItem>
+                <MenuItem value={'ED'}>ED</MenuItem>
+              </Select>
+            </FormControl>
           </Stack>
           <Button
             variant='contained'
             color='success'
             onClick={handleOnClick}
           >
-            Crear
+            {personalizado.boton}
           </Button>
         </Box>
       </Box>
