@@ -64,9 +64,30 @@ ctr.addClass = () => async (req, res, next) => {
     tipo,
     semestre,
     periodo,
+    ingles,
   } = req.body;
 
-  // const cip = [];
+  if (!(clave && grupoApg && materia)) {
+    res.status(400).json({msg: 'Missing required fields'});
+    return;
+  }
+
+  console.log(clave,
+    grupoApg,
+    materia,
+    modelo,
+    carga,
+    horario, // array
+    modalidadGrupo,
+    profesor, // array
+    cip,
+    paquete,
+    edificio, // empieza a fallar desde aqui
+    salon,
+    tipo,
+    semestre,
+    periodo,
+    ingles);
 
   // create new record
   const newClase = new Clase({
@@ -78,18 +99,50 @@ ctr.addClass = () => async (req, res, next) => {
     horario: horario,
     modalidad_grupo: modalidadGrupo,
     profesor: profesor,
-    cip: cip,
+    cip: cip.split('/'),
     paquete: paquete,
     edificio: edificio,
     salon: salon,
     tipo: tipo,
     semestre: semestre,
     periodo: periodo,
+    ingles, ingles,
   });
 
-  if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
-    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor}}).exec();
-    res.status(200).json({message: 'Clase actualizada'});
+
+  const clase = await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec();
+
+  if (clase) {
+    clase.materia = materia;
+    clase.propuesta = modelo;
+    clase.carga = carga;
+    clase.horario = horario;
+    clase.modalidad_grupo = modalidadGrupo;
+    clase.paquete = paquete;
+    clase.edificio = edificio;
+    clase.salon = salon;
+    clase.tipo = tipo;
+    clase.semestre = semestre;
+    clase.periodo = periodo;
+    clase.ingles = ingles;
+
+    // push if not already in database
+    console.log('Clase already exists');
+    // get class
+    if (!clase.profesor.includes(profesor)) {
+      clase.profesor.push(profesor);
+    }
+
+    // push cip
+    cip.split('/').forEach((cipElement) => {
+      if (!clase.cip.includes(cipElement)) {
+        clase.cip.push(cipElement);
+      }
+    });
+
+    // save
+    await clase.save();
+    res.status(200).json({msg: 'Clase updated'});
   } else {
     await newClase.save();
     res.status(201).json({msg: 'Clase agregada'});
