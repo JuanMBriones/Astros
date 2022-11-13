@@ -6,7 +6,6 @@ import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import {ViewState} from '@devexpress/dx-react-scheduler';
 import {Scheduler, WeekView, Appointments, Resources} from '@devexpress/dx-react-scheduler-material-ui';
-import emailNotificationHorario from '../../../server/controllers/emailProfesor'
 
 const instances = [
   {id: 0, color: '#9575cd'},
@@ -102,9 +101,8 @@ export default function Horario() {
   function handleMail(){
     console.log(profesor);
     console.log(profesor.correo);
-    
-    emailNotificationHorario(profesor.correo);
-        
+    axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendEmail?mail=${profesor.correo}`);
+
   }
   return (
     <div>
