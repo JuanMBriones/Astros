@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const emailNotificationHorario = require('./controllers/emailProfesor');
 const express = require('express');
 const app = express();
 const dbConfig = require('./dbConfig');
@@ -20,11 +21,21 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get('/sendEmail', (req, res ) => {
+  const mail = req.query.mail;
+  emailNotificationHorario(mail);
+  res.json({
+    msg: mail
+  });
+});
+
+
 app.use('/api', require('./controllers/Profesor'));
 
 app.use('/api/clase', require('./controllers/Clase'));
 
 app.use('/api', require('./controllers/auth'));
+
 
 // error handling middleware
 app.use(eHandler());
