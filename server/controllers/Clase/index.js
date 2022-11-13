@@ -14,4 +14,6 @@ router.get('/profesores', asyncHandler(claseCtr.getProfesores()));
 
 router.post('/add', asyncHandler(claseCtr.addClass()));
 
+router.post('/remove', asyncHandler(claseCtr.removeClass()));
+
 module.exports = router;

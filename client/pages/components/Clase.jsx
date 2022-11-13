@@ -97,6 +97,32 @@ export default function Clase({personalizado, flagEdit}) {
     });
   };
 
+  const deleteForm = () => {
+    if (!clave || !grupo) {
+      alert('Favor de llenar el campo de clave');
+      return;
+    }
+
+    axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/remove/`,
+      {
+        clave: clave,
+        grupo: grupo,
+      },
+    ).then((res) => {
+      console.log(res);
+      console.log(clave);
+      console.log(grupo);
+      if (res.status == 200 || res.status == 201) {
+        if (personalizado) {
+          alert(personalizado.mensaje);
+        }
+        // window.location.href = '../views/Clases';
+      } else {
+        alert('Error al eliminar la información');
+      }
+    });
+  };
+
   return (
     <>
       <Box sx={{
@@ -111,7 +137,7 @@ export default function Clase({personalizado, flagEdit}) {
         marginTop: '50px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
-          {personalizado.titulo}
+          {(personalizado != null) ? personalizado.titulo : null}
         </Typography>
         <Box
           component='form'
@@ -319,7 +345,12 @@ export default function Clase({personalizado, flagEdit}) {
             color='success'
             onClick={submitForm}
           >
-            {personalizado.boton}
+            {personalizado != null ? personalizado.boton : null}
+          </Button>
+          <Button
+            variant='contained'
+            onClick={deleteForm}
+          >
           </Button>
         </Box>
       </Box>
