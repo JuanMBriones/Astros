@@ -30,4 +30,6 @@ router.get('/horarioProf', asyncHandler(profesorCtr.horarioProf()));
 
 router.get('/warnings', asyncHandler(profesorCtr.warnings()));
 
+router.put('/changeStatus', asyncHandler(profesorCtr.changeStatus()));
+
 module.exports = router;

@@ -282,6 +282,19 @@ ctr.assignConfirm = () => async (req, res, next) => {
   res.status(200).json({message: 'Materia and Profesor updated successfully'});
 };
 
+// cambiar estatus de un profesor
+ctr.changeStatus = () => async (req, res, next) => {
+  // expected: id profesor, estatus
+  const idProfesor = req.query.profesor;
+  const newStatus = req.query.estatus;
+
+  const updatedProf = await Profesor.findByIdAndUpdate(idProfesor, {estatus: newStatus}).exec();
+  if (!updatedProf) {
+    throw new CustomError(500, 'Error updating Profesor');
+  }
+  res.status(200).json({message: 'Profesor updated successfully'});
+};
+
 // horario de un profesor
 ctr.horarioProf = () => async (req, res, next) => {
   const profesor = req.query.profesor;

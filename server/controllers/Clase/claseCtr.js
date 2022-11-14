@@ -29,6 +29,12 @@ ctr.getClases = () => async (req, res, next) => {
   }
 };
 
+// get clase individual
+ctr.getClase = () => async (req, res, next) => {
+  const clase = await Clase.findById(req.query.id).exec();
+  res.status(200).json({clase});
+};
+
 // get profesores que pueden dar una clase
 ctr.getProfesores = () => async (req, res, next) => {
   // expected: id clase
@@ -46,8 +52,23 @@ ctr.getProfesores = () => async (req, res, next) => {
   res.status(200).json({profesores});
 };
 
+ctr.removeClass = () => async (req, res, next) => {
+  // expected: attributes clase json
+  const {clave, grupo} = req.body;
+  console.log(grupo);
+  console.log(clave);
+  try {
+    await Clase.findOneAndDelete({clave: clave, grupo_apg: grupo}).exec();
+    res.status(200).json({msg: 'Clase eliminada'});
+  }
+  catch (err) {
+    res.status(200).json({msg: 'Error al eliminar clase'});
+  }
+};
+
+// post clase
 ctr.addClass = () => async (req, res, next) => {
-  // expected: id clase, id profesor
+  // expected: attributes clase json
   const {
     clave,
     grupoApg,
@@ -57,7 +78,7 @@ ctr.addClass = () => async (req, res, next) => {
     horario, // array
     modalidadGrupo,
     profesor, // array
-    cip,
+    cip, // array
     paquete,
     edificio,
     salon,
@@ -106,6 +127,7 @@ ctr.addClass = () => async (req, res, next) => {
     tipo: tipo,
     semestre: semestre,
     periodo: periodo,
+/*
     ingles, ingles,
   });
 
@@ -143,6 +165,16 @@ ctr.addClass = () => async (req, res, next) => {
     // save
     await clase.save();
     res.status(200).json({msg: 'Clase updated'});
+*/
+    ingles: ingles,
+  });
+
+  if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
+    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor},
+      clave: clave, grupo_apg: grupoApg, materia: materia, propuesta: modelo, carga: carga, horario: horario,
+      modalidad_grupo: modalidadGrupo, paquete: paquete, edificio: edificio, salon: salon, tipo: tipo, semestre: semestre,
+      periodo: periodo, ingles: ingles}).exec();
+    res.status(200).json({message: 'Clase actualizada'});
   } else {
     await newClase.save();
     res.status(201).json({msg: 'Clase agregada'});

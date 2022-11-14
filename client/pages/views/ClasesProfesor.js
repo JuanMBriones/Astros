@@ -9,7 +9,12 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import {Button, Link, Popover, Typography} from '@mui/material';
+import {Button, CircularProgress} from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
 
@@ -27,6 +32,7 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
+  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
@@ -34,84 +40,121 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 
 /**
  * @param {*} id
- * @param {*} nombreClase
- * @param {*} clave
- * @param {*} detalles
+ * @param {*} nombreProfesor
+ * @param {*} infoAdicional
+ * @param {*} nomina
+ * @param {*} asignada
  * @param {*} dbId
  * @return {Object} The render component
  */
-function createData(id, nombreClase, clave, detalles, dbId) {
-  return {id, nombreClase, clave, detalles, dbId};
+function createData(id, nombreProfesor, infoAdicional, nomina, asignada, dbId) {
+  return {id, nombreProfesor, infoAdicional, nomina, asignada, dbId};
 }
 
-/* const rawRows = [
-  createData(1, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(2, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(3, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(4, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(5, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(6, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(7, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(8, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(9, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(10, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(11, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(12, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(13, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(14, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(15, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(16, 'Calidad', 'TC4567', 'Detalles de la clase'),
-]; */
-
 /**
- * @param {Object} props to be passed to the component
  * @return {Object} The render component
  */
-export default function CustomizedTables() {
-  const [allMaterias, setAllMaterias] = useState([]);
-  const [materias, setMaterias] = useState([]);
-  const [anchor, setAnchor] = useState(null);
-  const [popMsg, setPopMsg] = useState([]);
-  const saveMateria = (selectedMateria) => {
-    localStorage.setItem('selectedMateria', JSON.stringify(selectedMateria));
-  };
+export default function AsignarClasesProfesor() {
+  const [open, setOpen] = useState(false);
+  const [allProfesores, setAllProfesores] = useState([]);
+  const [profesores, setProfesores] = useState([]);
+  const [selectedProfesor, setSelectedProfesor] = useState('');
+  const [materia, setMateria] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [errorFlag, setErrorFlag] = useState(false);
+  const [newCarga, setNewCarga] = useState(0);
+  const [cargando, setCargando] = useState(true);
 
-  const handleClick = (msgs, event) => {
-    setPopMsg(msgs);
-    setAnchor(event.currentTarget);
+  useEffect(() => {
+    const mat = JSON.parse(localStorage.getItem('selectedMateria'));
+    setMateria(mat);
+
+    const getProfesores = async () => {
+      const res = await axios.get('http://localhost:3001/api/clase/profesores?clase=' + mat.dbId);
+      const rawProfesores = res.data.profesores;
+      const profesores = [];
+      rawProfesores.forEach((profesor, index) => {
+        profesores.push(createData(index, profesor.nombre, 'Info extra', profesor.nomina, profesor.asignada, profesor._id));
+      });
+      setAllProfesores(profesores);
+      setProfesores(profesores);
+    };
+    getProfesores();
+  }, []);
+
+  const handleClickOpen = (prof) => {
+    setSelectedProfesor(prof);
+    setErrorFlag(false);
+    setMessages(['Validando...']);
+    setCargando(true);
+    setOpen(true);
+
+    let msgs = [];
+    if (!prof.asignada) {
+      const getWarnings = async () => {
+        try {
+          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + materia.dbId + '&profesor=' + prof.dbId);
+          msgs = res.data.message;
+          if (msgs.length > 0) {
+            msgs.unshift('Advertencias:');
+          } else {
+            msgs.push('No hay advertencias ni conflictos.');
+          }
+          msgs.unshift('Confirme que desea asignar a: ' + prof.nombreProfesor + ' a la clase: ' + materia.nombreClase + '.');
+          setNewCarga(res.data.carga);
+        } catch (err) {
+          msgs.push('No se puede asignar a: ' + prof.nombreProfesor + ' a la clase: ' + materia.nombreClase + '.');
+          msgs.push(err.response.data.message);
+          setErrorFlag(true);
+        } finally {
+          setMessages(msgs);
+          setCargando(false);
+        }
+      };
+      getWarnings();
+    } else {
+      msgs.push('Eliminar de la clase.');
+      msgs.push('¿Confirma que desea desasignar a: ' + prof.nombreProfesor + ' de la clase: ' + materia.nombreClase + '?');
+      setMessages(msgs);
+      setCargando(false);
+    }
   };
 
   const handleClose = () => {
-    setAnchor(null);
+    setOpen(false);
   };
 
-  const open = Boolean(anchor);
-
-  useEffect(() => {
-    const getClases = async () => {
-      const res = await axios.get('http://localhost:3001/api/clase/clases');
-      const rawClases = res.data.clases;
-      const clases = [];
-      rawClases.forEach((clase, index) => {
-        const nombre = clase.materia;
-        const clave = clase.clave;
-        const dbid = clase._id;
-        const horario = [clase.horario[0]];
-        for (let i = 1; i < clase.horario.length; i++) {
-          horario.push(clase.horario[i][0] + ': ' + clase.horario[i][1] + ' - ' + clase.horario[i][2]);
+  const handleCloseOk = () => {
+    if (selectedProfesor.asignada) {
+      const unassign = async () => {
+        try {
+          const res = await axios.put('http://localhost:3001/api/unassignProf?idMateria=' + materia.dbId + '&profesor=' + selectedProfesor.nomina);
+          console.log(res);
+        } catch (err) {
+          console.log(err);
         }
-        clases.push(createData(index, nombre, clave, horario, dbid));
-      });
-      setAllMaterias(clases);
-      setMaterias(clases);
-    };
-    getClases();
-  }, []);
+      };
+      unassign();
+      selectedProfesor.asignada = !selectedProfesor.asignada;
+    } else if (!errorFlag) {
+      const assign = async () => {
+        try {
+          const res = await axios.put('http://localhost:3001/api/assignConfirm?idMateria=' + materia.dbId + '&profesor=' + selectedProfesor.dbId + '&carga=' + newCarga);
+          console.log(res);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      assign();
+      selectedProfesor.asignada = !selectedProfesor.asignada;
+    }
+    setOpen(false);
+  };
 
   return (
     <div>
       <center>
-        <h1> Clases a asignar </h1>
+        <h1>Asignar {materia.nombreClase} a Profesores</h1>
         <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
           <TextField
             id="outlined-basic"
@@ -119,49 +162,72 @@ export default function CustomizedTables() {
             variant="outlined"
             label="Buscar"
             onChange={(e) => {
-              const filteredMaterias = allMaterias.filter((materia) => {
-                const nombre = removeDiacritics(materia.nombreClase.toString().toLowerCase());
+              const filteredProfesores = allProfesores.filter((profesor) => {
+                const nombre = removeDiacritics(profesor.nombreProfesor.toString().toLowerCase());
                 if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
-                  return materia;
+                  return profesor;
                 }
               });
-              setMaterias(filteredMaterias);
+              setProfesores(filteredProfesores);
             }}
           />
-          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
         </Box>
+
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>Nombre de la clase</StyledTableCell>
-                <StyledTableCell>Clave</StyledTableCell>
-                <StyledTableCell>Detalles</StyledTableCell>
+                <StyledTableCell>Nombre del profesor</StyledTableCell>
+                <StyledTableCell>Info extra</StyledTableCell>
+                <StyledTableCell>Asignar Clase</StyledTableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {materias.map((materia) => (
-                <StyledTableRow key={materia.id}>
+              {profesores.map((profesor) => (
+                <StyledTableRow key={profesor.id}>
                   <StyledTableCell component="th" scope="row">
-                    <Link onClick={() => saveMateria(materia)} href='./AsignarClasesProfesor'>
-                      {materia.nombreClase}
-                    </Link>
+                    {profesor.nombreProfesor}
                   </StyledTableCell>
+
                   <StyledTableCell component="th" scope="row">
-                    {materia.clave}
+                    {profesor.infoAdicional}
                   </StyledTableCell>
+
                   <StyledTableCell component="th" scope="row">
-                    <Link aria-owns={open ? 'pop' : undefined} aria-haspopup="true" onMouseEnter={(event) => {
-                      handleClick(materia.detalles, event);
-                    }} onMouseLeave={handleClose}>
-                      Detalles de la clase
-                    </Link>
-                    <Popover id='pop' open={open} sx={{pointerEvents: 'none'}} anchorEl={anchor} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'right'}} disableScrollLock>
-                      {popMsg.map((horario, index) => (
-                        <Typography key={index} sx={{p: 1.5, lineHeight: '10px'}}>{horario}</Typography>
-                      ))}
-                    </Popover>
-                    {/* {materia.detalles} */}
+                    {profesor.asignada ?
+                      (<Button variant="contained" color="error" onClick={() => {
+                        handleClickOpen(profesor);
+                      }}>Eliminar</Button>) :
+                      (<Button variant="contained" color="success" onClick={() => {
+                        handleClickOpen(profesor);
+                      }}>Asignar</Button>)
+                    }
+
+                    <Dialog
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                      BackdropProps={{style: {backgroundColor: '#000000', opacity: 0.5}}}
+                    >
+                      <DialogTitle id="alert-dialog-title">
+                        {messages[0]}
+                      </DialogTitle>
+                      <DialogContent>
+                        {cargando ? (<CircularProgress />) : (
+                          messages.slice(1).map((msg, index) => (
+                            <DialogContentText id="alert-dialog-description" key={index}>
+                              {msg}
+                            </DialogContentText>
+                          )))}
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleClose} disabled={cargando}>Cancelar</Button>
+                        <Button onClick={handleCloseOk} disabled={cargando} autoFocus> OK </Button>
+                      </DialogActions>
+                    </Dialog>
+
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

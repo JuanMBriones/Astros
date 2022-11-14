@@ -86,8 +86,8 @@ function MyApp({Component, pageProps}) {
     'Clases': {
       'condition': 1,
       'children': {
-        'Asignar Profesores': {
-          'url': '/views/ClasesProfesor',
+        'Asignar Clases': {
+          'url': '/views/Clases',
           'color': 'orange',
         },
         'Agregar Clases': {
