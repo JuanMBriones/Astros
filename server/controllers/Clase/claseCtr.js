@@ -29,6 +29,12 @@ ctr.getClases = () => async (req, res, next) => {
   }
 };
 
+// get clase individual
+ctr.getClase = () => async (req, res, next) => {
+  const clase = await Clase.findById(req.query.id).exec();
+  res.status(200).json({clase});
+};
+
 // get profesores que pueden dar una clase
 ctr.getProfesores = () => async (req, res, next) => {
   // expected: id clase
@@ -46,18 +52,40 @@ ctr.getProfesores = () => async (req, res, next) => {
   res.status(200).json({profesores});
 };
 
+ctr.removeClass = () => async (req, res, next) => {
+  // expected: attributes clase json
+  const {clave, grupo} = req.body;
+  console.log(grupo);
+  console.log(clave);
+  try {
+    await Clase.findOneAndDelete({clave: clave, grupo_apg: grupo}).exec();
+    res.status(200).json({msg: 'Clase eliminada'});
+  }
+  catch (err) {
+    res.status(200).json({msg: 'Error al eliminar clase'});
+  }
+};
+
+// post clase
 ctr.addClass = () => async (req, res, next) => {
-  // expected: id clase, id profesor
+  // expected: attributes clase json
   const {
     clave,
     grupoApg,
     materia,
-    propuesta,
+    modelo,
     carga,
     horario, // array
     modalidadGrupo,
     profesor, // array
-    cip,
+    cip, // array
+    paquete,
+    edificio,
+    salon,
+    tipo,
+    semestre,
+    periodo,
+    ingles,
   } = req.body;
 
   // const cip = [];
@@ -67,16 +95,26 @@ ctr.addClass = () => async (req, res, next) => {
     clave: clave,
     grupo_apg: grupoApg,
     materia: materia,
-    propuesta: propuesta,
+    propuesta: modelo,
     carga: carga,
     horario: horario,
     modalidad_grupo: modalidadGrupo,
     profesor: profesor,
     cip: cip,
+    paquete: paquete,
+    edificio: edificio,
+    salon: salon,
+    tipo: tipo,
+    semestre: semestre,
+    periodo: periodo,
+    ingles: ingles,
   });
 
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
-    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor}}).exec();
+    await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor},
+      clave: clave, grupo_apg: grupoApg, materia: materia, propuesta: modelo, carga: carga, horario: horario,
+      modalidad_grupo: modalidadGrupo, paquete: paquete, edificio: edificio, salon: salon, tipo: tipo, semestre: semestre,
+      periodo: periodo, ingles: ingles}).exec();
     res.status(200).json({message: 'Clase actualizada'});
   } else {
     await newClase.save();

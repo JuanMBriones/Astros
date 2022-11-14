@@ -29,11 +29,11 @@ import {MenuItem, InputLabel, FormControl, Select} from '@mui/material';
 // agregar o eliminar clase lo cambia a 'en proceso'
 // para enviar horario el estatus debe ser 'terminado'
 const estados = [
-  {id: 0, color: '#ffcc00', icon: <AccessTimeFilledIcon style={{color: '#ffcc00'}}/>, name: 'En proceso'},
-  {id: 1, color: '#218aff', icon: <MarkEmailReadIcon style={{color: '#218aff'}}/>, name: 'Enviado'},
-  {id: 2, color: '#9c27b0', icon: <CheckCircleIcon style={{color: '#9c27b0'}}/>, name: 'Terminado'},
-  {id: 3, color: '#99cc33', icon: <DoneAllIcon style={{color: '#99cc33'}}/>, name: 'Actualizado'},
-  {id: 4, color: '#000000', icon: <CircleIcon style={{color: '#000000'}}/>, name: 'Carga cero'},
+  {id: 0, color: '#000000', icon: <CircleIcon style={{color: '#000000'}}/>, name: 'Carga cero'},
+  {id: 1, color: '#ffcc00', icon: <AccessTimeFilledIcon style={{color: '#ffcc00'}}/>, name: 'En proceso'},
+  {id: 2, color: '#218aff', icon: <MarkEmailReadIcon style={{color: '#218aff'}}/>, name: 'Enviado'},
+  {id: 3, color: '#9c27b0', icon: <CheckCircleIcon style={{color: '#9c27b0'}}/>, name: 'Terminado'},
+  {id: 4, color: '#99cc33', icon: <DoneAllIcon style={{color: '#99cc33'}}/>, name: 'Actualizado'},
 ];
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({

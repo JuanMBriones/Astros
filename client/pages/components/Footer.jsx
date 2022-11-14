@@ -11,6 +11,7 @@ export default function Footer() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: '2rem',
       }}>
         <p>
           <strong>Sistema de Inscriptiones+</strong> by{' '}
