@@ -26,11 +26,70 @@ export default function uploadClase() {
       selector: (row) => row.TipoUf,
       sortable: true,
     },
+    {
+      name: 'Paquete',
+      selector: (row) => row.Paquete,
+      sortable: true,
+    },
+    {
+      name: 'Grupo APG',
+      selector: (row) => row.GrupoAPG,
+      sortable: true,
+    },
+    {
+      name: 'Salon',
+      selector: (row) => row.Salon,
+      sortable: true,
+    },
+    {
+      name: 'Aula',
+      selector: (row) => row.Aula,
+      sortable: true,
+    },
+    {
+      name: 'DeptoProf',
+      selector: (row) => row.DeptoProf,
+      sortable: true,
+    },
+    {
+      name: 'Nomina',
+      selector: (row) => row.Nomina,
+      sortable: true,
+    },
+    {
+      name: 'Nombre',
+      selector: (row) => row.Nombre,
+      sortable: true,
+    },
+    {
+      name: 'Correo',
+      selector: (row) => row.Correo,
+      sortable: true,
+    },
+    {
+      name: 'CIP',
+      selector: (row) => row.CIP,
+      sortable: true,
+    },
+    {
+      name: 'Modalidad',
+      selector: (row) => row.Modalidad,
+      sortable: true,
+    },
+    {
+      name: 'Carga Permitida',
+      selector: (row) => row.CargaPermitida,
+      sortable: true,
+    },
+    {
+      name: 'Horario',
+      selector: (row) => row.HorarioBloqueCompleto,
+      sortable: true,
+    },
   ];
 
   const [data, setData] = useState([]);
   const [dataTable, setDataTable] = useState([]);
-  // const [error, setError] = useState('');
   const [file, setFile] = useState('');
   let flag = 0;
 
@@ -69,18 +128,42 @@ export default function uploadClase() {
   useEffect(() => {
     async function postRecords() {
       data.forEach(async (clase) => {
+        const inglesValue = clase['Ingles'] ? true : false;
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/add`, {
           clave: clase['Clave'],
-          grupoApg: clase['Grupo APG'],
+          grupoApg: clase['GrupoAPG'],
           materia: clase['Materia'],
-          propuesta: 'Tec20',
+          modelo: clase['Modelo'],
           carga: clase['Carga'],
-          horario: '',
-          modalidadGrupo: clase['Modalidad Grupo'],
-          profesor: await professorGetId(clase['Nomina']),
-          cip: [],
+          horario: {
+            completo: clase['HorarioBloqueCompleto'],
+            semana1: clase['Semana1'],
+            semana2: clase['Semana2'],
+            semana3: clase['Semana3'],
+            semana4: clase['Semana4'],
+            semana5: clase['Semana5'],
+            semana6: clase['Semana6'],
+            semana7: clase['Semana7'],
+            semana8: clase['Semana8'],
+            semana9: clase['Semana9'],
+            semana10: clase['Semana10'],
+            semana11: clase['Semana11'],
+            semana12: clase['Semana12'],
+            semana13: clase['Semana13'],
+            semana14: clase['Semana14'],
+            semana15: clase['Semana15'],
+            semana16: clase['Semana16'],
+            semana17: clase['Semana17'],
+            semana18: clase['Semana18'],
+          },
+          modalidadGrupo: clase['ModalidadGrupo'],
+          profesor: await professorGetId(clase['Nomina']), // todo
+          cip: clase['CIP'],
+          edificio: clase['Edificio'],
+          salon: clase['Aula'],
+          ingles: inglesValue,
+          paquete: clase['Paquete'],
         });
-
         flag++;
         console.log(clase);
       });
@@ -98,16 +181,12 @@ export default function uploadClase() {
       const csv = Papa.parse(target.result, {header: true});
       const parsedData = csv?.data;
       // const columns = Object.keys(parsedData[0]);
-
-      console.log(parsedData);
-
       const slice = parsedData.slice(0, 2);
+
       setData(slice);
       setDataTable(parsedData);
     };
     reader.readAsText(file);
-
-    // console.log(await professorExists('L12345678'));
   };
 
   useEffect(() => {
@@ -213,19 +292,6 @@ export default function uploadClase() {
                 types={allowedExtensions}
               />
               <br />
-              <Button
-                variant="contained"
-                onClick={handleParse}
-                // center button
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                }}
-              >
-              Upload
-              </Button>
             </Grid>
           </Grid>
         )
