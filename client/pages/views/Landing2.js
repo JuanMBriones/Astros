@@ -5,52 +5,33 @@ import React from 'react';
 export default function Landing2() {
   return (
     <>
-      {/* Seccion 1 */}
-      <div className= 'bg-indigo-600 p-4 flex justify-between items-center'>
-        {/* TopPage derecho */}
-        <div className='flex items-center'>
-          <a href='#' className='inline-block p-2 text-indigo-200 hover:text-indigo-100 mr-2'>Sign Up</a>
-          <a href='#' className='inline-block p-2 text-indigo-200 hover:text-indigo-100 mr-2'>About</a>
-        </div>
-
-        {/* TopPage izquiero */}
+      <div className='mt-36'>
+        {/* Seccion 1 */}
         <div>
-          <a href='/../login' className='inline-block py-2 px-4 text-yellow-700 bg-yellow-400
-          hover:bg-yellow-300 hover:text-yellow-800 rounded transition ease-in duration-150'>Login</a>
+          <h2 className='mb-5 text-2xl md:text-4xl lg:text-5xl font-semibold'>Profesores</h2>
+          <div className='flex justify-center'>
+            <a href='./views/Profesores'>
+              <button className="mr-20 mt-2 w-48 h-48 rounded-full border border-black bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white text-2xl">Horario & Clases</button>
+            </a>
+            <a href='#'>
+              <button className="mt-2 w-48 h-48 rounded-full border border-black bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white text-2xl">Agregar Profesores</button>
+            </a>
+          </div>
         </div>
-      </div>
-      {/* Seccion 2 */}
-      <div className='md:flex justify-between py-20 px-10 bg-gradient-to-r from-indigo-500 to-blue-500 text-indigo-100'>
-        {/* MidPage izquierdo*/}
-        <div className='md:w-1/2 mb-10 md:mb-0'>
-          <h2 className='text-2xl md:text-4xl lg:text-5xl text-white mb-9'>Bienvenido al sistema de inscripciones para profesores</h2>
-          <p className='md:text-2xl lg:text-2xl mb-10'>Espíritu emprendedor con sentido humano</p>
-
-          <a href='#' className='inline-block py-3 px-5 text-lg bg-gray-400 text-gray-800 hover:bg-slate-300 rounded mr-5 transition ease-in duration-150'>Mas información</a>
-          <a href='/../login' className='inline-block py-3 px-14 text-lg bg-orange-400 text-orange-800 hover:bg-orange-300 rounded transition ease-in duration-150'>Login</a>
-        </div>
-        {/* MidPage derecho */}
-        <div className='md:w-1/2'>
-          <img src="https://tec.mx/sites/default/files/2017-06/colegiaturas.jpg" alt="Profesores" className="w-full rounded shadow-2xl"></img>
-        </div>
-      </div>
-      {/* Seccion 3 */}
-      <div>
-        <div>
-          <img src="" alt=""></img>
-          <p></p>
-        </div>
-        <div>
-          <img src="" alt=""></img>
-          <p></p>
-        </div>
-        <div>
-          <img src="" alt=""></img>
-          <p></p>
-        </div>
-        <div>
-          <img src="" alt=""></img>
-          <p></p>
+        {/* Seccion 2 */}
+        <div className='mt-10'>
+          <h2 className='mb-5 text-2xl md:text-4xl lg:text-5xl font-semibold'>Clases</h2>
+          <div className='flex justify-center'>
+            <a href='./views/ClasesProfesor'>
+              <button className="mr-20 w-48 h-48 rounded-full border border-black bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white text-2xl">Asignar Profesores</button>
+            </a>
+            <a href='#'>
+              <button className="mr-20 mt-10 w-48 h-48 rounded-full border border-black bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white text-2xl">Asignar Clases</button>
+            </a>
+            <a href='/../uploadFile'>
+              <button className="w-48 h-48 rounded-full border border-black bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white text-2xl">Agregar Clases por Archivo</button>
+            </a>
+          </div>
         </div>
       </div>
     </>
