@@ -16,4 +16,6 @@ router.post('/add', asyncHandler(claseCtr.addClass()));
 
 router.post('/remove', asyncHandler(claseCtr.removeClass()));
 
+router.post('/quejale', asyncHandler(claseCtr.parseSchedule()));
+
 module.exports = router;

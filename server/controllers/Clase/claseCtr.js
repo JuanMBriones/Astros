@@ -2,6 +2,7 @@ const Clase = require('../../models/clase');
 const Profesor = require('../../models/profesor');
 const HorarioB = require('../../models/horario_bloque');
 const HorarioS = require('../../models/horario_semana');
+const claseUtils = require('./ClaseHorarioUtils');
 const ctr = {};
 
 // get all clases
@@ -181,5 +182,16 @@ ctr.addClass = () => async (req, res, next) => {
   }
   // update profesor
 };
+
+ctr.parseSchedule = () => async (req, res, next) => {
+  const {
+    periodo,
+    horario,
+  } = req.body;
+  // 'LuMa 12:30-13:30 / JuVi 10:00-12:00'
+  await claseUtils.createDates(horario, periodo); // TODO: Cambiar el valor del parametro por el Periodo (PTM1, etc)
+  res.status(201).json({msg: 'Clase agregada'});
+};
+
 
 module.exports = ctr;
