@@ -60,8 +60,7 @@ ctr.removeClass = () => async (req, res, next) => {
   try {
     await Clase.findOneAndDelete({clave: clave, grupo_apg: grupo}).exec();
     res.status(200).json({msg: 'Clase eliminada'});
-  }
-  catch (err) {
+  } catch (err) {
     res.status(200).json({msg: 'Error al eliminar clase'});
   }
 };
@@ -121,6 +120,11 @@ ctr.addClass = () => async (req, res, next) => {
     res.status(201).json({msg: 'Clase agregada'});
   }
   // update profesor
+};
+
+ctr.deleteAll = () => async (req, res, next) => {
+  await Clase.deleteMany({}).exec();
+  res.status(200).json({msg: 'Clases eliminadas'});
 };
 
 module.exports = ctr;

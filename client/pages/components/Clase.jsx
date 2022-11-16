@@ -64,7 +64,11 @@ export default function Clase({personalizado, flagEdit}) {
   }, []);
 
   const submitForm = () => {
-    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !periodo || !horario) {
+    if (modelo == 'Tec 21' && !periodo) {
+      alert('Favor de llenar todos los campos');
+      return;
+    }
+    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !horario) {
       alert('Favor de llenar todos los campos');
       return;
     }
@@ -347,6 +351,7 @@ export default function Clase({personalizado, flagEdit}) {
           >
             {personalizado != null ? personalizado.boton : null}
           </Button>
+          {/* TODO: quitar de nueva clase */}
           <Button
             variant='contained'
             onClick={deleteForm}

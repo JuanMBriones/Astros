@@ -469,4 +469,9 @@ ctr.isAdmin = () => async (req, res, next) => {
   }
 };
 
+ctr.deleteAll = () => async (req, res, next) => {
+  await Profesor.deleteMany({}).exec();
+  res.status(200).json({message: 'Profesores eliminados'});
+};
+
 module.exports = ctr;
