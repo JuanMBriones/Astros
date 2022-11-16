@@ -74,7 +74,7 @@ export default function CustomizedTables() {
 
   useEffect(() => {
     const getClases = async () => {
-      const res = await axios.get('http://localhost:3001/api/clase/clases');
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/clases`);
       const rawClases = res.data.clases;
       const clases = [];
       rawClases.forEach((clase, index) => {
