@@ -32,6 +32,6 @@ router.get('/warnings', asyncHandler(profesorCtr.warnings()));
 
 router.put('/changeStatus', asyncHandler(profesorCtr.changeStatus()));
 
-router.post('/reset', asyncHandler(claseCtr.deleteAll()));
+router.delete('/reset', asyncHandler(profesorCtr.deleteAll()));
 
 module.exports = router;
