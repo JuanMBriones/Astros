@@ -41,14 +41,13 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 /**
  * @param {*} id
  * @param {*} nombreProfesor
- * @param {*} infoAdicional
  * @param {*} nomina
  * @param {*} asignada
  * @param {*} dbId
  * @return {Object} The render component
  */
-function createData(id, nombreProfesor, infoAdicional, nomina, asignada, dbId) {
-  return {id, nombreProfesor, infoAdicional, nomina, asignada, dbId};
+function createData(id, nombreProfesor, nomina, asignada, dbId) {
+  return {id, nombreProfesor, nomina, asignada, dbId};
 }
 
 /**
@@ -74,7 +73,7 @@ export default function AsignarClasesProfesor() {
       const rawProfesores = res.data.profesores;
       const profesores = [];
       rawProfesores.forEach((profesor, index) => {
-        profesores.push(createData(index, profesor.nombre, 'Info extra', profesor.nomina, profesor.asignada, profesor._id));
+        profesores.push(createData(index, profesor.nombre, profesor.nomina, profesor.asignada, profesor._id));
       });
       setAllProfesores(profesores);
       setProfesores(profesores);
@@ -178,7 +177,7 @@ export default function AsignarClasesProfesor() {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Nombre del profesor</StyledTableCell>
-                <StyledTableCell>Info extra</StyledTableCell>
+                <StyledTableCell>Nómina</StyledTableCell>
                 <StyledTableCell>Asignar Clase</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -191,7 +190,7 @@ export default function AsignarClasesProfesor() {
                   </StyledTableCell>
 
                   <StyledTableCell component="th" scope="row">
-                    {profesor.infoAdicional}
+                    {profesor.nomina}
                   </StyledTableCell>
 
                   <StyledTableCell component="th" scope="row">

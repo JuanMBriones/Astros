@@ -66,7 +66,7 @@ export default function Clase({personalizado, flagEdit}) {
   }, []);
 
   const submitForm = () => {
-    if (modelo == 'Tec 21' && !periodo) {
+    if (modelo == 'Tec 21' && (!periodo || periodo == 'Todo el semestre')) {
       alert('Favor de llenar todos los campos');
       return;
     }

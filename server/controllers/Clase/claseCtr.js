@@ -40,8 +40,9 @@ ctr.getClase = () => async (req, res, next) => {
 ctr.getProfesores = () => async (req, res, next) => {
   // expected: id clase
   const clase = req.query.clase;
-  const claseCip = await Clase.find({id: clase}).distinct('cip').exec();
-  const profesores = await Profesor.find({cip: {'$in': claseCip}}).exec();
+  // const claseCip = await Clase.find({id: clase}).distinct('cip').exec();
+  // const profesores = await Profesor.find({cip: {'$in': claseCip}}).exec();
+  const profesores = await Profesor.find({}).exec();
   profesores.forEach((profesor) => {
     if (profesor.clases.includes(clase)) {
       profesor.asignada = 1;
