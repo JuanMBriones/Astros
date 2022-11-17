@@ -7,6 +7,7 @@ import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import SaveIcon from '@mui/icons-material/Save';
 import {useRouter} from 'next/router';
+import {motion} from 'framer-motion';
 
 const allowedExtensions = ['csv'];
 
@@ -118,7 +119,7 @@ export default function uploadClase() {
   const [data, setData] = useState([]);
   const [dataTable, setDataTable] = useState([]);
   const [file, setFile] = useState('');
-  let flag = 0;
+  // let flag = 0;
 
   const handleFileChange = (file) => {
     setFile(file);
@@ -143,11 +144,11 @@ export default function uploadClase() {
     }
     if (await professor.profe === null) {
       console.log('professor does not exist');
-      if (flag === 0) {
+      /* if (flag === 0) {
         return '632e0c989d2a84fb1f9b2b5f';
       } else {
         return '634fb0298970745a8a5ae90d';
-      }
+      } */
     }
     return await professor.profe._id;
   };
@@ -200,7 +201,7 @@ export default function uploadClase() {
           paquete: clase['Paquete'],
           periodo: clase['Periodo'],
         });
-        flag++;
+        // flag++;
         console.log(clase);
       });
       console.log(data);
@@ -239,97 +240,129 @@ export default function uploadClase() {
       {
         file !== '' ? (
           <>
-            <Grid
-              container
-              direction="row"
-              justifyContent="center"
-              spacing={2}
-              sx={{
-                marginTop: '0.5rem',
+            <motion.div
+              initial={{
+                y: 25,
+                opacity: 0,
+              }}
+              animate={{
+                y: 0,
+                opacity: 1,
+              }}
+              transition={{
+                duration: 0.75,
+                ease: 'easeOut',
+                delay: 0.25,
               }}
             >
-              <Grid item xs={3}>
-                <Button
-                  variant='contained'
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor: '#252323',
-                  }}
-                  onClick={() => {
-                    setFile('');
-                  } }
-                >
+              <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                spacing={2}
+                sx={{
+                  marginTop: '0.5rem',
+                }}
+              >
+                <Grid item xs={3}>
+                  <Button
+                    variant='contained'
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor: '#252323',
+                    }}
+                    onClick={() => {
+                      setFile('');
+                    } }
+                  >
                   Cargar otro archivo 📁
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  variant='contained'
-                  startIcon={<SaveIcon />}
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor: '#252323',
-                  }}
-                  onClick={() => {
-                    setFile('');
-                  } }
-                >
+                  </Button>
+                </Grid>
+                <Grid item xs={3}>
+                  <Button
+                    variant='contained'
+                    startIcon={<SaveIcon />}
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor: '#252323',
+                    }}
+                    onClick={() => {
+                      setFile('');
+                    } }
+                  >
                 Guardar
-                </Button>
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid
-              container
-              // alignItems='center'
-              justifyContent='center'
-              style={{minHeight: '100vh'}}
-              spacing={2}
-              sx={{mt: 4}}
-            >
-              <Grid item xs={9} alignItems='center'>
-                <DataTable
-                  title="Clases a ser cargadas"
-                  columns={columns}
-                  data={dataTable}
-                  pagination
-                  sx={{
-                    display: 'flex',
-                    width: '100%',
-                  }} />
+              <Grid
+                container
+                // alignItems='center'
+                justifyContent='center'
+                style={{minHeight: '100vh'}}
+                spacing={2}
+                sx={{mt: 4}}
+              >
+                <Grid item xs={9} alignItems='center'>
+                  <DataTable
+                    title="Clases a ser cargadas"
+                    columns={columns}
+                    data={dataTable}
+                    pagination
+                    sx={{
+                      display: 'flex',
+                      width: '100%',
+                    }} />
+                </Grid>
               </Grid>
-            </Grid>
+            </motion.div>
           </>
         ) : (
-          <Grid
-            container
-            spacing={0}
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            style={{minHeight: '100vh'}}
+          <motion.div
+            initial={{
+              y: 25,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.75,
+              ease: 'easeOut',
+              delay: 0.25,
+            }}
           >
-
             <Grid
-              item
-              xs={3}
-              alignItems='center'
-              sx={{
-                mt: 4,
-              }}
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              style={{minHeight: '100vh'}}
             >
-              <h1
-                style={{textAlign: 'center'}}
+
+              <Grid
+                item
+                xs={3}
+                alignItems='center'
+                sx={{
+                  mt: 4,
+                }}
               >
+                <h1
+                  style={{textAlign: 'center'}}
+                >
               Upload a file
-              </h1>
-              <FileUploader
-                handleChange={handleFileChange}
-                name="file"
-                types={allowedExtensions}
-              />
-              <br />
+                </h1>
+                <FileUploader
+                  handleChange={handleFileChange}
+                  name="file"
+                  types={allowedExtensions}
+                />
+                <br />
+              </Grid>
             </Grid>
-          </Grid>
+          </motion.div>
         )
       }
     </>
