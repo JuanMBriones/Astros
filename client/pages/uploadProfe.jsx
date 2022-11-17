@@ -56,6 +56,14 @@ export default function uploadProfe() {
     setFile(file);
   };
 
+  // TODO: Anadir un alert para el profe que ya existe
+  /**
+   err : CustomError: Profesor already exists
+      at /Users/juanma/Developer/Projects/CSProject/Astros/server/controllers/Profesor/profesorCtr.js:390:11
+      at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+    statusCode: 400
+  }
+  */
   useEffect(() => {
     async function postRecords() {
       data.forEach(async (profesores) => {

@@ -25,17 +25,31 @@ app.get('/sendEmail', (req, res ) => {
   const mail = req.query.mail;
   emailNotificationHorario(mail);
   res.json({
-    msg: mail
+    msg: mail,
   });
 });
 
+app.post('/deleteAll', async (req, res) => {
+  const Clase = require('./models/clase');
+  const Profesor = require('./models/profesor');
+  const HorarioB = require('./models/horario_bloque');
+  const HorarioS = require('./models/horario_semana');
+
+  await Profesor.deleteMany({}).exec();
+  await Clase.deleteMany({}).exec();
+  await HorarioB.deleteMany({}).exec();
+  await HorarioS.deleteMany({}).exec();
+
+  res.status(200).json({
+    message: 'Base de datos eliminada :D',
+  });
+});
 
 app.use('/api', require('./controllers/Profesor'));
 
 app.use('/api/clase', require('./controllers/Clase'));
 
 app.use('/api', require('./controllers/auth'));
-
 
 // error handling middleware
 app.use(eHandler());
