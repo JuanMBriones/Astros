@@ -7,6 +7,7 @@ import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import SaveIcon from '@mui/icons-material/Save';
 import {useRouter} from 'next/router';
+import {motion} from 'framer-motion';
 
 const allowedExtensions = ['csv'];
 
@@ -145,108 +146,140 @@ export default function uploadProfe() {
       {
         file !== '' ? (
           <>
-            <Grid
-              container
-              direction="row"
-              justifyContent="center"
-              spacing={2}
-              sx={{
-                marginTop: '0.5rem',
+            <motion.div
+              initial={{
+                y: 25,
+                opacity: 0,
+              }}
+              animate={{
+                y: 0,
+                opacity: 1,
+              }}
+              transition={{
+                duration: 0.75,
+                ease: 'easeOut',
+                delay: 0.25,
               }}
             >
-              <Grid item xs={3}>
-                <Button
-                  variant='contained'
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor: '#252323',
-                  }}
-                  onClick={() => {
-                    setFile('');
-                  } }
-                >
-                  Cargar otro archivo 📁
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  variant='contained'
-                  startIcon={<SaveIcon />}
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor: '#252323',
-                  }}
-                  onClick={() => {
-                    setFile('');
-                  } }
-                >
-                Guardar
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              justifyContent='center'
-              style={{minHeight: '100vh'}}
-              spacing={2}
-              sx={{mt: 4}}
-            >
-              <Grid item xs={9} alignItems='center'>
-                <DataTable
-                  title="Profesores a ser cargados"
-                  columns={columns}
-                  data={dataTable}
-                  pagination
-                  sx={{
-                    display: 'flex',
-                    width: '100%',
-                  }} />
-              </Grid>
-            </Grid>
-          </>
-        ) : (
-          <Grid
-            container
-            spacing={0}
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            style={{minHeight: '100vh'}}
-          >
-
-            <Grid
-              item
-              xs={3}
-              alignItems='center'
-              sx={{
-                mt: 4,
-              }}
-            >
-              <h1
-                style={{textAlign: 'center'}}
-              >
-              Upload a file
-              </h1>
-              <FileUploader
-                handleChange={handleFileChange}
-                name="file"
-                types={allowedExtensions}
-              />
-              <br />
-              <Button
-                variant="contained"
-                onClick={handleParse}
+              <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                spacing={2}
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
+                  marginTop: '0.5rem',
                 }}
               >
+                <Grid item xs={3}>
+                  <Button
+                    variant='contained'
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor: '#252323',
+                    }}
+                    onClick={() => {
+                      setFile('');
+                    } }
+                  >
+                  Cargar otro archivo 📁
+                  </Button>
+                </Grid>
+                <Grid item xs={3}>
+                  <Button
+                    variant='contained'
+                    startIcon={<SaveIcon />}
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor: '#252323',
+                    }}
+                    onClick={() => {
+                      setFile('');
+                    } }
+                  >
+                Guardar
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                justifyContent='center'
+                style={{minHeight: '100vh'}}
+                spacing={2}
+                sx={{mt: 4}}
+              >
+                <Grid item xs={9} alignItems='center'>
+                  <DataTable
+                    title="Profesores a ser cargados"
+                    columns={columns}
+                    data={dataTable}
+                    pagination
+                    sx={{
+                      display: 'flex',
+                      width: '100%',
+                    }} />
+                </Grid>
+              </Grid>
+            </motion.div>
+          </>
+        ) : (
+          <motion.div
+            initial={{
+              y: 25,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.75,
+              ease: 'easeOut',
+              delay: 0.25,
+            }}
+          >
+            <Grid
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              style={{minHeight: '100vh'}}
+            >
+
+              <Grid
+                item
+                xs={3}
+                alignItems='center'
+                sx={{
+                  mt: 4,
+                }}
+              >
+                <h1
+                  style={{textAlign: 'center'}}
+                >
+              Upload a file
+                </h1>
+                <FileUploader
+                  handleChange={handleFileChange}
+                  name="file"
+                  types={allowedExtensions}
+                />
+                <br />
+                <Button
+                  variant="contained"
+                  onClick={handleParse}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
               Upload
-              </Button>
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
+          </motion.div>
         )
       }
     </>

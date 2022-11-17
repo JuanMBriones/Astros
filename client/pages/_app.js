@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import {useRouter} from 'next/router';
 import AnimatedNav from './components/NavBar/AnimatedNav';
 import axios from 'axios';
+import {AnimatePresence, motion} from 'framer-motion';
 
 /**
    * getSanitizedPath - Sanitizes the path to remove the query params
@@ -25,9 +26,11 @@ function getSanitizedPath(urlPath) {
  */
 function MyApp({Component, pageProps}) {
   const [hideNavbarFooter, setHideNavbarFooter] = useState(false);
+  const router = useRouter();
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userNomina, setUserNomina] = useState('L00000000');
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
   const backMenu = {
     'color': 'orange',
@@ -52,8 +55,8 @@ function MyApp({Component, pageProps}) {
       'color': 'orange',
     },
     'Mi Horario': {
-      'condition': 1,
-      'url': '/views/Horario?professor=LXD',
+      'condition': getSanitizedPath(useRouter().asPath) !== '/login',
+      'url': `/views/Horario?professor=${userNomina}`,
       'color': 'orange',
     },
     'Profesores': {
@@ -106,6 +109,11 @@ function MyApp({Component, pageProps}) {
     },
     'Logout': {
       'condition': getSanitizedPath(useRouter().asPath) !== '/login',
+      'onClick': async () => {
+        await localStorage.removeItem('professor');
+        await localStorage.removeItem('loginData');
+        await router.push('/login');
+      },
       'url': '/login',
       'color': 'red',
     },
@@ -115,6 +123,7 @@ function MyApp({Component, pageProps}) {
     const profInfo = localStorage.getItem('professor');
     if (profInfo) {
       const profInfoJson = JSON.parse(profInfo);
+      setUserNomina(profInfoJson.profe.nomina);
       axios({
         method: 'post',
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/isAdmin/`,
@@ -130,13 +139,14 @@ function MyApp({Component, pageProps}) {
           console.log('POWER🤑');
 
           console.log(navInfo);
-          const newNavInfo = navInfo;
-          newNavInfo['Clases']['condition'] = isAdmin? 1 : 0;
-          newNavInfo['Profesores']['condition'] = isAdmin? 1 : 0;
-          newNavInfo['Mi Horario']['condition'] = isAdmin? 0 : 1;
+          const newNavInfo = defaultNavInfo;
+          newNavInfo['Clases']['condition'] = 1;
+          newNavInfo['Profesores']['condition'] = 1;
+          newNavInfo['Mi Horario']['condition'] = 1;
+          newNavInfo['Mi Horario']['url'] = `/views/Horario?professor=${profInfoJson.profe.nomina}`;
 
           console.log(newNavInfo);
-          // setNavInfo(newNavInfo);
+          setNavInfo(newNavInfo);
         } else {
           setIsAdmin(false);
         }
@@ -159,32 +169,60 @@ function MyApp({Component, pageProps}) {
     if (rawUrl === '/') {
       setHideNavbarFooter(true);
     }
-    setUser('test');
+    // setUser('test');
 
     if (localStorage.getItem('loginData')) {
       setUser(localStorage.getItem('loginData'));
+
+      console.log('user', user);
+      console.log(localStorage.getItem('loginData'));
     }
 
-    defaultNavInfo = Object.fromEntries(Object.entries(defaultNavInfo).filter(([key, value]) => value.condition == 1)); // for filtering
-    console.log(defaultNavInfo);
-    setNavInfo(defaultNavInfo);
+    let auxNav = defaultNavInfo;
+    auxNav = Object.fromEntries(Object.entries(defaultNavInfo).filter(([key, value]) => value.condition == 1)); // for filtering
+
+    setNavInfo(auxNav);
   }, []);
 
   return (
     <>
-      {
-        !hideNavbarFooter ? (
-          <AnimatedNav barLabels={barLabels} navInfo={navInfo} />
-        ) : null
-      }
-      <Component
-        {...pageProps}
-      />
-      {
-        !hideNavbarFooter ? (
-          <Footer />
-        ) : null
-      }
+      <AnimatePresence exitBeforeEnter>
+        <motion.div
+          key={router.route}
+          initial='initialState'
+          transition={{duration: 0.7}}
+          animate='animateState'
+          exit='exitState'
+          variants={{
+            initialState: {
+              opacity: 0,
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
+            },
+            animateState: {
+              opacity: 1,
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
+            },
+            exitState: {
+              opacity: 0,
+              clipPath: 'polygon(50% 0, 50% 0, 50% 100%, 50% 100%)',
+            },
+          }}
+        >
+          {
+            !hideNavbarFooter ? (
+              <AnimatedNav barLabels={barLabels} navInfo={navInfo} />
+            ) : null
+          }
+          <Component
+            {...pageProps}
+          />
+          {
+            !hideNavbarFooter ? (
+              <Footer />
+            ) : null
+          }
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 }
