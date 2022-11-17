@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const emailNotificationHorario = require('./controllers/emailProfesor');
 const express = require('express');
 const app = express();
 const dbConfig = require('./dbConfig');
@@ -17,6 +18,30 @@ dbConfig();
 app.get('/', (req, res) => {
   res.json({
     msg: 'Hello from Astros index route!',
+  });
+});
+
+app.get('/sendEmail', (req, res ) => {
+  const mail = req.query.mail;
+  emailNotificationHorario(mail);
+  res.json({
+    msg: mail,
+  });
+});
+
+app.post('/deleteAll', async (req, res) => {
+  const Clase = require('./models/clase');
+  const Profesor = require('./models/profesor');
+  const HorarioB = require('./models/horario_bloque');
+  const HorarioS = require('./models/horario_semana');
+
+  await Profesor.deleteMany({}).exec();
+  await Clase.deleteMany({}).exec();
+  await HorarioB.deleteMany({}).exec();
+  await HorarioS.deleteMany({}).exec();
+
+  res.status(200).json({
+    message: 'Base de datos eliminada :D',
   });
 });
 

@@ -206,11 +206,11 @@ export default function MuiNavbar() {
             onClick={handleClose2}
           >
             <Link
-              href='/views/ClasesProfesor'
+              href='/views/Clases'
               underline='none'
               color='inherit'
             >
-              Asignar Profesores
+              Asignar Clases
             </Link>
 
           </MenuItem>

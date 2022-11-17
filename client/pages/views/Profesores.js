@@ -11,7 +11,32 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import {Button} from '@mui/material';
 import axios from 'axios';
+import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
 import removeDiacritics from '../components/removeDiacritics';
+import IconButton from '@mui/material/IconButton';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'; // en proceso
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead'; // enviado
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // terminado
+import DoneAllIcon from '@mui/icons-material/DoneAll'; // actualizado
+import CircleIcon from '@mui/icons-material/Circle'; // carga cero
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Chip from '@mui/material/Chip';
+import {MenuItem, InputLabel, FormControl, Select} from '@mui/material';
+
+// agregar o eliminar clase lo cambia a 'en proceso'
+// para enviar horario el estatus debe ser 'terminado'
+const estados = [
+  {id: 0, color: '#000000', icon: <CircleIcon style={{color: '#000000'}}/>, name: 'Carga cero'},
+  {id: 1, color: '#ffcc00', icon: <AccessTimeFilledIcon style={{color: '#ffcc00'}}/>, name: 'En proceso'},
+  {id: 2, color: '#218aff', icon: <MarkEmailReadIcon style={{color: '#218aff'}}/>, name: 'Enviado'},
+  {id: 3, color: '#9c27b0', icon: <CheckCircleIcon style={{color: '#9c27b0'}}/>, name: 'Terminado'},
+  {id: 4, color: '#99cc33', icon: <DoneAllIcon style={{color: '#99cc33'}}/>, name: 'Actualizado'},
+];
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,10 +63,11 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
  * @param {*} nombreProfesor
  * @param {*} nomina
  * @param {*} dbId
+ * @param {*} estatus
  * @return {Object} The render component
  */
-function createData(id, nombreProfesor, nomina, dbId) {
-  return {id, nombreProfesor, nomina, dbId};
+function createData(id, nombreProfesor, nomina, dbId, estatus) {
+  return {id, nombreProfesor, nomina, dbId, estatus};
 }
 
 /**
@@ -51,26 +77,66 @@ function createData(id, nombreProfesor, nomina, dbId) {
 export default function Profesores() {
   const [allProfesores, setallProfesores] = useState([]);
   const [profesores, setProfesores] = useState([]);
+  const [currentEstatus, setCurrentEstatus] = useState(4);
+  const [selectedProfesor, setSelectedProfesor] = useState('');
+  const [numPages, setNumPages] = useState(10);
+  // eslint-disable-next-line no-unused-vars
+  const [pageSize, setPageSize] = useState(7);
+  const [pivot, setPivot] = useState(0);
+
   const saveProfesor = (selectedProfesor) => {
     localStorage.setItem('selectedProfesor', JSON.stringify(selectedProfesor));
   };
 
+  const changeStatus = (estado) => {
+    selectedProfesor.estatus = estado;
+    setCurrentEstatus(estado);
+    const cambiarEstatus = async () => {
+      await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/changeStatus?profesor=` + selectedProfesor.dbId + '&estatus=' + estado);
+    };
+    cambiarEstatus();
+  };
+
   useEffect(() => {
     const getProfesores = async () => {
-      const res = await axios.get('http://localhost:3001/api/profesores');
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profesores`);
       const rawProfesores = res.data.allProfessors;
       const profesores = [];
       rawProfesores.forEach((profesor, index) => {
         const nombre = profesor.nombre;
         const nomina = profesor.nomina;
         const dbId = profesor._id;
-        profesores.push(createData(index, nombre, nomina, dbId));
+        const estatus = profesor.estatus;
+        profesores.push(createData(index, nombre, nomina, dbId, estatus));
       });
       setallProfesores(profesores);
-      setProfesores(profesores);
+      setProfesores(profesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+      setNumPages(Math.ceil(profesores.length / pageSize));
     };
     getProfesores();
   }, []);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (profesor) => {
+    setCurrentEstatus(profesor.estatus);
+    setSelectedProfesor(profesor);
+    setOpen(true);
+  };
+
+  const handleChange = (event, value) => {
+    console.log(value);
+    setPivot(value - 1);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    const newProfesores = allProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1);
+    setProfesores(newProfesores);
+  }, [pivot]);
 
   return (
     <div>
@@ -89,15 +155,35 @@ export default function Profesores() {
                   return profesor;
                 }
               });
-              setProfesores(filteredProfesores);
+              setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+
+              setNumPages(Math.ceil(filteredProfesores.length / pageSize));
             }}
           />
-          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
+
+          <FormControl variant="outlined" sx={{width: '15%', marginLeft: 3}}>
+            <InputLabel id="demo-simple-select-label">Estado</InputLabel>
+            <Select labelId="demo-simple-select-label" label='Estado' onChange={(e) => {
+              const filteredProfesores = allProfesores.filter((profesor) => {
+                if (e.target.value == 5 || profesor.estatus == e.target.value) {
+                  return profesor;
+                }
+              });
+              setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+              setNumPages(Math.ceil(filteredProfesores.length / pageSize));
+            }}>
+              <MenuItem value={'5'}><b>Todos</b></MenuItem>
+              {estados.map((estado) => {
+                return <MenuItem key={estado.id} value={estado.id}>{estado.name}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
         </Box>
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
+                <StyledTableCell>Estado</StyledTableCell>
                 <StyledTableCell>Nombre del profesor</StyledTableCell>
                 <StyledTableCell>Nómina</StyledTableCell>
                 <StyledTableCell>Horario</StyledTableCell>
@@ -107,6 +193,56 @@ export default function Profesores() {
             <TableBody>
               {profesores.map((profesor) => (
                 <StyledTableRow key={profesor.id}>
+                  <StyledTableCell component="th" scope="row">
+                    <div>
+                      <IconButton style={{color: estados[profesor.estatus].color}} onClick={() => {
+                        handleClickOpen(profesor);
+                      }}>
+                        <Chip icon={estados[profesor.estatus].icon} variant="outlined"/>
+                      </IconButton>
+                      <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                      >
+                        <DialogTitle id="alert-dialog-title">
+                          {'Seleccione el nuevo estado del profesor ' + selectedProfesor.nombreProfesor + ':'}
+                        </DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="alert-dialog-description">
+                            <center>
+                              <TableContainer component={Paper} sx={{maxWidth: '90%', marginBottom: 3}}>
+                                <Table aria-label="customized table">
+                                  <TableHead>
+                                    <TableRow>
+                                      <StyledTableCell>Estado</StyledTableCell>
+                                      <StyledTableCell>Nombre del estado</StyledTableCell>
+                                      <StyledTableCell>  </StyledTableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {estados.map((estado) => (
+                                      <StyledTableRow key={estado.id}>
+                                        <StyledTableCell component="th" scope="row"> {estado.icon} </StyledTableCell>
+                                        <StyledTableCell component="th" scope="row"> {estado.name} </StyledTableCell>
+                                        <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
+                                          changeStatus(estado.id);
+                                        }}>{currentEstatus == estado.id ? 'Actual':'Cambiar'}</Button> </StyledTableCell>
+                                      </StyledTableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            </center>
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleClose}>Cerrar</Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
+                  </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {profesor.nombreProfesor}
                   </StyledTableCell>
@@ -124,6 +260,17 @@ export default function Profesores() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Stack
+          spacing={2}
+          alignItems={'center'}
+        >
+          <Pagination
+            count={numPages}
+            onChange={handleChange}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
       </center>
     </div>
 

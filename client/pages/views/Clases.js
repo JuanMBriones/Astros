@@ -9,9 +9,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
 import {Button, Link, Popover, Typography} from '@mui/material';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import {useRouter} from 'next/router';
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,30 +43,13 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
  * @param {*} clave
  * @param {*} detalles
  * @param {*} dbId
+ * @param {*} grupo
  * @return {Object} The render component
  */
-function createData(id, nombreClase, clave, detalles, dbId) {
-  return {id, nombreClase, clave, detalles, dbId};
+function createData(id, nombreClase, clave, detalles, dbId, grupo) {
+  return {id, nombreClase, clave, detalles, dbId, grupo};
 }
 
-/* const rawRows = [
-  createData(1, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(2, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(3, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(4, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(5, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(6, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(7, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(8, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(9, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(10, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(11, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(12, 'Calidad', 'TC4567', 'Detalles de la clase'),
-  createData(13, 'Introduccion a la vida profesional', 'TI3035', 'Detalles de la clase'),
-  createData(14, 'Proyecto Integrador', 'TC7890', 'Detalles de la clase'),
-  createData(15, 'Compiladores', 'TC1234', 'Detalles de la clase'),
-  createData(16, 'Calidad', 'TC4567', 'Detalles de la clase'),
-]; */
 
 /**
  * @param {Object} props to be passed to the component
@@ -72,9 +60,35 @@ export default function CustomizedTables() {
   const [materias, setMaterias] = useState([]);
   const [anchor, setAnchor] = useState(null);
   const [popMsg, setPopMsg] = useState([]);
+  const [numPages, setNumPages] = useState(10);
+  // eslint-disable-next-line no-unused-vars
+  const [pageSize, setPageSize] = useState(7);
+  const [pivot, setPivot] = useState(0);
+
   const saveMateria = (selectedMateria) => {
     localStorage.setItem('selectedMateria', JSON.stringify(selectedMateria));
   };
+
+  const handleChange = (event, value) => {
+    console.log(value);
+    setPivot(value - 1);
+  };
+
+  const deleteForm = (id) => {
+    axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/remove/`,
+      {
+        id: id,
+      },
+    ).then((res) => {
+      if (res.status == 200 || res.status == 201) {
+        alert('Clase eliminada');
+        window.location.reload();
+      } else {
+        alert('Error al eliminar la información');
+      }
+    });
+  };
+
 
   const handleClick = (msgs, event) => {
     setPopMsg(msgs);
@@ -87,9 +101,35 @@ export default function CustomizedTables() {
 
   const open = Boolean(anchor);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    const profInfo = localStorage.getItem('professor');
+    console.log(profInfo);
+    if (profInfo) {
+      const profInfoJson = JSON.parse(profInfo);
+      console.log(profInfoJson);
+
+      if (profInfoJson && profInfoJson.profe) {
+        if (profInfoJson.profe.rol && profInfoJson.profe.rol === 'admin') {
+          console.log('🎉');
+        } else {
+          router.push('/login');
+          // window.location.href = '/login';
+          console.log('not logged in');
+        }
+      } else {
+        router.push('/login'); // window.location.href = '/login';
+        // next router send to login
+
+        console.log('not logged in');
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const getClases = async () => {
-      const res = await axios.get('http://localhost:3001/api/clase/clases');
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/clases`);
       const rawClases = res.data.clases;
       const clases = [];
       rawClases.forEach((clase, index) => {
@@ -97,16 +137,25 @@ export default function CustomizedTables() {
         const clave = clase.clave;
         const dbid = clase._id;
         const horario = [clase.horario[0]];
+        const grupo = clase.grupo_apg;
         for (let i = 1; i < clase.horario.length; i++) {
           horario.push(clase.horario[i][0] + ': ' + clase.horario[i][1] + ' - ' + clase.horario[i][2]);
         }
-        clases.push(createData(index, nombre, clave, horario, dbid));
+        clases.push(createData(index, nombre, clave, horario, dbid, grupo));
       });
+
+      // TODO: Paginar
       setAllMaterias(clases);
-      setMaterias(clases);
+      setNumPages(Math.ceil(clases.length / pageSize));
+      setMaterias(clases.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
     };
     getClases();
   }, []);
+
+  useEffect(() => {
+    const newMaterias = allMaterias.slice(pivot * pageSize, pivot * pageSize + pageSize - 1);
+    setMaterias(newMaterias);
+  }, [pivot]);
 
   return (
     <div>
@@ -125,27 +174,40 @@ export default function CustomizedTables() {
                   return materia;
                 }
               });
-              setMaterias(filteredMaterias);
+
+              // TODO: Paginar aqui
+              setMaterias(filteredMaterias.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+              setNumPages(Math.ceil(filteredMaterias.length / pageSize));
             }}
           />
-          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
         </Box>
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
+                <StyledTableCell>  </StyledTableCell>
                 <StyledTableCell>Nombre de la clase</StyledTableCell>
+                <StyledTableCell>Grupo</StyledTableCell>
                 <StyledTableCell>Clave</StyledTableCell>
                 <StyledTableCell>Detalles</StyledTableCell>
+                <StyledTableCell>   </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {materias.map((materia) => (
                 <StyledTableRow key={materia.id}>
                   <StyledTableCell component="th" scope="row">
-                    <Link onClick={() => saveMateria(materia)} href='./AsignarClasesProfesor'>
+                    <IconButton onClick={() => saveMateria(materia)} href='../editClase'>
+                      <EditIcon style={{color: '#335687'}} />
+                    </IconButton>
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    <Link onClick={() => saveMateria(materia)} href='./ClasesAsignar'>
                       {materia.nombreClase}
                     </Link>
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {materia.grupo}
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {materia.clave}
@@ -163,11 +225,27 @@ export default function CustomizedTables() {
                     </Popover>
                     {/* {materia.detalles} */}
                   </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    <Button variant="outlined" color="error" onClick={() => {
+                      deleteForm(materia.dbId);
+                    }}>Eliminar</Button>
+                  </StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Stack
+          spacing={2}
+          alignItems={'center'}
+        >
+          <Pagination
+            count={numPages}
+            onChange={handleChange}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
       </center>
     </div>
 

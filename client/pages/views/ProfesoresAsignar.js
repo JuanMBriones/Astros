@@ -44,26 +44,12 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
  * @param {*} detalles
  * @param {*} asignada
  * @param {*} dbId
+ * @param {*} clave
  * @return {Object} The render component
  */
-function createData(id, nombreClase, detalles, asignada, dbId) {
-  return {id, nombreClase, detalles, asignada, dbId};
+function createData(id, nombreClase, detalles, asignada, dbId, clave) {
+  return {id, nombreClase, detalles, asignada, dbId, clave};
 }
-
-/* const rows = [
-  createData(1, 'Israel Lobo', 'Info extra'),
-  createData(2, 'Rita de la Torre', 'Info extra'),
-  createData(3, 'Manuel Gonzalez', 'Info extra'),
-  createData(4, 'Laura de la Fuente', 'Info extra'),
-  createData(5, 'Israel Lobo', 'Info extra'),
-  createData(6, 'Rita de la Torre', 'Info extra'),
-  createData(7, 'Manuel Gonzalez', 'Info extra'),
-  createData(8, 'Laura de la Fuente', 'Info extra'),
-  createData(9, 'Israel Lobo', 'Info extra'),
-  createData(10, 'Rita de la Torre', 'Info extra'),
-  createData(11, 'Manuel Gonzalez', 'Info extra'),
-  createData(12, 'Laura de la Fuente', 'Info extra'),
-]; */
 
 /**
  * @return {Object} The render component
@@ -97,7 +83,7 @@ export default function AsignarClasesProfesor() {
     setProfesor(prof);
 
     const getMaterias = async () => {
-      const res = await axios.get('http://localhost:3001/api/profMaterias?profesor=' + prof.dbId);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profMaterias?profesor=` + prof.dbId);
       const rawMaterias = res.data.clases;
       const materias = [];
       rawMaterias.forEach((materia, index) => {
@@ -105,7 +91,7 @@ export default function AsignarClasesProfesor() {
         for (let i = 1; i < materia.horario.length; i++) {
           horario.push(materia.horario[i][0] + ': ' + materia.horario[i][1] + ' - ' + materia.horario[i][2]);
         }
-        materias.push(createData(index, materia.materia, horario, materia.asignada, materia._id));
+        materias.push(createData(index, materia.materia, horario, materia.asignada, materia._id, materia.clave));
       });
       setallMaterias(materias);
       setMaterias(materias);
@@ -124,7 +110,7 @@ export default function AsignarClasesProfesor() {
     if (!mat.asignada) {
       const getWarnings = async () => {
         try {
-          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + mat.dbId + '&profesor=' + profesor.dbId);
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/assignProf?idMateria=` + mat.dbId + '&profesor=' + profesor.dbId);
           msgs = res.data.message;
           if (msgs.length > 0) {
             msgs.unshift('Advertencias:');
@@ -159,7 +145,7 @@ export default function AsignarClasesProfesor() {
     if (selectedMateria.asignada) {
       const unassign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/unassignProf?idMateria=' + selectedMateria.dbId + '&profesor=' + profesor.nomina);
+          const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/unassignProf?idMateria=` + selectedMateria.dbId + '&profesor=' + profesor.nomina);
           console.log(res);
         } catch (err) {
           console.log(err);
@@ -170,7 +156,7 @@ export default function AsignarClasesProfesor() {
     } else if (!errorFlag) {
       const assign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/assignConfirm?idMateria=' + selectedMateria.dbId + '&profesor=' + profesor.dbId + '&carga=' + newCarga);
+          const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/assignConfirm?idMateria=` + selectedMateria.dbId + '&profesor=' + profesor.dbId + '&carga=' + newCarga);
           console.log(res);
         } catch (err) {
           console.log(err);
@@ -185,7 +171,7 @@ export default function AsignarClasesProfesor() {
   return (
     <div>
       <center>
-        <h1>Asignar Clases a {profesor.nombreProfesor}</h1>
+        <h1>Asignar Clases a {profesor.nombreProfesor + ' - ' + profesor.nomina}</h1>
         <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
           <TextField
             id="outlined-basic"
@@ -202,13 +188,13 @@ export default function AsignarClasesProfesor() {
               setMaterias(filteredMaterias);
             }}
           />
-          <Button variant="outlined" sx={{width: '15%', marginLeft: 3}}>Buscar</Button>
         </Box>
 
         <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
+                <StyledTableCell>Clave</StyledTableCell>
                 <StyledTableCell>Nombre de la materia</StyledTableCell>
                 <StyledTableCell>Detalles</StyledTableCell>
                 <StyledTableCell>Asignar Clase</StyledTableCell>
@@ -218,6 +204,10 @@ export default function AsignarClasesProfesor() {
             <TableBody>
               {materias.map((materia) => (
                 <StyledTableRow key={materia.id}>
+                  <StyledTableCell component="th" scope="row">
+                    {materia.clave}
+                  </StyledTableCell>
+
                   <StyledTableCell component="th" scope="row">
                     {materia.nombreClase}
                   </StyledTableCell>
