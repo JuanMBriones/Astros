@@ -39,6 +39,8 @@ export default function Clase({personalizado, flagEdit}) {
   const [horario, setHorario] = React.useState(null);
   const [ingles, setIngles] = React.useState(false);
 
+  const mapPeriodo = ['Todo el semestre', 'PMT1', 'PMT2', 'PMT3', 'PMT4', 'PMT5', 'PMT6'];
+
   useEffect(() => {
     if (flagEdit) {
       const materia = JSON.parse(localStorage.getItem('selectedMateria'));
@@ -55,7 +57,7 @@ export default function Clase({personalizado, flagEdit}) {
         setModelo(res.data.clase.propuesta ? res.data.clase.propuesta:'');
         setCarga(res.data.clase.carga ? res.data.clase.carga:'');
         setSemestre(res.data.clase.semestre ? res.data.clase.semestre:'');
-        setPeriodo(res.data.clase.periodo ? res.data.clase.periodo:'');
+        setPeriodo(res.data.clase.periodo ? mapPeriodo[res.data.clase.periodo]:'');
         setHorario(res.data.clase.horario ? res.data.clase.horario:null);
         setIngles(res.data.clase.ingles ? res.data.clase.ingles:false);
       };
@@ -66,6 +68,11 @@ export default function Clase({personalizado, flagEdit}) {
   const submitForm = () => {
     if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !periodo || !horario) {
       alert('Favor de llenar todos los campos');
+      return;
+    }
+
+    if (/^(((Lu|Ma|Mi|Ju|Vi)+ ([01]?[0-9]|2[0-3]):[0-5][0-9]-([01]?[0-9]|2[0-3]):[0-5][0-9])(\/)*)+$/.test(horario) == false) {
+      alert('Formato de horario incorrecto');
       return;
     }
 
@@ -93,32 +100,6 @@ export default function Clase({personalizado, flagEdit}) {
         window.location.href = '../views/Clases';
       } else {
         alert('Error al guardar la información');
-      }
-    });
-  };
-
-  const deleteForm = () => {
-    if (!clave || !grupo) {
-      alert('Favor de llenar el campo de clave');
-      return;
-    }
-
-    axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/remove/`,
-      {
-        clave: clave,
-        grupo: grupo,
-      },
-    ).then((res) => {
-      console.log(res);
-      console.log(clave);
-      console.log(grupo);
-      if (res.status == 200 || res.status == 201) {
-        if (personalizado) {
-          alert(personalizado.mensaje);
-        }
-        // window.location.href = '../views/Clases';
-      } else {
-        alert('Error al eliminar la información');
       }
     });
   };
@@ -286,7 +267,7 @@ export default function Clase({personalizado, flagEdit}) {
               }}
             />
             <FormGroup>
-              <FormControlLabel control={<Checkbox value={ingles} onChange={(e) => setIngles(e.target.checked)}/>} label={
+              <FormControlLabel control={<Checkbox value={ingles} onChange={(e) => setIngles(e.target.checked)} checked={ingles}/>} label={
                 <Typography variant="body1" gutterBottom>
                     Inglés
                 </Typography> }/>
@@ -346,11 +327,6 @@ export default function Clase({personalizado, flagEdit}) {
             onClick={submitForm}
           >
             {personalizado != null ? personalizado.boton : null}
-          </Button>
-          <Button
-            variant='contained'
-            onClick={deleteForm}
-          >
           </Button>
         </Box>
       </Box>

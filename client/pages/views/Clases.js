@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import {Link, Popover, Typography} from '@mui/material';
+import {Button, Link, Popover, Typography} from '@mui/material';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
 import EditIcon from '@mui/icons-material/Edit';
@@ -60,6 +60,22 @@ export default function CustomizedTables() {
   const saveMateria = (selectedMateria) => {
     localStorage.setItem('selectedMateria', JSON.stringify(selectedMateria));
   };
+
+  const deleteForm = (id) => {
+    axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/remove/`,
+      {
+        id: id,
+      },
+    ).then((res) => {
+      if (res.status == 200 || res.status == 201) {
+        alert('Clase eliminada');
+        window.location.reload();
+      } else {
+        alert('Error al eliminar la información');
+      }
+    });
+  };
+
 
   const handleClick = (msgs, event) => {
     setPopMsg(msgs);
@@ -124,6 +140,7 @@ export default function CustomizedTables() {
                 <StyledTableCell>Grupo</StyledTableCell>
                 <StyledTableCell>Clave</StyledTableCell>
                 <StyledTableCell>Detalles</StyledTableCell>
+                <StyledTableCell>   </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -157,6 +174,11 @@ export default function CustomizedTables() {
                       ))}
                     </Popover>
                     {/* {materia.detalles} */}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    <Button variant="outlined" color="error" onClick={() => {
+                      deleteForm(materia.dbId);
+                    }}>Eliminar</Button>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
