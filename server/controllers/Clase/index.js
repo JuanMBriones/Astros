@@ -14,4 +14,10 @@ router.get('/profesores', asyncHandler(claseCtr.getProfesores()));
 
 router.post('/add', asyncHandler(claseCtr.addClass()));
 
+router.post('/remove', asyncHandler(claseCtr.removeClass()));
+
+router.post('/quejale', asyncHandler(claseCtr.parseSchedule()));
+
+router.delete('/reset', asyncHandler(claseCtr.deleteAll()));
+
 module.exports = router;

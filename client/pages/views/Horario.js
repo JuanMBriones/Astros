@@ -75,7 +75,7 @@ export default function Horario() {
   useEffect(() => {
     const nomina = JSON.parse(localStorage.getItem('selectedProfesor')).nomina;
     const getMateriasProfe = async () => {
-      const res = await axios.get('http://localhost:3001/api/horarioProf?profesor=' + nomina);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/horarioProf?profesor=` + nomina);
       const materias = res.data.horarioProf;
       setAllMaterias(materias);
       setMaterias(materias);
@@ -84,14 +84,14 @@ export default function Horario() {
     getMateriasProfe();
 
     const getWarnings = async () => {
-      const res = await axios.get('http://localhost:3001/api/warnings?profesor=' + nomina);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/warnings?profesor=` + nomina);
       const warningArr = res.data.message.length < 1 ? ['No hay advertencias.'] : res.data.message;
       setWarning(warningArr);
     };
     getWarnings();
 
     const getDataProfe = async () => {
-      const res = await axios.get('http://localhost:3001/api/profe?profesor=' + nomina);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profe?profesor=` + nomina);
       setProfessor(res.data.profe);
     };
     getDataProfe();

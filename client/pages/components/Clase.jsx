@@ -39,6 +39,8 @@ export default function Clase({personalizado, flagEdit}) {
   const [horario, setHorario] = React.useState(null);
   const [ingles, setIngles] = React.useState(false);
 
+  const mapPeriodo = ['Todo el semestre', 'PMT1', 'PMT2', 'PMT3', 'PMT4', 'PMT5', 'PMT6'];
+
   useEffect(() => {
     if (flagEdit) {
       const materia = JSON.parse(localStorage.getItem('selectedMateria'));
@@ -55,7 +57,7 @@ export default function Clase({personalizado, flagEdit}) {
         setModelo(res.data.clase.propuesta ? res.data.clase.propuesta:'');
         setCarga(res.data.clase.carga ? res.data.clase.carga:'');
         setSemestre(res.data.clase.semestre ? res.data.clase.semestre:'');
-        setPeriodo(res.data.clase.periodo ? res.data.clase.periodo:'');
+        setPeriodo(res.data.clase.periodo ? mapPeriodo[res.data.clase.periodo]:'');
         setHorario(res.data.clase.horario ? res.data.clase.horario:null);
         setIngles(res.data.clase.ingles ? res.data.clase.ingles:false);
       };
@@ -64,8 +66,17 @@ export default function Clase({personalizado, flagEdit}) {
   }, []);
 
   const submitForm = () => {
-    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !periodo || !horario) {
+    if (modelo == 'Tec 21' && (!periodo || periodo == 'Todo el semestre')) {
       alert('Favor de llenar todos los campos');
+      return;
+    }
+    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !horario) {
+      alert('Favor de llenar todos los campos');
+      return;
+    }
+
+    if (/^(((Lu|Ma|Mi|Ju|Vi)+ ([01]?[0-9]|2[0-3]):[0-5][0-9]-([01]?[0-9]|2[0-3]):[0-5][0-9])(\/)*)+$/.test(horario) == false) {
+      alert('Formato de horario incorrecto');
       return;
     }
 
@@ -111,7 +122,7 @@ export default function Clase({personalizado, flagEdit}) {
         marginTop: '50px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
-          {personalizado.titulo}
+          {(personalizado != null) ? personalizado.titulo : null}
         </Typography>
         <Box
           component='form'
@@ -260,7 +271,7 @@ export default function Clase({personalizado, flagEdit}) {
               }}
             />
             <FormGroup>
-              <FormControlLabel control={<Checkbox value={ingles} onChange={(e) => setIngles(e.target.checked)}/>} label={
+              <FormControlLabel control={<Checkbox value={ingles} onChange={(e) => setIngles(e.target.checked)} checked={ingles}/>} label={
                 <Typography variant="body1" gutterBottom>
                     Inglés
                 </Typography> }/>
@@ -319,7 +330,7 @@ export default function Clase({personalizado, flagEdit}) {
             color='success'
             onClick={submitForm}
           >
-            {personalizado.boton}
+            {personalizado != null ? personalizado.boton : null}
           </Button>
         </Box>
       </Box>
