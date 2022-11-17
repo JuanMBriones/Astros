@@ -16,6 +16,7 @@ import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
+import {useRouter} from 'next/router';
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -99,6 +100,32 @@ export default function CustomizedTables() {
   };
 
   const open = Boolean(anchor);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const profInfo = localStorage.getItem('professor');
+    console.log(profInfo);
+    if (profInfo) {
+      const profInfoJson = JSON.parse(profInfo);
+      console.log(profInfoJson);
+
+      if (profInfoJson && profInfoJson.profe) {
+        if (profInfoJson.profe.rol && profInfoJson.profe.rol === 'admin') {
+          console.log('🎉');
+        } else {
+          router.push('/login');
+          // window.location.href = '/login';
+          console.log('not logged in');
+        }
+      } else {
+        router.push('/login'); // window.location.href = '/login';
+        // next router send to login
+
+        console.log('not logged in');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const getClases = async () => {

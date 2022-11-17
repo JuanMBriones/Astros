@@ -4,6 +4,7 @@ import {Button} from '@mui/material';
 import Box from '@mui/material/Box';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
+import {useRouter} from 'next/router';
 import {ViewState} from '@devexpress/dx-react-scheduler';
 import {Scheduler, WeekView, Appointments, Resources} from '@devexpress/dx-react-scheduler-material-ui';
 
@@ -32,6 +33,7 @@ const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
 const periodos = ['Todo el semestre', 'Periodo 1', 'Periodo 2', 'Periodo 3', 'Semana tec 1', 'Semana tec 2', 'Semana 18'];
 
 export default function Horario() {
+  const {asPath} = useRouter();
   const [profesor, setProfessor] = useState([]);
   const [materiasBloque, setMaterias] = useState([]);
   const [materiasTodas, setAllMaterias] = useState([]);
@@ -72,10 +74,28 @@ export default function Horario() {
     setAppointments(mats);
   }, [materiasBloque]);
 
+  /**
+   * getSanitizedPath - Sanitizes the path to remove the query params
+   * @param {*} urlPath
+   * @return {String}
+   */
+  function getSanitizedPath(urlPath) {
+    return urlPath.split('?')[1].split('=')[1];
+  }
+
+
   useEffect(() => {
-    const nomina = JSON.parse(localStorage.getItem('selectedProfesor')).nomina;
+    console.log('asPath', asPath);
+    // const path = getSanitizedPath(useRouter().asPath);
+    let nomina = null;
+    if (asPath.includes('?')) {
+      nomina = getSanitizedPath(asPath);
+    } else {
+      nomina = JSON.parse(localStorage.getItem('selectedProfesor')).nomina;
+    }
     const getMateriasProfe = async () => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/horarioProf?profesor=` + nomina);
+      console.log('res', res);
       const materias = res.data.horarioProf;
       setAllMaterias(materias);
       setMaterias(materias);
@@ -103,73 +123,78 @@ export default function Horario() {
     axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendEmail?mail=${profesor.correo}`);
   }
   return (
-    <div>
-      <center>
-        <h1>{profesor.nombre + ' - ' + profesor.nomina}</h1>
-        <h2>Horario {periodos[periodo]}</h2>
-        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materiasTodas)}>Periodo 1</Button>
-        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materiasTodas)}>Semana Tec 1</Button>
-        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(2, materiasTodas)}>Periodo 2</Button>
-        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(5, materiasTodas)}>Semana Tec 2</Button>
-        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(3, materiasTodas)}>Periodo 3</Button>
-        <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(6, materiasTodas)}>Semana 18</Button>
-      </center>
+    <>
+      {
+        profesor ? (
+          <div>
+            <>
+              <center>
+                <h1>{profesor.nombre + ' - ' + profesor.nomina}</h1>
+                <h2>Horario {periodos[periodo]}</h2>
+                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materiasTodas)}>Periodo 1</Button>
+                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materiasTodas)}>Semana Tec 1</Button>
+                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(2, materiasTodas)}>Periodo 2</Button>
+                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(5, materiasTodas)}>Semana Tec 2</Button>
+                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(3, materiasTodas)}>Periodo 3</Button>
+                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(6, materiasTodas)}>Semana 18</Button>
+              </center><div style={{width: '100%'}}>
+                <Box sx={{display: 'flex', justifyContent: 'space-evenly', p: 1, m: 1, bgcolor: 'background.paper', borderRadius: 1}}>
+                  <div style={{padding: 20}}>
+                    <h2 style={{color: 'red'}}>WARNINGS</h2>
+                    <ul>
+                      {warnings.map((warning) => (
+                        <li key={warning}>{warning}</li>
+                      ))}
+                    </ul>
 
-      <div style={{width: '100%'}}>
-        <Box sx={{display: 'flex', justifyContent: 'space-evenly', p: 1, m: 1, bgcolor: 'background.paper', borderRadius: 1}}>
-          <div style={{padding: 20}}>
-            <h2 style={{color: 'red'}}>WARNINGS</h2>
-            <ul>
-              {warnings.map((warning) => (
-                <li key={warning}>{warning}</li>
-              ))}
-            </ul>
-
-            {materiasBloque.map((materia, index) => (
-              <Box sx={{display: 'flex', flexDirection: 'column'}}>
-                <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
-                  <h2 style={{color: instances[index].color, backgroundColor: instances[index].color}}>_____  </h2>
-                  <h2 style={{paddingLeft: 5}}>{materia.materia}</h2>
-                </Box>
-                {materia.horario.map((horarioBloque) => (
-                  <p style={{marginBlockStart: 0}}>
+                    {materiasBloque.map((materia, index) => (
+                      <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                        <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
+                          <h2 style={{color: instances[index].color, backgroundColor: instances[index].color}}>_____  </h2>
+                          <h2 style={{paddingLeft: 5}}>{materia.materia}</h2>
+                        </Box>
+                        {materia.horario.map((horarioBloque) => (
+                          <p style={{marginBlockStart: 0}}>
                     Se imparte en: {periodos[horarioBloque.bloque]}
-                    {horarioBloque.horario_semana.map((dia) => (
-                      <div>Día: {dias[dia.dia-1]} {dia.hora_inicio.match(/[0-9]{2}:[0-9]{2}/)[0]} a {dia.hora_fin.match(/[0-9]{2}:[0-9]{2}/)[0]}</div>
+                            {horarioBloque.horario_semana.map((dia) => (
+                              <div>Día: {dias[dia.dia - 1]} {dia.hora_inicio.match(/[0-9]{2}:[0-9]{2}/)[0]} a {dia.hora_fin.match(/[0-9]{2}:[0-9]{2}/)[0]}</div>
+                            ))}
+                          </p>
+                        ))}
+                      </Box>
                     ))}
-                  </p>
-                ))}
-              </Box>
-            ))
-            }
+                  </div>
+
+                  <div style={{padding: 20, width: '60%'}}>
+                    <Scheduler
+                      data={appointments}
+                      locale="es-ES"
+                    >
+                      <ViewState
+                        defaultCurrentDate="2022-08-01" />
+                      <WeekView
+                        startDayHour={7}
+                        endDayHour={22}
+                        excludedDays={[0, 6]} />
+                      <Appointments />
+                      <Resources
+                        data={resources} />
+                    </Scheduler>
+                  </div>
+
+                </Box>
+                <center style={{padding: 10}}>
+                  <Button variant="contained" style={{padding: 10}} endIcon={<SendIcon />} onClick={handleMail}> Enviar Horario</Button>
+                </center>
+              </div></>
+
           </div>
-
-          <div style={{padding: 20, width: '60%'}}>
-            <Scheduler
-              data={appointments}
-              locale="es-ES"
-            >
-              <ViewState
-                defaultCurrentDate="2022-08-01"
-              />
-              <WeekView
-                startDayHour={7}
-                endDayHour={22}
-                excludedDays={[0, 6]}
-              />
-              <Appointments />
-              <Resources
-                data={resources}
-              />
-            </Scheduler>
+        ) : (
+          <div>
+            loading...
           </div>
-
-        </Box>
-        <center style={{padding: 10}}>
-          <Button variant="contained" style={{padding: 10}} endIcon={<SendIcon />} onClick={handleMail}> Enviar Horario</Button>
-        </center>
-      </div>
-
-    </div>
+        )
+      }
+    </>
   );
 }

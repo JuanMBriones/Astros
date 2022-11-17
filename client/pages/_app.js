@@ -9,6 +9,15 @@ import AnimatedNav from './components/NavBar/AnimatedNav';
 import axios from 'axios';
 
 /**
+   * getSanitizedPath - Sanitizes the path to remove the query params
+   * @param {*} urlPath
+   * @return {String}
+   */
+function getSanitizedPath(urlPath) {
+  return urlPath.split('#')[0].split('?')[0];
+}
+
+/**
  *
  * @param {Object} Component to be rendered
  * @param {Object} pageProps to be passed to the component
@@ -18,12 +27,78 @@ function MyApp({Component, pageProps}) {
   const [hideNavbarFooter, setHideNavbarFooter] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
-  // const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
   const backMenu = {
     'color': 'orange',
     'onClick': () => {
       setNavInfo(defaultNavInfo);
+    },
+  };
+
+  let defaultNavInfo = {
+    'Home': {
+      'condition': 1,
+      'url': '/',
+      'color': 'orange',
+    },
+    'Mi Horario': {
+      'condition': 1,
+      'url': '/views/Horario?professor=LXD',
+      'color': 'orange',
+    },
+    'Profesores': {
+      'condition': isAdmin,
+      'color': 'orange',
+      'children': {
+        'Horario & clases': {
+          'url': '/views/Profesores',
+          'color': 'orange',
+        },
+        'Agregar profesores': {
+          'condition': isAdmin? 1 : 0,
+          'url': '/newProfe',
+          'color': 'orange',
+        },
+        'Agregar profesores con archivo': {
+          'condition': isAdmin? 1 : 0,
+          'url': '/uploadProfe',
+          'color': 'orange',
+        },
+        '←': backMenu,
+      },
+      'onClick': () => {
+        setNavInfo(defaultNavInfo.Profesores.children);
+      },
+    },
+    'Clases': {
+      'condition': isAdmin,
+      'children': {
+        'Asignar Clases': {
+          'url': '/views/Clases',
+          'color': 'orange',
+        },
+        'Agregar Clases': {
+          'url': '/newClase',
+          'color': 'orange',
+        },
+        'Agregar Clases por Archivo': {
+          'url': '/uploadClase',
+          'color': 'orange',
+        },
+        '←': backMenu,
+      },
+      'onClick': () => {
+        console.log(defaultNavInfo);
+
+        setNavInfo(defaultNavInfo.Clases.children);
+      },
+      'color': 'blue',
+    },
+    'Logout': {
+      'condition': getSanitizedPath(useRouter().asPath) !== '/login',
+      'url': '/login',
+      'color': 'red',
     },
   };
 
@@ -43,6 +118,16 @@ function MyApp({Component, pageProps}) {
       }).then((res) => {
         if (res.data.message === 'Profesor is admin') {
           setIsAdmin(true);
+          console.log('POWER🤑');
+
+          console.log(navInfo);
+          const newNavInfo = navInfo;
+          newNavInfo['Clases']['condition'] = isAdmin? 1 : 0;
+          newNavInfo['Profesores']['condition'] = isAdmin? 1 : 0;
+          newNavInfo['Mi Horario']['condition'] = isAdmin? 0 : 1;
+
+          console.log(newNavInfo);
+          // setNavInfo(newNavInfo);
         } else {
           setIsAdmin(false);
         }
@@ -54,73 +139,15 @@ function MyApp({Component, pageProps}) {
     }
   }, []);
 
-  // TODO: Refactor this to use a context
-  let defaultNavInfo = {
-    'Home': {
-      'condition': 1,
-      'url': '/',
-      'color': 'orange',
-    },
-    'Profesores': {
-      'condition': 1,
-      'color': 'orange',
-      'children': {
-        'Horario & clases': {
-          'url': '/views/Profesores',
-          'color': 'orange',
-        },
-        'Agregar profesores': {
-          'url': '/newProfe',
-          'color': 'orange',
-        },
-        'Agregar profesores con archivo': {
-          'url': '/uploadProfe',
-          'color': 'orange',
-        },
-        '←': backMenu,
-      },
-      'onClick': () => {
-        setNavInfo(defaultNavInfo.Profesores.children);
-      },
-    },
-    'Clases': {
-      'condition': 1,
-      'children': {
-        'Asignar Clases': {
-          'url': '/views/Clases',
-          'color': 'orange',
-        },
-        'Agregar Clases': {
-          'url': '/newClase',
-          'color': 'orange',
-        },
-        'Agregar Clases por Archivo': {
-          'url': '/uploadClase',
-          'color': 'orange',
-        },
-        '←': backMenu,
-      },
-      'onClick': () => {
-        setNavInfo(defaultNavInfo.Clases.children);
-      },
-      'color': 'blue',
-    },
-    'Logout': {
-      'condition': 1,
-      'url': '/login',
-      'color': 'red',
-    },
-  };
-
   const [navInfo, setNavInfo] = useState(defaultNavInfo);
 
   const {asPath} = useRouter();
   // barLabels.forEach((key, i) => (navInfo[key] = colors[i]));
 
   useEffect(() => {
-    const rawUrl = asPath.split('#')[0].split('?');
-    console.log(rawUrl[0]);
-    if (rawUrl[0] === '/') {
+    console.log('asPath', asPath);
+    const rawUrl = getSanitizedPath(asPath);
+    if (rawUrl === '/') {
       setHideNavbarFooter(true);
     }
     setUser('test');
