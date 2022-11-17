@@ -39,8 +39,16 @@ function MyApp({Component, pageProps}) {
     },
   };
 
+  useEffect(() => {
+    const newNavInfo = defaultNavInfo;
 
-  const defaultNavInfo = {
+    newNavInfo.Profesores.condition = isAdmin ? 1 : 0;
+    newNavInfo.Clases.condition = isAdmin ? 1 : 0;
+
+    setNavInfo(newNavInfo);
+  }, [isAdmin]);
+
+  let defaultNavInfo = {
     'Home': {
       'condition': 1,
       'url': '/',
