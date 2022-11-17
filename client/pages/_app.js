@@ -39,7 +39,7 @@ function MyApp({Component, pageProps}) {
   };
 
 
-  let defaultNavInfo = {
+  const defaultNavInfo = {
     'Home': {
       'condition': 1,
       'url': '/',
