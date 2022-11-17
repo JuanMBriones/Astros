@@ -43,12 +43,12 @@ function MyApp({Component, pageProps}) {
       'color': 'orange',
     },
     'Mi Horario': {
-      'condition': isAdmin? 0 : 1,
+      'condition': 1,
       'url': '/views/Horario',
       'color': 'orange',
     },
     'Profesores': {
-      'condition': isAdmin? 1 : 0,
+      'condition': isAdmin,
       'color': 'orange',
       'children': {
         'Horario & clases': {
@@ -72,7 +72,7 @@ function MyApp({Component, pageProps}) {
       },
     },
     'Clases': {
-      'condition': isAdmin? 1 : 0,
+      'condition': isAdmin,
       'children': {
         'Asignar Clases': {
           'url': '/views/Clases',
@@ -89,6 +89,8 @@ function MyApp({Component, pageProps}) {
         '←': backMenu,
       },
       'onClick': () => {
+        console.log(defaultNavInfo);
+
         setNavInfo(defaultNavInfo.Clases.children);
       },
       'color': 'blue',
@@ -125,7 +127,7 @@ function MyApp({Component, pageProps}) {
           newNavInfo['Mi Horario']['condition'] = isAdmin? 0 : 1;
 
           console.log(newNavInfo);
-          setNavInfo(newNavInfo);
+          // setNavInfo(newNavInfo);
         } else {
           setIsAdmin(false);
         }
