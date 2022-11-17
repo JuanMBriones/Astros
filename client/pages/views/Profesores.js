@@ -85,14 +85,14 @@ export default function Profesores() {
     selectedProfesor.estatus = estado;
     setCurrentEstatus(estado);
     const cambiarEstatus = async () => {
-      await axios.put('http://localhost:3001/api/changeStatus?profesor=' + selectedProfesor.dbId + '&estatus=' + estado);
+      await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/changeStatus?profesor=` + selectedProfesor.dbId + '&estatus=' + estado);
     };
     cambiarEstatus();
   };
 
   useEffect(() => {
     const getProfesores = async () => {
-      const res = await axios.get('http://localhost:3001/api/profesores');
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profesores`);
       const rawProfesores = res.data.allProfessors;
       const profesores = [];
       rawProfesores.forEach((profesor, index) => {

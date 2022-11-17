@@ -41,14 +41,13 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 /**
  * @param {*} id
  * @param {*} nombreProfesor
- * @param {*} infoAdicional
  * @param {*} nomina
  * @param {*} asignada
  * @param {*} dbId
  * @return {Object} The render component
  */
-function createData(id, nombreProfesor, infoAdicional, nomina, asignada, dbId) {
-  return {id, nombreProfesor, infoAdicional, nomina, asignada, dbId};
+function createData(id, nombreProfesor, nomina, asignada, dbId) {
+  return {id, nombreProfesor, nomina, asignada, dbId};
 }
 
 /**
@@ -70,11 +69,11 @@ export default function AsignarClasesProfesor() {
     setMateria(mat);
 
     const getProfesores = async () => {
-      const res = await axios.get('http://localhost:3001/api/clase/profesores?clase=' + mat.dbId);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/clase/profesores?clase=` + mat.dbId);
       const rawProfesores = res.data.profesores;
       const profesores = [];
       rawProfesores.forEach((profesor, index) => {
-        profesores.push(createData(index, profesor.nombre, 'Info extra', profesor.nomina, profesor.asignada, profesor._id));
+        profesores.push(createData(index, profesor.nombre, profesor.nomina, profesor.asignada, profesor._id));
       });
       setAllProfesores(profesores);
       setProfesores(profesores);
@@ -93,7 +92,7 @@ export default function AsignarClasesProfesor() {
     if (!prof.asignada) {
       const getWarnings = async () => {
         try {
-          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + materia.dbId + '&profesor=' + prof.dbId);
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/assignProf?idMateria=` + materia.dbId + '&profesor=' + prof.dbId);
           msgs = res.data.message;
           if (msgs.length > 0) {
             msgs.unshift('Advertencias:');
@@ -128,7 +127,7 @@ export default function AsignarClasesProfesor() {
     if (selectedProfesor.asignada) {
       const unassign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/unassignProf?idMateria=' + materia.dbId + '&profesor=' + selectedProfesor.nomina);
+          const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/unassignProf?idMateria=` + materia.dbId + '&profesor=' + selectedProfesor.nomina);
           console.log(res);
         } catch (err) {
           console.log(err);
@@ -139,7 +138,7 @@ export default function AsignarClasesProfesor() {
     } else if (!errorFlag) {
       const assign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/assignConfirm?idMateria=' + materia.dbId + '&profesor=' + selectedProfesor.dbId + '&carga=' + newCarga);
+          const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/assignConfirm?idMateria=` + materia.dbId + '&profesor=' + selectedProfesor.dbId + '&carga=' + newCarga);
           console.log(res);
         } catch (err) {
           console.log(err);
@@ -178,7 +177,7 @@ export default function AsignarClasesProfesor() {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Nombre del profesor</StyledTableCell>
-                <StyledTableCell>Info extra</StyledTableCell>
+                <StyledTableCell>Nómina</StyledTableCell>
                 <StyledTableCell>Asignar Clase</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -191,7 +190,7 @@ export default function AsignarClasesProfesor() {
                   </StyledTableCell>
 
                   <StyledTableCell component="th" scope="row">
-                    {profesor.infoAdicional}
+                    {profesor.nomina}
                   </StyledTableCell>
 
                   <StyledTableCell component="th" scope="row">
