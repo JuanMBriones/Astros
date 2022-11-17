@@ -44,7 +44,7 @@ function MyApp({Component, pageProps}) {
     },
     'Mi Horario': {
       'condition': 1,
-      'url': '/views/Horario',
+      'url': '/views/Horario?professor=LXD',
       'color': 'orange',
     },
     'Profesores': {

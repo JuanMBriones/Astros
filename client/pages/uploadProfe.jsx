@@ -6,10 +6,37 @@ import {FileUploader} from 'react-drag-drop-files';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import SaveIcon from '@mui/icons-material/Save';
+import {useRouter} from 'next/router';
 
 const allowedExtensions = ['csv'];
 
 export default function uploadProfe() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const profInfo = localStorage.getItem('professor');
+    console.log(profInfo);
+    if (profInfo) {
+      const profInfoJson = JSON.parse(profInfo);
+      console.log(profInfoJson);
+
+      if (profInfoJson && profInfoJson.profe) {
+        if (profInfoJson.profe.rol && profInfoJson.profe.rol === 'admin') {
+          console.log('🎉');
+        } else {
+          router.push('/login');
+          // window.location.href = '/login';
+          console.log('not logged in');
+        }
+      } else {
+        router.push('/login'); // window.location.href = '/login';
+        // next router send to login
+
+        console.log('not logged in');
+      }
+    }
+  }, []);
+
   const columns = [
     {
       name: 'Nomina',
