@@ -118,7 +118,7 @@ export default function uploadClase() {
   const [data, setData] = useState([]);
   const [dataTable, setDataTable] = useState([]);
   const [file, setFile] = useState('');
-  let flag = 0;
+  // let flag = 0;
 
   const handleFileChange = (file) => {
     setFile(file);
@@ -143,11 +143,11 @@ export default function uploadClase() {
     }
     if (await professor.profe === null) {
       console.log('professor does not exist');
-      if (flag === 0) {
+      /* if (flag === 0) {
         return '632e0c989d2a84fb1f9b2b5f';
       } else {
         return '634fb0298970745a8a5ae90d';
-      }
+      } */
     }
     return await professor.profe._id;
   };
@@ -200,7 +200,7 @@ export default function uploadClase() {
           paquete: clase['Paquete'],
           periodo: clase['Periodo'],
         });
-        flag++;
+        // flag++;
         console.log(clase);
       });
       console.log(data);
