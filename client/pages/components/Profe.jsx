@@ -92,7 +92,11 @@ export default function Profe({personalizado, flagEdit}) {
         marginTop: '50px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
-          {personalizado.titulo}
+          {
+            (personalizado && personalizado.titulo) ?
+              personalizado.titulo :
+              null
+          }
         </Typography>
         <Box
           component='form'
