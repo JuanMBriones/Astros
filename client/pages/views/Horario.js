@@ -126,7 +126,7 @@ export default function Horario() {
   return (
     <>
       <motion.div
-        animate={{x: 100}}
+        animate={{x: 20}}
         transition={{ease: 'easeOut', duration: 2}}
       >
         {
