@@ -21,7 +21,7 @@ import {motion} from 'framer-motion';
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#001489',
+    backgroundColor: '#495057',
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -186,7 +186,7 @@ export default function CustomizedTables() {
               }}
             />
           </Box>
-          <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
+          <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3, borderRadius: '15px'}}>
             <Table aria-label="customized table">
               <TableHead>
                 <TableRow>

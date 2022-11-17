@@ -41,7 +41,7 @@ const estados = [
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#001489',
+    backgroundColor: '#495057',
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -158,7 +158,7 @@ export default function Profesores() {
       <div>
         <center>
           <h1> Profesores </h1>
-          <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
+          <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start', borderRadius: 10}}>
             <TextField
               id="outlined-basic"
               fullWidth
@@ -195,9 +195,9 @@ export default function Profesores() {
               </Select>
             </FormControl>
           </Box>
-          <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
+          <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3, borderRadius: '15px'}}>
             <Table aria-label="customized table">
-              <TableHead>
+              <TableHead sx={{color: 'black'}}>
                 <TableRow>
                   <StyledTableCell>Estado</StyledTableCell>
                   <StyledTableCell>Nombre del profesor</StyledTableCell>
