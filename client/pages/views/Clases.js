@@ -68,7 +68,7 @@ export default function CustomizedTables() {
       },
     ).then((res) => {
       if (res.status == 200 || res.status == 201) {
-        alert("Clase eliminada");
+        alert('Clase eliminada');
         window.location.reload();
       } else {
         alert('Error al eliminar la información');
@@ -176,7 +176,9 @@ export default function CustomizedTables() {
                     {/* {materia.detalles} */}
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
-                    <Button variant="outlined" color="error" onClick={() => {deleteForm(materia.dbId)}}>Eliminar</Button>
+                    <Button variant="outlined" color="error" onClick={() => {
+                      deleteForm(materia.dbId);
+                    }}>Eliminar</Button>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

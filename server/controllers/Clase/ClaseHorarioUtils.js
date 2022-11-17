@@ -73,7 +73,7 @@ async function createDates(dateExpression, bloque) {
   for (let i=0; i<bloques.length; i++) {
     horario = horario.concat(await parseDate(bloques[i].split(' '), bloque));
   }
-  
+
   const newHorarioBloque = new HorarioB({
     bloque: bloque,
     horario_semana: horario,

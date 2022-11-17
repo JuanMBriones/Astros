@@ -59,8 +59,7 @@ ctr.removeClass = () => async (req, res, next) => {
   try {
     await Clase.findOneAndDelete({_id: id}).exec();
     res.status(200).json({msg: 'Clase eliminada'});
-  }
-  catch (err) {
+  } catch (err) {
     console.logg(err);
     res.status(200).json({msg: 'Error al eliminar clase'});
   }
@@ -110,19 +109,18 @@ ctr.addClass = () => async (req, res, next) => {
     periodo,
     ingles);
 
-    if(cip){
-      cip.split('/');
-    }
+  if (cip) {
+    cip.split('/');
+  }
 
-    const mapPeriodos = {'PMT1': 1, 'PMT2': 2, 'PMT3': 3, 'PMT4': 4, 'PMT5': 5, 'PMT6': 6};
-    if(modelo == 'Tec 20'){
-      periodo = 0;
-    }
-    else{
-      periodo = mapPeriodos[periodo];
-    }
+  const mapPeriodos = {'PMT1': 1, 'PMT2': 2, 'PMT3': 3, 'PMT4': 4, 'PMT5': 5, 'PMT6': 6};
+  if (modelo == 'Tec 20') {
+    periodo = 0;
+  } else {
+    periodo = mapPeriodos[periodo];
+  }
 
-    const horarioDB = await claseUtils.createDates(horario, periodo);
+  const horarioDB = await claseUtils.createDates(horario, periodo);
 
   // create new record
   const newClase = new Clase({
@@ -145,7 +143,7 @@ ctr.addClass = () => async (req, res, next) => {
   });
 
 
-/*
+  /*
   const clase = await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec();
 
   if (clase) {
@@ -201,10 +199,10 @@ ctr.parseSchedule = () => async (req, res, next) => {
   } = req.body;
   // 'LuMa 12:30-13:30 / JuVi 10:00-12:00'
   const horarioDB = await claseUtils.createDates(horario, periodo); // TODO: Cambiar el valor del parametro por el Periodo (PTM1, etc)
-  console.log("adiosss");
+  console.log('adiosss');
   console.log(horarioDB);
   const newClase = new Clase({
-    clave: "TC1463",
+    clave: 'TC1463',
     horario: horarioDB,
   });
   await newClase.save();
