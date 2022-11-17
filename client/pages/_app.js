@@ -38,9 +38,6 @@ function MyApp({Component, pageProps}) {
     },
   };
 
-  useEffect(() => {
-
-  }, [user]);
 
   let defaultNavInfo = {
     'Home': {
@@ -49,7 +46,7 @@ function MyApp({Component, pageProps}) {
       'color': 'orange',
     },
     'Mi Horario': {
-      'condition': 1,
+      'condition': getSanitizedPath(useRouter().asPath) !== '/login',
       'url': `/views/Horario?professor=${userNomina}`,
       'color': 'orange',
     },
@@ -133,13 +130,14 @@ function MyApp({Component, pageProps}) {
           console.log('POWER🤑');
 
           console.log(navInfo);
-          const newNavInfo = navInfo;
-          newNavInfo['Clases']['condition'] = isAdmin? 1 : 0;
-          newNavInfo['Profesores']['condition'] = isAdmin? 1 : 0;
-          newNavInfo['Mi Horario']['condition'] = isAdmin? 0 : 1;
+          const newNavInfo = defaultNavInfo;
+          newNavInfo['Clases']['condition'] = 1;
+          newNavInfo['Profesores']['condition'] = 1;
+          newNavInfo['Mi Horario']['condition'] = 1;
+          newNavInfo['Mi Horario']['url'] = `/views/Horario?professor=${profInfoJson.profe.nomina}`;
 
           console.log(newNavInfo);
-          // setNavInfo(newNavInfo);
+          setNavInfo(newNavInfo);
         } else {
           setIsAdmin(false);
         }
@@ -171,9 +169,10 @@ function MyApp({Component, pageProps}) {
       console.log(localStorage.getItem('loginData'));
     }
 
-    defaultNavInfo = Object.fromEntries(Object.entries(defaultNavInfo).filter(([key, value]) => value.condition == 1)); // for filtering
-    console.log(defaultNavInfo);
-    setNavInfo(defaultNavInfo);
+    let auxNav = defaultNavInfo;
+    auxNav = Object.fromEntries(Object.entries(defaultNavInfo).filter(([key, value]) => value.condition == 1)); // for filtering
+
+    setNavInfo(auxNav);
   }, []);
 
   return (
