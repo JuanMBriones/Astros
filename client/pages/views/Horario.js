@@ -97,12 +97,10 @@ export default function Horario() {
     getDataProfe();
   }, []);
 
-
-  function handleMail(){
+  function handleMail() {
     console.log(profesor);
     console.log(profesor.correo);
     axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendEmail?mail=${profesor.correo}`);
-
   }
   return (
     <div>
