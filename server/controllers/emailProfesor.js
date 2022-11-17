@@ -17,7 +17,7 @@ const fechasPeriodosAcademicos = 'Planes anteriores(17 semanas): Febrero 13 – 
  * @param {*} profesorEmail
  */
 function emailNotificationHorario(profesorEmail) {
-  console.log("Correo enviado")
+  console.log('Correo enviado');
   const mailOptions = {
     from: process.env.EMAILSENDER,
     to: profesorEmail,

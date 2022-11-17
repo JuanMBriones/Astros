@@ -65,6 +65,17 @@ ctr.removeClass = () => async (req, res, next) => {
   }
 };
 
+/**
+ * range
+ * @param {*} start
+ * @param {*} length
+ * @return {Array}
+ */
+function range(start, length) {
+  return Array.from({length})
+    .map((_, i) => start + i);
+}
+
 // post clase
 ctr.addClass = () => async (req, res, next) => {
   // expected: attributes clase json
@@ -110,14 +121,47 @@ ctr.addClass = () => async (req, res, next) => {
     ingles);
 
   if (cip) {
-    cip.split('/');
+    cip = cip.split('/');
   }
 
-  const mapPeriodos = {'PMT1': 1, 'PMT2': 2, 'PMT3': 3, 'PMT4': 4, 'PMT5': 5, 'PMT6': 6};
-  if (modelo == 'Tec 20') {
+  const mapPeriodos = {
+    'PMT1': {
+      'num': 1,
+      'semanas': range(1, 5),
+    },
+    'PMT2': {
+      'num': 2,
+      'semanas': range(7, 5),
+    },
+    'PMT3': {
+      'num': 3,
+      'semanas': range(13, 5),
+    },
+    'PMT4': {
+      'num': 4,
+      'semanas': 6,
+    },
+    'PMT5': {
+      'num': 5,
+      'semanas': 12,
+    },
+    'PMT6': {
+      'num': 6,
+      'semanas': 18,
+    },
+  };
+  console.log(modelo);
+  console.log(periodo);
+  // let semanas = []; // dejame te cuento una idea millonaria
+  if (modelo == 'Tec 20' || modelo == 'T20') {
     periodo = 0;
   } else {
-    periodo = mapPeriodos[periodo];
+    // semanas = mapPeriodos[periodo].semanas;
+    periodo = mapPeriodos[periodo].num;
+  }
+
+  if (typeof horario === 'object') {
+    horario = horario.completo;
   }
 
   const horarioDB = await claseUtils.createDates(horario, periodo);
@@ -142,48 +186,11 @@ ctr.addClass = () => async (req, res, next) => {
     ingles, ingles,
   });
 
-
-  /*
-  const clase = await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec();
-
-  if (clase) {
-    clase.materia = materia;
-    clase.propuesta = modelo;
-    clase.carga = carga;
-    clase.horario = horario;
-    clase.modalidad_grupo = modalidadGrupo;
-    clase.paquete = paquete;
-    clase.edificio = edificio;
-    clase.salon = salon;
-    clase.tipo = tipo;
-    clase.semestre = semestre;
-    clase.periodo = periodo;
-    clase.ingles = ingles;
-
-    // push if not already in database
-    console.log('Clase already exists');
-    // get class
-    if (!clase.profesor.includes(profesor)) {
-      clase.profesor.push(profesor);
-    }
-
-    // push cip
-    cip.split('/').forEach((cipElement) => {
-      if (!clase.cip.includes(cipElement)) {
-        clase.cip.push(cipElement);
-      }
-    });
-
-    // save
-    await clase.save();
-    res.status(200).json({msg: 'Clase updated'});
-*/
-
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
     await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor},
       clave: clave, grupo_apg: grupoApg, materia: materia, propuesta: modelo, carga: carga, horario: horarioDB,
       modalidad_grupo: modalidadGrupo, paquete: paquete, edificio: edificio, salon: salon, tipo: tipo, semestre: semestre,
-      periodo: periodo, ingles: ingles}).exec();
+      periodo: periodo, ingles: ingles, cip: cip}).exec();
     res.status(200).json({message: 'Clase actualizada'});
   } else {
     await newClase.save();

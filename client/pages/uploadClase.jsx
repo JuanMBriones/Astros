@@ -73,7 +73,7 @@ export default function uploadClase() {
     },
     {
       name: 'Modalidad',
-      selector: (row) => row.Modalidad,
+      selector: (row) => row.ModalidadGrupo,
       sortable: true,
     },
     {
@@ -125,6 +125,14 @@ export default function uploadClase() {
     return await professor.profe._id;
   };
 
+  // TODO: Anadir un alert para el profe que ya existe
+  /**
+   err : CustomError: Profesor already exists
+      at /Users/juanma/Developer/Projects/CSProject/Astros/server/controllers/Profesor/profesorCtr.js:390:11
+      at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+    statusCode: 400
+  }
+  */
   useEffect(() => {
     async function postRecords() {
       data.forEach(async (clase) => {
@@ -163,6 +171,7 @@ export default function uploadClase() {
           salon: clase['Aula'],
           ingles: inglesValue,
           paquete: clase['Paquete'],
+          periodo: clase['Periodo'],
         });
         flag++;
         console.log(clase);
