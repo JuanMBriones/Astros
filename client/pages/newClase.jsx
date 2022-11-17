@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Clase from './components/Clase';
 import {useRouter} from 'next/router';
 
