@@ -92,7 +92,11 @@ export default function Profe({personalizado, flagEdit}) {
         marginTop: '50px',
       }}>
         <Typography variant='h4' component='h1' sx={{mb: '2rem'}}>
-          {personalizado.titulo}
+          {
+            (personalizado && personalizado.titulo) ?
+              personalizado.titulo :
+              null
+          }
         </Typography>
         <Box
           component='form'
@@ -198,7 +202,11 @@ export default function Profe({personalizado, flagEdit}) {
             color='success'
             onClick={handleOnClick}
           >
-            {personalizado.boton}
+            {
+              (personalizado && personalizado.boton) ?
+                personalizado.boton :
+                null
+            }
           </Button>
         </Box>
       </Box>

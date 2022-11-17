@@ -83,7 +83,7 @@ export default function AsignarClasesProfesor() {
     setProfesor(prof);
 
     const getMaterias = async () => {
-      const res = await axios.get('http://localhost:3001/api/profMaterias?profesor=' + prof.dbId);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profMaterias?profesor=` + prof.dbId);
       const rawMaterias = res.data.clases;
       const materias = [];
       rawMaterias.forEach((materia, index) => {
@@ -110,7 +110,7 @@ export default function AsignarClasesProfesor() {
     if (!mat.asignada) {
       const getWarnings = async () => {
         try {
-          const res = await axios.get('http://localhost:3001/api/assignProf?idMateria=' + mat.dbId + '&profesor=' + profesor.dbId);
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/assignProf?idMateria=` + mat.dbId + '&profesor=' + profesor.dbId);
           msgs = res.data.message;
           if (msgs.length > 0) {
             msgs.unshift('Advertencias:');
@@ -145,7 +145,7 @@ export default function AsignarClasesProfesor() {
     if (selectedMateria.asignada) {
       const unassign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/unassignProf?idMateria=' + selectedMateria.dbId + '&profesor=' + profesor.nomina);
+          const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/unassignProf?idMateria=` + selectedMateria.dbId + '&profesor=' + profesor.nomina);
           console.log(res);
         } catch (err) {
           console.log(err);
@@ -156,7 +156,7 @@ export default function AsignarClasesProfesor() {
     } else if (!errorFlag) {
       const assign = async () => {
         try {
-          const res = await axios.put('http://localhost:3001/api/assignConfirm?idMateria=' + selectedMateria.dbId + '&profesor=' + profesor.dbId + '&carga=' + newCarga);
+          const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/assignConfirm?idMateria=` + selectedMateria.dbId + '&profesor=' + profesor.dbId + '&carga=' + newCarga);
           console.log(res);
         } catch (err) {
           console.log(err);

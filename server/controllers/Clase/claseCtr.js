@@ -40,8 +40,9 @@ ctr.getClase = () => async (req, res, next) => {
 ctr.getProfesores = () => async (req, res, next) => {
   // expected: id clase
   const clase = req.query.clase;
-  const claseCip = await Clase.find({id: clase}).distinct('cip').exec();
-  const profesores = await Profesor.find({cip: {'$in': claseCip}}).exec();
+  // const claseCip = await Clase.find({id: clase}).distinct('cip').exec();
+  // const profesores = await Profesor.find({cip: {'$in': claseCip}}).exec();
+  const profesores = await Profesor.find({}).exec();
   profesores.forEach((profesor) => {
     if (profesor.clases.includes(clase)) {
       profesor.asignada = 1;
@@ -60,7 +61,6 @@ ctr.removeClass = () => async (req, res, next) => {
     await Clase.findOneAndDelete({_id: id}).exec();
     res.status(200).json({msg: 'Clase eliminada'});
   } catch (err) {
-    console.logg(err);
     res.status(200).json({msg: 'Error al eliminar clase'});
   }
 };
@@ -209,5 +209,10 @@ ctr.parseSchedule = () => async (req, res, next) => {
   res.status(201).json({msg: 'Clase agregada'});
 };
 
+
+ctr.deleteAll = () => async (req, res, next) => {
+  await Clase.deleteMany({}).exec();
+  res.status(200).json({msg: 'Clases eliminadas'});
+};
 
 module.exports = ctr;

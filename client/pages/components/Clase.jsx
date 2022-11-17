@@ -66,7 +66,11 @@ export default function Clase({personalizado, flagEdit}) {
   }, []);
 
   const submitForm = () => {
-    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !periodo || !horario) {
+    if (modelo == 'Tec 21' && (!periodo || periodo == 'Todo el semestre')) {
+      alert('Favor de llenar todos los campos');
+      return;
+    }
+    if (!paquete || !clave || !grupo || !nombre || !modalidad || !tipo || !modelo || !carga || !semestre || !horario) {
       alert('Favor de llenar todos los campos');
       return;
     }
