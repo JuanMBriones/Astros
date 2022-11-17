@@ -4,6 +4,7 @@
 import React, {useEffect} from 'react';
 import styles from '../../../styles/AnimatedNav.module.scss';
 import '../../../styles/AnimatedNav.module.scss';
+import {motion} from 'framer-motion';
 
 const AnimatedNav = (props) => {
   useEffect(() => {
@@ -64,14 +65,30 @@ const AnimatedNav = (props) => {
 
   return (
     <>
-      <br />
-      <div>
-        <nav className={styles.nav}>
-          <MakeTabs navInfo={props.navInfo} />
-          <span className={styles.nav_indicator}></span>
-        </nav>
-      </div>
-      <br />
+      <motion.div
+        initial={{
+          y: -25,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.75,
+          ease: 'easeOut',
+          delay: 0.25,
+        }}
+      >
+        <br />
+        <div>
+          <nav className={styles.nav}>
+            <MakeTabs navInfo={props.navInfo} />
+            <span className={styles.nav_indicator}></span>
+          </nav>
+        </div>
+        <br />
+      </motion.div>
     </>
   );
 };

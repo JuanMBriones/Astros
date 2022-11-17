@@ -17,10 +17,11 @@ import removeDiacritics from '../components/removeDiacritics';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import {useRouter} from 'next/router';
+import {motion} from 'framer-motion';
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#001489',
+    backgroundColor: '#495057',
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -158,96 +159,100 @@ export default function CustomizedTables() {
   }, [pivot]);
 
   return (
-    <div>
-      <center>
-        <h1> Clases a asignar </h1>
-        <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
-          <TextField
-            id="outlined-basic"
-            fullWidth
-            variant="outlined"
-            label="Buscar"
-            onChange={(e) => {
-              const filteredMaterias = allMaterias.filter((materia) => {
-                const nombre = removeDiacritics(materia.nombreClase.toString().toLowerCase());
-                if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
-                  return materia;
-                }
-              });
+    <motion.div
+      animate={{x: 15}}
+      transition={{ease: 'easeOut', duration: 2}}
+    >
+      <div>
+        <center>
+          <h1> Clases a asignar </h1>
+          <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
+            <TextField
+              id="outlined-basic"
+              fullWidth
+              variant="outlined"
+              label="Buscar"
+              onChange={(e) => {
+                const filteredMaterias = allMaterias.filter((materia) => {
+                  const nombre = removeDiacritics(materia.nombreClase.toString().toLowerCase());
+                  if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
+                    return materia;
+                  }
+                });
 
-              // TODO: Paginar aqui
-              setMaterias(filteredMaterias.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
-              setNumPages(Math.ceil(filteredMaterias.length / pageSize));
-            }}
-          />
-        </Box>
-        <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
-          <Table aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>  </StyledTableCell>
-                <StyledTableCell>Nombre de la clase</StyledTableCell>
-                <StyledTableCell>Grupo</StyledTableCell>
-                <StyledTableCell>Clave</StyledTableCell>
-                <StyledTableCell>Detalles</StyledTableCell>
-                <StyledTableCell>   </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {materias.map((materia) => (
-                <StyledTableRow key={materia.id}>
-                  <StyledTableCell component="th" scope="row">
-                    <IconButton onClick={() => saveMateria(materia)} href='../editClase'>
-                      <EditIcon style={{color: '#335687'}} />
-                    </IconButton>
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    <Link onClick={() => saveMateria(materia)} href='./ClasesAsignar'>
-                      {materia.nombreClase}
-                    </Link>
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    {materia.grupo}
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    {materia.clave}
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    <Link aria-owns={open ? 'pop' : undefined} aria-haspopup="true" onMouseEnter={(event) => {
-                      handleClick(materia.detalles, event);
-                    }} onMouseLeave={handleClose}>
+                // TODO: Paginar aqui
+                setMaterias(filteredMaterias.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+                setNumPages(Math.ceil(filteredMaterias.length / pageSize));
+              }}
+            />
+          </Box>
+          <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3, borderRadius: '15px'}}>
+            <Table aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>  </StyledTableCell>
+                  <StyledTableCell>Nombre de la clase</StyledTableCell>
+                  <StyledTableCell>Grupo</StyledTableCell>
+                  <StyledTableCell>Clave</StyledTableCell>
+                  <StyledTableCell>Detalles</StyledTableCell>
+                  <StyledTableCell>   </StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {materias.map((materia) => (
+                  <StyledTableRow key={materia.id}>
+                    <StyledTableCell component="th" scope="row">
+                      <IconButton onClick={() => saveMateria(materia)} href='../editClase'>
+                        <EditIcon style={{color: '#335687'}} />
+                      </IconButton>
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <Link onClick={() => saveMateria(materia)} href='./ClasesAsignar'>
+                        {materia.nombreClase}
+                      </Link>
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {materia.grupo}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {materia.clave}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <Link aria-owns={open ? 'pop' : undefined} aria-haspopup="true" onMouseEnter={(event) => {
+                        handleClick(materia.detalles, event);
+                      }} onMouseLeave={handleClose}>
                       Detalles de la clase
-                    </Link>
-                    <Popover id='pop' open={open} sx={{pointerEvents: 'none'}} anchorEl={anchor} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'right'}} disableScrollLock>
-                      {popMsg.map((horario, index) => (
-                        <Typography key={index} sx={{p: 1.5, lineHeight: '10px'}}>{horario}</Typography>
-                      ))}
-                    </Popover>
-                    {/* {materia.detalles} */}
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    <Button variant="outlined" color="error" onClick={() => {
-                      deleteForm(materia.dbId);
-                    }}>Eliminar</Button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Stack
-          spacing={2}
-          alignItems={'center'}
-        >
-          <Pagination
-            count={numPages}
-            onChange={handleChange}
-            showFirstButton
-            showLastButton
-          />
-        </Stack>
-      </center>
-    </div>
-
+                      </Link>
+                      <Popover id='pop' open={open} sx={{pointerEvents: 'none'}} anchorEl={anchor} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'right'}} disableScrollLock>
+                        {popMsg.map((horario, index) => (
+                          <Typography key={index} sx={{p: 1.5, lineHeight: '10px'}}>{horario}</Typography>
+                        ))}
+                      </Popover>
+                      {/* {materia.detalles} */}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <Button variant="outlined" color="error" onClick={() => {
+                        deleteForm(materia.dbId);
+                      }}>Eliminar</Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Stack
+            spacing={2}
+            alignItems={'center'}
+          >
+            <Pagination
+              count={numPages}
+              onChange={handleChange}
+              showFirstButton
+              showLastButton
+            />
+          </Stack>
+        </center>
+      </div>
+    </motion.div>
   );
 }
