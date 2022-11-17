@@ -25,9 +25,11 @@ function getSanitizedPath(urlPath) {
  */
 function MyApp({Component, pageProps}) {
   const [hideNavbarFooter, setHideNavbarFooter] = useState(false);
+  const router = useRouter();
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(undefined);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userNomina, setUserNomina] = useState('L00000000');
   const barLabels = ['Home', 'About', 'Contact', 'Blog', 'Support'];
   const backMenu = {
     'color': 'orange',
@@ -35,6 +37,10 @@ function MyApp({Component, pageProps}) {
       setNavInfo(defaultNavInfo);
     },
   };
+
+  useEffect(() => {
+
+  }, [user]);
 
   let defaultNavInfo = {
     'Home': {
@@ -44,7 +50,7 @@ function MyApp({Component, pageProps}) {
     },
     'Mi Horario': {
       'condition': 1,
-      'url': '/views/Horario?professor=LXD',
+      'url': `/views/Horario?professor=${userNomina}`,
       'color': 'orange',
     },
     'Profesores': {
@@ -97,6 +103,11 @@ function MyApp({Component, pageProps}) {
     },
     'Logout': {
       'condition': getSanitizedPath(useRouter().asPath) !== '/login',
+      'onClick': async () => {
+        await localStorage.removeItem('professor');
+        await localStorage.removeItem('loginData');
+        await router.push('/login');
+      },
       'url': '/login',
       'color': 'red',
     },
@@ -106,6 +117,7 @@ function MyApp({Component, pageProps}) {
     const profInfo = localStorage.getItem('professor');
     if (profInfo) {
       const profInfoJson = JSON.parse(profInfo);
+      setUserNomina(profInfoJson.profe.nomina);
       axios({
         method: 'post',
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/isAdmin/`,
@@ -150,10 +162,13 @@ function MyApp({Component, pageProps}) {
     if (rawUrl === '/') {
       setHideNavbarFooter(true);
     }
-    setUser('test');
+    // setUser('test');
 
     if (localStorage.getItem('loginData')) {
       setUser(localStorage.getItem('loginData'));
+
+      console.log('user', user);
+      console.log(localStorage.getItem('loginData'));
     }
 
     defaultNavInfo = Object.fromEntries(Object.entries(defaultNavInfo).filter(([key, value]) => value.condition == 1)); // for filtering

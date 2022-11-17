@@ -103,7 +103,10 @@ export default function Login() {
                   console.log('profeinfo', professor);
                   localStorage.setItem('professor', JSON.stringify(professor));
                 }
-                router.push('/');
+                const profesorInfo = professor.profe;
+                console.log('profeinfo', professor);
+                // router.push('/');
+                router.push(`/views/Horario?nomina=${profesorInfo.nomina}`);
               }}
               onError={() => {
                 console.log('Login Failed');
