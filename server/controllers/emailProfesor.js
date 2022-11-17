@@ -15,12 +15,11 @@ const fechasPeriodosAcademicos = 'Planes anteriores(17 semanas): Febrero 13 – 
 /**
  * emailNotificationHorario
  * @param {*} profesorEmail
- * @param {*} nameUser
- * @param {*} adminEmail
  */
-function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
+function emailNotificationHorario(profesorEmail) {
+  console.log("Correo enviado")
   const mailOptions = {
-    from: myUser,
+    from: process.env.EMAILSENDER,
     to: profesorEmail,
     subject: 'Confimación de horario',
     html: `
@@ -38,7 +37,7 @@ function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
             El semestre ahora inicia el <b>`+fechaInicio+`</b>, las fechas de los distintos períodos académicos son las siguientes: 
             <li>`+fechasPeriodosAcademicos +`</li>
             <br>
-            Para conocer los grupos en los que te estamos considerando te pido que accedas con tu cuenta @tec.mx a la siguiente liga: <a href="#"> Ver horario</a>
+            Para conocer los grupos en los que te estamos considerando te pido que accedas con tu cuenta @tec.mx a la siguiente liga: <a href="https://schedule-pied.vercel.app/"> Ver horario</a>
 
           </p>
         </body>
@@ -54,8 +53,4 @@ function emailNotificationHorario(profesorEmail, nameUser, adminEmail) {
   });
 }
 
-const destinatario = 'a00824742@tec.mx';
-
-
-// TODO cambiar 2do y 3er parametro
-emailNotificationHorario(destinatario, '1', '2');
+module.exports = emailNotificationHorario;
