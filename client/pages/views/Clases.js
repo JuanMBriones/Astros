@@ -9,6 +9,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
 import {Button, Link, Popover, Typography} from '@mui/material';
 import axios from 'axios';
 import removeDiacritics from '../components/removeDiacritics';
@@ -57,8 +59,18 @@ export default function CustomizedTables() {
   const [materias, setMaterias] = useState([]);
   const [anchor, setAnchor] = useState(null);
   const [popMsg, setPopMsg] = useState([]);
+  const [numPages, setNumPages] = useState(10);
+  // eslint-disable-next-line no-unused-vars
+  const [pageSize, setPageSize] = useState(7);
+  const [pivot, setPivot] = useState(0);
+
   const saveMateria = (selectedMateria) => {
     localStorage.setItem('selectedMateria', JSON.stringify(selectedMateria));
+  };
+
+  const handleChange = (event, value) => {
+    console.log(value);
+    setPivot(value - 1);
   };
 
   const deleteForm = (id) => {
@@ -104,11 +116,19 @@ export default function CustomizedTables() {
         }
         clases.push(createData(index, nombre, clave, horario, dbid, grupo));
       });
+
+      // TODO: Paginar
       setAllMaterias(clases);
-      setMaterias(clases);
+      setNumPages(Math.ceil(clases.length / pageSize));
+      setMaterias(clases.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
     };
     getClases();
   }, []);
+
+  useEffect(() => {
+    const newMaterias = allMaterias.slice(pivot * pageSize, pivot * pageSize + pageSize - 1);
+    setMaterias(newMaterias);
+  }, [pivot]);
 
   return (
     <div>
@@ -127,7 +147,10 @@ export default function CustomizedTables() {
                   return materia;
                 }
               });
-              setMaterias(filteredMaterias);
+
+              // TODO: Paginar aqui
+              setMaterias(filteredMaterias.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+              setNumPages(Math.ceil(filteredMaterias.length / pageSize));
             }}
           />
         </Box>
@@ -185,6 +208,17 @@ export default function CustomizedTables() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Stack
+          spacing={2}
+          alignItems={'center'}
+        >
+          <Pagination
+            count={numPages}
+            onChange={handleChange}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
       </center>
     </div>
 
