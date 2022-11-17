@@ -202,7 +202,11 @@ export default function Profe({personalizado, flagEdit}) {
             color='success'
             onClick={handleOnClick}
           >
-            {personalizado.boton}
+            {
+              (personalizado && personalizado.boton) ?
+                personalizado.boton :
+                null
+            }
           </Button>
         </Box>
       </Box>
