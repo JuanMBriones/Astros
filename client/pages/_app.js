@@ -45,7 +45,7 @@ function MyApp({Component, pageProps}) {
     setNavInfo(newNavInfo);
   }, [isAdmin]);
 
-  let defaultNavInfo = {
+  const defaultNavInfo = {
     'Home': {
       'condition': 1,
       'url': '/',
