@@ -11,6 +11,8 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import {Button} from '@mui/material';
 import axios from 'axios';
+import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
 import removeDiacritics from '../components/removeDiacritics';
 import IconButton from '@mui/material/IconButton';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'; // en proceso
@@ -77,6 +79,11 @@ export default function Profesores() {
   const [profesores, setProfesores] = useState([]);
   const [currentEstatus, setCurrentEstatus] = useState(4);
   const [selectedProfesor, setSelectedProfesor] = useState('');
+  const [numPages, setNumPages] = useState(10);
+  // eslint-disable-next-line no-unused-vars
+  const [pageSize, setPageSize] = useState(7);
+  const [pivot, setPivot] = useState(0);
+
   const saveProfesor = (selectedProfesor) => {
     localStorage.setItem('selectedProfesor', JSON.stringify(selectedProfesor));
   };
@@ -103,7 +110,8 @@ export default function Profesores() {
         profesores.push(createData(index, nombre, nomina, dbId, estatus));
       });
       setallProfesores(profesores);
-      setProfesores(profesores);
+      setProfesores(profesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+      setNumPages(Math.ceil(profesores.length / pageSize));
     };
     getProfesores();
   }, []);
@@ -116,9 +124,19 @@ export default function Profesores() {
     setOpen(true);
   };
 
+  const handleChange = (event, value) => {
+    console.log(value);
+    setPivot(value - 1);
+  };
+
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    const newProfesores = allProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1);
+    setProfesores(newProfesores);
+  }, [pivot]);
 
   return (
     <div>
@@ -137,7 +155,9 @@ export default function Profesores() {
                   return profesor;
                 }
               });
-              setProfesores(filteredProfesores);
+              setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+
+              setNumPages(Math.ceil(filteredProfesores.length / pageSize));
             }}
           />
 
@@ -149,7 +169,8 @@ export default function Profesores() {
                   return profesor;
                 }
               });
-              setProfesores(filteredProfesores);
+              setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+              setNumPages(Math.ceil(filteredProfesores.length / pageSize));
             }}>
               <MenuItem value={'5'}><b>Todos</b></MenuItem>
               {estados.map((estado) => {
@@ -239,6 +260,17 @@ export default function Profesores() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Stack
+          spacing={2}
+          alignItems={'center'}
+        >
+          <Pagination
+            count={numPages}
+            onChange={handleChange}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
       </center>
     </div>
 
