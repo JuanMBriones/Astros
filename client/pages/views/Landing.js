@@ -8,21 +8,10 @@ import Stack from '@mui/material/Stack';
 
 const anchors = ['firstPage', 'secondPage', 'thirdPage'];
 const bannerStrings = [
-  'Crea un horario nuevo 🚀',
-  'Organiza tu vida en el Tec ✨',
-  'Una vida sin problemas de horarios 🤩',
+  'Sistema de inscripciones para profesores',
+  'Inscripciones de clases y profesores',
 ];
 
-class MySection extends React.Component {
-  render() {
-    return (
-      <div className="section">
-        <h3>{this.props.content}</h3>
-        <h3>{this.props.content}</h3>
-      </div>
-    );
-  }
-}
 
 /**
  * @return {Object} The render component
@@ -61,8 +50,22 @@ export default function Landing() {
                 />
               </Stack>
             </div>
-            <MySection className={styles.landing} content={'Keep going!'} />
-            <MySection className={styles.landing} content={'Slide up!'} />
+
+            {/* Seccion 2 */}
+            <div className='h-screen md:flex justify-between py-20 px-10 bg-gradient-to-r from-indigo-500 to-blue-500 text-indigo-100'>
+              {/* MidPage izquierdo*/}
+              <div className='md:w-1/2 mb-10 md:mb-0'>
+                <h2 className='text-2xl md:text-4xl lg:text-5xl text-white mb-9'>Bienvenido al sistema de inscripciones para profesores</h2>
+                <p className='md:text-2xl lg:text-2xl mb-10'>Espíritu emprendedor con sentido humano</p>
+
+                <a href='/../login' className='inline-block py-3 px-14 text-yellow-700 bg-yellow-400 hover:bg-yellow-300 hover:text-yellow-800 rounded transition ease-in duration-150'>Login</a>
+
+              </div>
+              {/* MidPage derecho */}
+              <div className='md:w-1/2'>
+                <img src="https://tec.mx/sites/default/files/2017-06/colegiaturas.jpg" alt="Profesores" className="w-full rounded shadow-2xl"></img>
+              </div>
+            </div>
           </div>
         );
       }}
