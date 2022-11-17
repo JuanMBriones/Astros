@@ -96,7 +96,7 @@ export default function MuiNavbar() {
             color='inherit'
           >
             <Link
-              href='/uploadFile'
+              href='/uploadfile'
               underline='none'
               color='inherit'
             >
