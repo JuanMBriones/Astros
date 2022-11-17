@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import {useRouter} from 'next/router';
 import AnimatedNav from './components/NavBar/AnimatedNav';
 import axios from 'axios';
+import {AnimatePresence, motion} from 'framer-motion';
 
 /**
    * getSanitizedPath - Sanitizes the path to remove the query params
@@ -177,19 +178,43 @@ function MyApp({Component, pageProps}) {
 
   return (
     <>
-      {
-        !hideNavbarFooter ? (
-          <AnimatedNav barLabels={barLabels} navInfo={navInfo} />
-        ) : null
-      }
-      <Component
-        {...pageProps}
-      />
-      {
-        !hideNavbarFooter ? (
-          <Footer />
-        ) : null
-      }
+      <AnimatePresence exitBeforeEnter>
+        <motion.div
+          key={router.route}
+          initial='initialState'
+          transition={{duration: 0.7}}
+          animate='animateState'
+          exit='exitState'
+          variants={{
+            initialState: {
+              opacity: 0,
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
+            },
+            animateState: {
+              opacity: 1,
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
+            },
+            exitState: {
+              opacity: 0,
+              clipPath: 'polygon(50% 0, 50% 0, 50% 100%, 50% 100%)',
+            },
+          }}
+        >
+          {
+            !hideNavbarFooter ? (
+              <AnimatedNav barLabels={barLabels} navInfo={navInfo} />
+            ) : null
+          }
+          <Component
+            {...pageProps}
+          />
+          {
+            !hideNavbarFooter ? (
+              <Footer />
+            ) : null
+          }
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 }

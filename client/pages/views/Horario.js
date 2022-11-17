@@ -7,6 +7,7 @@ import axios from 'axios';
 import {useRouter} from 'next/router';
 import {ViewState} from '@devexpress/dx-react-scheduler';
 import {Scheduler, WeekView, Appointments, Resources} from '@devexpress/dx-react-scheduler-material-ui';
+import {motion} from 'framer-motion';
 
 const instances = [
   {id: 0, color: '#9575cd'},
@@ -124,77 +125,82 @@ export default function Horario() {
   }
   return (
     <>
-      {
-        profesor ? (
-          <div>
-            <>
-              <center>
-                <h1>{profesor.nombre + ' - ' + profesor.nomina}</h1>
-                <h2>Horario {periodos[periodo]}</h2>
-                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materiasTodas)}>Periodo 1</Button>
-                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materiasTodas)}>Semana Tec 1</Button>
-                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(2, materiasTodas)}>Periodo 2</Button>
-                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(5, materiasTodas)}>Semana Tec 2</Button>
-                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(3, materiasTodas)}>Periodo 3</Button>
-                <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(6, materiasTodas)}>Semana 18</Button>
-              </center><div style={{width: '100%'}}>
-                <Box sx={{display: 'flex', justifyContent: 'space-evenly', p: 1, m: 1, bgcolor: 'background.paper', borderRadius: 1}}>
-                  <div style={{padding: 20}}>
-                    <h2 style={{color: 'red'}}>WARNINGS</h2>
-                    <ul>
-                      {warnings.map((warning) => (
-                        <li key={warning}>{warning}</li>
-                      ))}
-                    </ul>
-
-                    {materiasBloque.map((materia, index) => (
-                      <Box sx={{display: 'flex', flexDirection: 'column'}}>
-                        <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
-                          <h2 style={{color: instances[index].color, backgroundColor: instances[index].color}}>_____  </h2>
-                          <h2 style={{paddingLeft: 5}}>{materia.materia}</h2>
-                        </Box>
-                        {materia.horario.map((horarioBloque) => (
-                          <p style={{marginBlockStart: 0}}>
-                    Se imparte en: {periodos[horarioBloque.bloque]}
-                            {horarioBloque.horario_semana.map((dia) => (
-                              <div>Día: {dias[dia.dia - 1]} {dia.hora_inicio.match(/[0-9]{2}:[0-9]{2}/)[0]} a {dia.hora_fin.match(/[0-9]{2}:[0-9]{2}/)[0]}</div>
-                            ))}
-                          </p>
+      <motion.div
+        animate={{x: 100}}
+        transition={{ease: 'easeOut', duration: 2}}
+      >
+        {
+          profesor ? (
+            <div>
+              <>
+                <center>
+                  <h1>{profesor.nombre + ' - ' + profesor.nomina}</h1>
+                  <h2>Horario {periodos[periodo]}</h2>
+                  <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(1, materiasTodas)}>Periodo 1</Button>
+                  <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(4, materiasTodas)}>Semana Tec 1</Button>
+                  <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(2, materiasTodas)}>Periodo 2</Button>
+                  <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(5, materiasTodas)}>Semana Tec 2</Button>
+                  <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(3, materiasTodas)}>Periodo 3</Button>
+                  <Button variant="outlined" style={{margin: 3}} onClick={() => getMateriasParcial(6, materiasTodas)}>Semana 18</Button>
+                </center><div style={{width: '100%'}}>
+                  <Box sx={{display: 'flex', justifyContent: 'space-evenly', p: 1, m: 1, bgcolor: 'background.paper', borderRadius: 1}}>
+                    <div style={{padding: 20}}>
+                      <h2 style={{color: 'red'}}>WARNINGS</h2>
+                      <ul>
+                        {warnings.map((warning) => (
+                          <li key={warning}>{warning}</li>
                         ))}
-                      </Box>
-                    ))}
-                  </div>
+                      </ul>
 
-                  <div style={{padding: 20, width: '60%'}}>
-                    <Scheduler
-                      data={appointments}
-                      locale="es-ES"
-                    >
-                      <ViewState
-                        defaultCurrentDate="2022-08-01" />
-                      <WeekView
-                        startDayHour={7}
-                        endDayHour={22}
-                        excludedDays={[0, 6]} />
-                      <Appointments />
-                      <Resources
-                        data={resources} />
-                    </Scheduler>
-                  </div>
+                      {materiasBloque.map((materia, index) => (
+                        <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                          <Box sx={{display: 'flex', justifyContent: 'flex-start'}}>
+                            <h2 style={{color: instances[index].color, backgroundColor: instances[index].color}}>_____  </h2>
+                            <h2 style={{paddingLeft: 5}}>{materia.materia}</h2>
+                          </Box>
+                          {materia.horario.map((horarioBloque) => (
+                            <p style={{marginBlockStart: 0}}>
+                      Se imparte en: {periodos[horarioBloque.bloque]}
+                              {horarioBloque.horario_semana.map((dia) => (
+                                <div>Día: {dias[dia.dia - 1]} {dia.hora_inicio.match(/[0-9]{2}:[0-9]{2}/)[0]} a {dia.hora_fin.match(/[0-9]{2}:[0-9]{2}/)[0]}</div>
+                              ))}
+                            </p>
+                          ))}
+                        </Box>
+                      ))}
+                    </div>
 
-                </Box>
-                <center style={{padding: 10}}>
-                  <Button variant="contained" style={{padding: 10}} endIcon={<SendIcon />} onClick={handleMail}> Enviar Horario</Button>
-                </center>
-              </div></>
+                    <div style={{padding: 20, width: '60%'}}>
+                      <Scheduler
+                        data={appointments}
+                        locale="es-ES"
+                      >
+                        <ViewState
+                          defaultCurrentDate="2022-08-01" />
+                        <WeekView
+                          startDayHour={7}
+                          endDayHour={22}
+                          excludedDays={[0, 6]} />
+                        <Appointments />
+                        <Resources
+                          data={resources} />
+                      </Scheduler>
+                    </div>
 
-          </div>
-        ) : (
-          <div>
-            loading...
-          </div>
-        )
-      }
+                  </Box>
+                  <center style={{padding: 10}}>
+                    <Button variant="contained" style={{padding: 10}} endIcon={<SendIcon />} onClick={handleMail}> Enviar Horario</Button>
+                  </center>
+                </div></>
+
+            </div>
+          ) : (
+            <div>
+              loading...
+            </div>
+          )
+        }
+      </motion.div>
     </>
   );
 }

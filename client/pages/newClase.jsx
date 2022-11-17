@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import Clase from './components/Clase';
 import {useRouter} from 'next/router';
+import {motion} from 'framer-motion';
 
 /**
  * newClase
@@ -35,10 +36,27 @@ export default function newClase() {
 
   return (
     <>
-      <Clase
-        personalizado = {{titulo: 'Nueva Clase', boton: 'Crear', mensaje: 'Clase creada correctamente'}}
-        flagEdit = {false}
-      />
+      <motion.div
+        initial={{
+          x: 25,
+          opacity: 0,
+        }}
+        animate={{
+          x: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.75,
+          // ease: 'easeOut',
+          ease: 'easeInOut',
+          delay: 0.25,
+        }}
+      >
+        <Clase
+          personalizado = {{titulo: 'Nueva Clase', boton: 'Crear', mensaje: 'Clase creada correctamente'}}
+          flagEdit = {false}
+        />
+      </motion.div>
     </>
   );
 }

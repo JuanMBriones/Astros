@@ -27,6 +27,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Chip from '@mui/material/Chip';
 import {MenuItem, InputLabel, FormControl, Select} from '@mui/material';
+import {motion} from 'framer-motion';
 
 // agregar o eliminar clase lo cambia a 'en proceso'
 // para enviar horario el estatus debe ser 'terminado'
@@ -139,140 +140,155 @@ export default function Profesores() {
   }, [pivot]);
 
   return (
-    <div>
-      <center>
-        <h1> Profesores </h1>
-        <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
-          <TextField
-            id="outlined-basic"
-            fullWidth
-            variant="outlined"
-            label="Buscar"
-            onChange={(e) => {
-              const filteredProfesores = allProfesores.filter((profesor) => {
-                const nombre = removeDiacritics(profesor.nombreProfesor.toString().toLowerCase());
-                if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
-                  return profesor;
-                }
-              });
-              setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+    <motion.div
+      initial={{
+        y: 25,
+        opacity: 0,
+      }}
+      animate={{
+        y: 0,
+        opacity: 1,
+      }}
+      transition={{
+        duration: 0.75,
+        ease: 'easeOut',
+        delay: 0.25,
+      }}
+    >
+      <div>
+        <center>
+          <h1> Profesores </h1>
+          <Box sx={{width: '70%', padding: 3, display: 'flex', justifyContent: 'flex-start'}}>
+            <TextField
+              id="outlined-basic"
+              fullWidth
+              variant="outlined"
+              label="Buscar"
+              onChange={(e) => {
+                const filteredProfesores = allProfesores.filter((profesor) => {
+                  const nombre = removeDiacritics(profesor.nombreProfesor.toString().toLowerCase());
+                  if (nombre.includes(removeDiacritics(e.target.value.toLowerCase()))) {
+                    return profesor;
+                  }
+                });
+                setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
 
-              setNumPages(Math.ceil(filteredProfesores.length / pageSize));
-            }}
-          />
+                setNumPages(Math.ceil(filteredProfesores.length / pageSize));
+              }}
+            />
 
-          <FormControl variant="outlined" sx={{width: '15%', marginLeft: 3}}>
-            <InputLabel id="demo-simple-select-label">Estado</InputLabel>
-            <Select labelId="demo-simple-select-label" label='Estado' onChange={(e) => {
-              const filteredProfesores = allProfesores.filter((profesor) => {
-                if (e.target.value == 5 || profesor.estatus == e.target.value) {
-                  return profesor;
-                }
-              });
-              setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
-              setNumPages(Math.ceil(filteredProfesores.length / pageSize));
-            }}>
-              <MenuItem value={'5'}><b>Todos</b></MenuItem>
-              {estados.map((estado) => {
-                return <MenuItem key={estado.id} value={estado.id}>{estado.name}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
-        </Box>
-        <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
-          <Table aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Estado</StyledTableCell>
-                <StyledTableCell>Nombre del profesor</StyledTableCell>
-                <StyledTableCell>Nómina</StyledTableCell>
-                <StyledTableCell>Horario</StyledTableCell>
-                <StyledTableCell>Clases</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {profesores.map((profesor) => (
-                <StyledTableRow key={profesor.id}>
-                  <StyledTableCell component="th" scope="row">
-                    <div>
-                      <IconButton style={{color: estados[profesor.estatus].color}} onClick={() => {
-                        handleClickOpen(profesor);
-                      }}>
-                        <Chip icon={estados[profesor.estatus].icon} variant="outlined"/>
-                      </IconButton>
-                      <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                      >
-                        <DialogTitle id="alert-dialog-title">
-                          {'Seleccione el nuevo estado del profesor ' + selectedProfesor.nombreProfesor + ':'}
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-description">
-                            <center>
-                              <TableContainer component={Paper} sx={{maxWidth: '90%', marginBottom: 3}}>
-                                <Table aria-label="customized table">
-                                  <TableHead>
-                                    <TableRow>
-                                      <StyledTableCell>Estado</StyledTableCell>
-                                      <StyledTableCell>Nombre del estado</StyledTableCell>
-                                      <StyledTableCell>  </StyledTableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {estados.map((estado) => (
-                                      <StyledTableRow key={estado.id}>
-                                        <StyledTableCell component="th" scope="row"> {estado.icon} </StyledTableCell>
-                                        <StyledTableCell component="th" scope="row"> {estado.name} </StyledTableCell>
-                                        <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
-                                          changeStatus(estado.id);
-                                        }}>{currentEstatus == estado.id ? 'Actual':'Cambiar'}</Button> </StyledTableCell>
-                                      </StyledTableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              </TableContainer>
-                            </center>
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={handleClose}>Cerrar</Button>
-                        </DialogActions>
-                      </Dialog>
-                    </div>
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    {profesor.nombreProfesor}
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    {profesor.nomina}
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    <Button variant="contained" color="success" onClick={() => saveProfesor(profesor)} href='./Horario'>Horario</Button>
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    <Button variant="contained" color="success" onClick={() => saveProfesor(profesor)} href='./ProfesoresAsignar'>Asignar</Button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Stack
-          spacing={2}
-          alignItems={'center'}
-        >
-          <Pagination
-            count={numPages}
-            onChange={handleChange}
-            showFirstButton
-            showLastButton
-          />
-        </Stack>
-      </center>
-    </div>
-
+            <FormControl variant="outlined" sx={{width: '15%', marginLeft: 3}}>
+              <InputLabel id="demo-simple-select-label">Estado</InputLabel>
+              <Select labelId="demo-simple-select-label" label='Estado' onChange={(e) => {
+                const filteredProfesores = allProfesores.filter((profesor) => {
+                  if (e.target.value == 5 || profesor.estatus == e.target.value) {
+                    return profesor;
+                  }
+                });
+                setProfesores(filteredProfesores.slice(pivot * pageSize, pivot * pageSize + pageSize - 1));
+                setNumPages(Math.ceil(filteredProfesores.length / pageSize));
+              }}>
+                <MenuItem value={'5'}><b>Todos</b></MenuItem>
+                {estados.map((estado) => {
+                  return <MenuItem key={estado.id} value={estado.id}>{estado.name}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Box>
+          <TableContainer component={Paper} sx={{maxWidth: '80%', marginBottom: 3}}>
+            <Table aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Estado</StyledTableCell>
+                  <StyledTableCell>Nombre del profesor</StyledTableCell>
+                  <StyledTableCell>Nómina</StyledTableCell>
+                  <StyledTableCell>Horario</StyledTableCell>
+                  <StyledTableCell>Clases</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {profesores.map((profesor) => (
+                  <StyledTableRow key={profesor.id}>
+                    <StyledTableCell component="th" scope="row">
+                      <div>
+                        <IconButton style={{color: estados[profesor.estatus].color}} onClick={() => {
+                          handleClickOpen(profesor);
+                        }}>
+                          <Chip icon={estados[profesor.estatus].icon} variant="outlined"/>
+                        </IconButton>
+                        <Dialog
+                          open={open}
+                          onClose={handleClose}
+                          aria-labelledby="alert-dialog-title"
+                          aria-describedby="alert-dialog-description"
+                        >
+                          <DialogTitle id="alert-dialog-title">
+                            {'Seleccione el nuevo estado del profesor ' + selectedProfesor.nombreProfesor + ':'}
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                              <center>
+                                <TableContainer component={Paper} sx={{maxWidth: '90%', marginBottom: 3}}>
+                                  <Table aria-label="customized table">
+                                    <TableHead>
+                                      <TableRow>
+                                        <StyledTableCell>Estado</StyledTableCell>
+                                        <StyledTableCell>Nombre del estado</StyledTableCell>
+                                        <StyledTableCell>  </StyledTableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                      {estados.map((estado) => (
+                                        <StyledTableRow key={estado.id}>
+                                          <StyledTableCell component="th" scope="row"> {estado.icon} </StyledTableCell>
+                                          <StyledTableCell component="th" scope="row"> {estado.name} </StyledTableCell>
+                                          <StyledTableCell component="th" scope="row"><Button variant="outlined" onClick={() => {
+                                            changeStatus(estado.id);
+                                          }}>{currentEstatus == estado.id ? 'Actual':'Cambiar'}</Button> </StyledTableCell>
+                                        </StyledTableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </TableContainer>
+                              </center>
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose}>Cerrar</Button>
+                          </DialogActions>
+                        </Dialog>
+                      </div>
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {profesor.nombreProfesor}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {profesor.nomina}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <Button variant="contained" color="success" onClick={() => saveProfesor(profesor)} href='./Horario'>Horario</Button>
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <Button variant="contained" color="success" onClick={() => saveProfesor(profesor)} href='./ProfesoresAsignar'>Asignar</Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Stack
+            spacing={2}
+            alignItems={'center'}
+          >
+            <Pagination
+              count={numPages}
+              onChange={handleChange}
+              showFirstButton
+              showLastButton
+            />
+          </Stack>
+        </center>
+      </div>
+    </motion.div>
   );
 }

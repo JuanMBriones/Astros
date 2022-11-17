@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import Profe from './components/Profe';
 import {useRouter} from 'next/router';
+import {motion} from 'framer-motion';
 
 // TODO: Anadir un alert para el profe que ya existe
 /**
@@ -43,10 +44,26 @@ export default function newProfe() {
 
   return (
     <>
-      <Profe
-        personalizado = {{titulo: 'Nuevo Profesor', boton: 'Crear', mensaje: 'Profesor creado correctamente'}}
-        flagEdit = {false}
-      />
+      <motion.div
+        initial={{
+          y: 25,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.75,
+          ease: 'easeOut',
+          delay: 0.25,
+        }}
+      >
+        <Profe
+          personalizado = {{titulo: 'Nuevo Profesor', boton: 'Crear', mensaje: 'Profesor creado correctamente'}}
+          flagEdit = {false}
+        />
+      </motion.div>
     </>
   );
 }
