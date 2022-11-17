@@ -19,8 +19,15 @@ async function parseDate(date, bloque) {
   const days = date[0].split(/(?=[A-Z])/);
   const hours = date[1].split('-');
 
-  const horaInicio = hours[0];
-  const horaFin = hours[1];
+  let horaInicio = hours[0];
+  let horaFin = hours[1];
+
+  if (horaInicio.length <= 4) {
+    horaInicio = '0' + horaInicio;
+  }
+  if (horaFin.length <= 4) {
+    horaFin = '0' + horaFin;
+  }
 
   const daysIdx = {
     'Lu': 1,
@@ -43,8 +50,8 @@ async function parseDate(date, bloque) {
     // new Date(2022, 7, dia, horaInicio.getUTCHours(), horaInicio.getUTCMinutes())
     // create new horario_semana
     const newHorarioSemana = new HorarioS({
-      hora_inicio: `2022-02-08T${horaInicio}:00`,
-      hora_fin: `2022-02-08T${horaFin}:00`,
+      hora_inicio: `2022-02-08T${horaInicio}:00.000Z`,
+      hora_fin: `2022-02-08T${horaFin}:00.000Z`,
       dia: dayNum,
     });
 
@@ -56,20 +63,24 @@ async function parseDate(date, bloque) {
     console.log(horarios);
   } // })
 
-  const newHorarioBloque = new HorarioB({
-    bloque: bloque,
-    horario_semana: horarios,
-  });
-
-  await newHorarioBloque.save();
+  return horarios;
 }
 
 async function createDates(dateExpression, bloque) {
+  let horario = [];
   const bloques = dateExpression.split('/');
 
-  bloques.forEach(async (element) => {
-    await parseDate(element.trim().split(' '), bloque);
+  for (let i=0; i<bloques.length; i++) {
+    horario = horario.concat(await parseDate(bloques[i].split(' '), bloque));
+  }
+  
+  const newHorarioBloque = new HorarioB({
+    bloque: bloque,
+    horario_semana: horario,
   });
+
+  const horarioFinal = await newHorarioBloque.save();
+  return horarioFinal._id;
 }
 
 module.exports = {

@@ -55,14 +55,13 @@ ctr.getProfesores = () => async (req, res, next) => {
 
 ctr.removeClass = () => async (req, res, next) => {
   // expected: attributes clase json
-  const {clave, grupo} = req.body;
-  console.log(grupo);
-  console.log(clave);
+  const {id} = req.body;
   try {
-    await Clase.findOneAndDelete({clave: clave, grupo_apg: grupo}).exec();
+    await Clase.findOneAndDelete({_id: id}).exec();
     res.status(200).json({msg: 'Clase eliminada'});
   }
   catch (err) {
+    console.logg(err);
     res.status(200).json({msg: 'Error al eliminar clase'});
   }
 };
@@ -70,7 +69,7 @@ ctr.removeClass = () => async (req, res, next) => {
 // post clase
 ctr.addClass = () => async (req, res, next) => {
   // expected: attributes clase json
-  const {
+  let {
     clave,
     grupoApg,
     materia,
@@ -111,6 +110,20 @@ ctr.addClass = () => async (req, res, next) => {
     periodo,
     ingles);
 
+    if(cip){
+      cip.split('/');
+    }
+
+    const mapPeriodos = {'PMT1': 1, 'PMT2': 2, 'PMT3': 3, 'PMT4': 4, 'PMT5': 5, 'PMT6': 6};
+    if(modelo == 'Tec 20'){
+      periodo = 0;
+    }
+    else{
+      periodo = mapPeriodos[periodo];
+    }
+
+    const horarioDB = await claseUtils.createDates(horario, periodo);
+
   // create new record
   const newClase = new Clase({
     clave: clave,
@@ -118,21 +131,21 @@ ctr.addClass = () => async (req, res, next) => {
     materia: materia,
     propuesta: modelo,
     carga: carga,
-    horario: horario,
+    horario: horarioDB,
     modalidad_grupo: modalidadGrupo,
     profesor: profesor,
-    cip: cip.split('/'),
+    cip: cip,
     paquete: paquete,
     edificio: edificio,
     salon: salon,
     tipo: tipo,
     semestre: semestre,
     periodo: periodo,
-/*
     ingles, ingles,
   });
 
 
+/*
   const clase = await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec();
 
   if (clase) {
@@ -167,12 +180,10 @@ ctr.addClass = () => async (req, res, next) => {
     await clase.save();
     res.status(200).json({msg: 'Clase updated'});
 */
-    ingles: ingles,
-  });
 
   if (await Clase.findOne({clave: clave, grupoApg: grupoApg}).exec()) {
     await Clase.findOneAndUpdate({clave: clave, grupoApg: grupoApg}, {$push: {profesor: profesor},
-      clave: clave, grupo_apg: grupoApg, materia: materia, propuesta: modelo, carga: carga, horario: horario,
+      clave: clave, grupo_apg: grupoApg, materia: materia, propuesta: modelo, carga: carga, horario: horarioDB,
       modalidad_grupo: modalidadGrupo, paquete: paquete, edificio: edificio, salon: salon, tipo: tipo, semestre: semestre,
       periodo: periodo, ingles: ingles}).exec();
     res.status(200).json({message: 'Clase actualizada'});
@@ -189,7 +200,14 @@ ctr.parseSchedule = () => async (req, res, next) => {
     horario,
   } = req.body;
   // 'LuMa 12:30-13:30 / JuVi 10:00-12:00'
-  await claseUtils.createDates(horario, periodo); // TODO: Cambiar el valor del parametro por el Periodo (PTM1, etc)
+  const horarioDB = await claseUtils.createDates(horario, periodo); // TODO: Cambiar el valor del parametro por el Periodo (PTM1, etc)
+  console.log("adiosss");
+  console.log(horarioDB);
+  const newClase = new Clase({
+    clave: "TC1463",
+    horario: horarioDB,
+  });
+  await newClase.save();
   res.status(201).json({msg: 'Clase agregada'});
 };
 
