@@ -30,6 +30,7 @@ const profesorSchema = new mongoose.Schema({
   },
   carga_asig: {
     type: Number,
+    default: 0,
   },
   clases: [{
     type: mongoose.Schema.Types.ObjectId,

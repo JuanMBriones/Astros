@@ -100,7 +100,9 @@ export default function Horario() {
   function handleMail() {
     console.log(profesor);
     console.log(profesor.correo);
+    axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/changeStatus?profesor=` + profesor._id + '&estatus=2');
     axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendEmail?mail=${profesor.correo}`);
+    alert('Correo enviado exitosamente');
   }
   return (
     <div>

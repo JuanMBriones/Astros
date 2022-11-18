@@ -29,7 +29,7 @@ app.get('/sendEmail', (req, res ) => {
   });
 });
 
-app.post('/deleteAll', async (req, res) => {
+app.get('/deleteAll', async (req, res) => {
   const Clase = require('./models/clase');
   const Profesor = require('./models/profesor');
   const HorarioB = require('./models/horario_bloque');
