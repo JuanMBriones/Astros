@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
-import {useRouter} from 'next/router';
+// import {useRouter} from 'next/router';
 import {Typography, Box} from '@mui/material';
 import axios from 'axios';
 import {motion} from 'framer-motion';
@@ -33,7 +33,7 @@ async function getProfessorInfo() {
 export default function Login() {
   // eslint-disable-next-line no-unused-vars
   const [loginData, setLoginData] = React.useState(null);
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     if (localStorage.getItem('loginData')) {
@@ -122,7 +122,8 @@ export default function Login() {
                   const profesorInfo = professor.profe;
                   console.log('profeinfo', professor);
                   // router.push('/');
-                  router.push(`/views/Horario?nomina=${profesorInfo.nomina}`);
+                  // router.push(`/views/Horario?nomina=${profesorInfo.nomina}`);
+                  window.location.href = `/views/Horario?nomina=${profesorInfo.nomina}`;
                 }}
                 onError={() => {
                   console.log('Login Failed');

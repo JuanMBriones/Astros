@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import Profe from './components/Profe';
-import {useRouter} from 'next/router';
+// import {useRouter} from 'next/router';
 import {motion} from 'framer-motion';
 
 // TODO: Anadir un alert para el profe que ya existe
@@ -16,7 +16,7 @@ import {motion} from 'framer-motion';
  * @return {React.Component}
  */
 export default function newProfe() {
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     const profInfo = localStorage.getItem('professor');
@@ -29,12 +29,13 @@ export default function newProfe() {
         if (profInfoJson.profe.rol && profInfoJson.profe.rol === 'admin') {
           console.log('🎉');
         } else {
-          router.push('/login');
-          // window.location.href = '/login';
+          // router.push('/login');
+          window.location.href = '/login';
           console.log('not logged in');
         }
       } else {
-        router.push('/login'); // window.location.href = '/login';
+        // router.push('/login');
+        window.location.href = '/login';
         // next router send to login
 
         console.log('not logged in');

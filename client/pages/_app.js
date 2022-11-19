@@ -112,7 +112,8 @@ function MyApp({Component, pageProps}) {
       'onClick': async () => {
         await localStorage.removeItem('professor');
         await localStorage.removeItem('loginData');
-        await router.push('/login');
+        // await router.push('/login');
+        window.location.href = '/login';
       },
       'url': '/login',
       'color': 'red',

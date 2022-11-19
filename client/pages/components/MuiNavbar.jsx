@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {useRouter} from 'next/router';
+// import {useRouter} from 'next/router';
 
 /**
  * @name MuiNavbar
@@ -25,7 +25,7 @@ export default function MuiNavbar() {
   const open = Boolean(anchorEl);
   const open2 = Boolean(anchorEl2);
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -53,7 +53,8 @@ export default function MuiNavbar() {
     localStorage.removeItem('loginData');
     setUserData(undefined);
 
-    router.push('/');
+    // router.push('/');
+    window.location.href = '/';
   };
 
   return (
