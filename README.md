@@ -26,7 +26,7 @@
   Run on your terminal
   ```bash
   cd client
-  npm i
+  npm i --force
   ```
 
 ## **How to run**
