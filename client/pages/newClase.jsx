@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import Clase from './components/Clase';
-import {useRouter} from 'next/router';
+// import {useRouter} from 'next/router';
 import {motion} from 'framer-motion';
 
 /**
@@ -8,7 +8,7 @@ import {motion} from 'framer-motion';
  * @return {React.Component}
  */
 export default function newClase() {
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     const profInfo = localStorage.getItem('professor');
@@ -21,12 +21,13 @@ export default function newClase() {
         if (profInfoJson.profe.rol && profInfoJson.profe.rol === 'admin') {
           console.log('🎉');
         } else {
-          router.push('/login');
-          // window.location.href = '/login';
+          // router.push('/login');
+          window.location.href = '/login';
           console.log('not logged in');
         }
       } else {
-        router.push('/login'); // window.location.href = '/login';
+        // router.push('/login');
+        window.location.href = '/login';
         // next router send to login
 
         console.log('not logged in');
