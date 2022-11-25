@@ -9,6 +9,12 @@
   ```bash
   npm i
   ```
+
+  ```bash
+  npm run prepare
+  ```
+
+
   ### **Backend**
   Run on your terminal
   ```bash
