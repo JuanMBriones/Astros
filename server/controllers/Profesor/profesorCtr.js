@@ -409,7 +409,7 @@ ctr.postProfesor = () => async (req, res, next) => {
 
 // give power to a profesor 🤑🔥
 ctr.givePower = () => async (req, res, next) => {
-  const {nomina} = req.body;
+  const {nomina} = req.query;
 
   if (!nomina) {
     throw new CustomError(400, 'Missing parameters');
@@ -425,11 +425,11 @@ ctr.givePower = () => async (req, res, next) => {
   if (!savedProfesor) {
     throw new CustomError(500, 'Error saving Profesor');
   }
-  res.status(201).json({message: 'Profesor has been given a power up'});
+  res.status(201).json({message: 'Profesor has been given admin'});
 };
 
 ctr.nerfProfessor = () => async (req, res, next) => {
-  const {nomina} = req.body;
+  const {nomina} = req.query;
 
   if (!nomina) {
     throw new CustomError(400, 'Missing parameters');
@@ -445,7 +445,7 @@ ctr.nerfProfessor = () => async (req, res, next) => {
   if (!savedProfesor) {
     throw new CustomError(500, 'Error saving Profesor');
   }
-  res.status(201).json({message: 'Profesor has been nerfed'});
+  res.status(201).json({message: 'Profesor has been removed admin'});
 };
 
 ctr.isAdmin = () => async (req, res, next) => {
